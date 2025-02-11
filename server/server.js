@@ -7,7 +7,7 @@ const app = express();
 
 connectDB()
 .then(
-  app.listen(process.nextTick.PORT || 8080, () => {
+  app.listen(process.env.PORT || 8080, () => {
     console.log(`MongoDb connection is on port : ${process.env.PORT}`);
 })
 )
