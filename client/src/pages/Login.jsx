@@ -1,10 +1,7 @@
-import React from "react";
-import { useState } from "react";
 import { FaUser } from "react-icons/fa";
 
 function Login() {
 
-  const [open, setOpen] = useState(false);
   return (
     <div className="h-[100vh] flex flex-col items-center justify-center text-white">
       <div className="h-[300px] w-8- bg-blue-600 px-6 my-4">
