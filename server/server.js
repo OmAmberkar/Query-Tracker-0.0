@@ -7,8 +7,8 @@ const app = express();
 
 connectDB()
 .then(
-  app.listen(process.nextTick.PORT || 8080, () => {
-    console.log(`MongoDb connection is on port : ${process.env.PORT}`);
+  app.listen(process.env.PORT || 8080, () => {
+    console.log(`MongoDb connection is on  : http://localhost:${process.env.PORT} `);
 })
 )
 .catch(
@@ -17,5 +17,5 @@ connectDB()
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
-  console.log(`Server is running on http://localhost:${process.env.PORT}`);
+  console.log(`Server is running on ${process.env.PORT}`);
 });

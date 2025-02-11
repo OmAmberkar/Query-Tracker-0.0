@@ -94,3 +94,6 @@ dist
 .webpack/
 
 .svelte-kit
+
+/node_modules
+.env
