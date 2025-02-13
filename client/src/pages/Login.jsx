@@ -6,7 +6,7 @@ function Login({ setOpen }) {
   return (
     <div
       className="flex items-center justify-center min-h-screen bg-cover bg-center transition-opacity duration-500"
-      style={{ backgroundImage: "url('./src/assets/RedBlack.jpg')" }}
+      style={{ backgroundImage: "url('./src/assets/Cool-Red-and-Black-Wallpaper-Computer.jpg')" }}
     >
       {/* The container with background opacity */}
       <div className="bg-transparent  backdrop-blur-lg rounded-lg p-8 w-full max-w-md">
