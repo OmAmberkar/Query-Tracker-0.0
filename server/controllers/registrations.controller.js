@@ -3,7 +3,7 @@ import User from "../models/user.model.js";
 import { hashPassword, verifyPassword } from "../utils/encryption.utils.js";
 
 const createUser = async (req, res) => {
-  const { name, email, contact, password } = req.body;
+  const { name, username, email, contact, password } = req.body;
   try {
     const existingUser = await User.findOne({ email });
 
@@ -13,6 +13,7 @@ const createUser = async (req, res) => {
     const hashedPassword = await hashPassword(password);
     const newUser = new User({
       name,
+      username,
       email,
       contact,
       password: hashedPassword,
