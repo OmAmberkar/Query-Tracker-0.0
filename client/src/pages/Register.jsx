@@ -1,152 +1,3 @@
-// import { useState } from 'react';
-// import { FaUserAlt, FaLock, FaPhoneAlt } from 'react-icons/fa';
-// import { MdOutlineMail } from 'react-icons/md';
-// import { Link, useNavigate } from 'react-router-dom';
-// import axios from 'axios';
-// import '../App.css';
-
-
-// function Register() {
-//   const [name,setName] = useState('');
-//   const [username,setUsername] = useState('');
-//   const [email,setEmail] = useState('');
-//   const [contact,setContact] = useState('');  
-//   const [password,setPassword] = useState('');
-//   const [ loading, setLoading] = useState(false);
-//   const [ error, setError] = useState('');
-//   const navigate = useNavigate();
-
-//   const handleRegister = async (e) => {
-//     e.preventDefault();
-//     axios
-//     .post('http://localhost:4000/user/register', {
-//       name,
-//       username,
-//       email,
-//       contact,
-//       password
-//     })
-//     .then((result) => {
-//       console.log(result.data);
-//       navigate('/login');
-//       setLoading(true);
-//       setError('Registration Successful');
-//     }
-//     )
-//     .catch((error) => {
-//       console.log(error)
-//       setLoading(false);
-//       setError('Registration failed. Please try again.');
-//     });
-//   }
-
-//   const handleLogin = async (e) => {
-//     e.preventDefault();
-//     navigate('/login');
-//   }
-
-
-//   return (
-//     <div
-//       className="flex items-center justify-center min-h-screen bg-cover bg-center transition-opacity duration-500 bg-blue-950 bg-opacity-60"
-//       // style={{ backgroundImage: "url('./src/assets/.jpg')" }}
-//     >
-//       <div className="bg-transparent bg-opacity-20 backdrop-blur-2xl rounded-lg p-8 w-full max-w-md shadow-lg">
-//         <h2 className="text-3xl font-bold pb-6 text-center text-white">Register</h2>
-//         <form className="flex flex-col">
-//           <div className="relative w-full">
-//             <input
-//               type="text"
-//               name='name'
-//               className="border border-gray-400 w-full rounded-full py-2 px-4 pl-10 my-2 bg-transparent focus:outline-none text-white placeholder-white"
-//               placeholder="Full Name"
-//               required
-//               onChange={(e) => setName(e.target.value)}
-//             />
-//             <span className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-300">
-//               <FaUserAlt />
-//             </span>
-//           </div>
-//           <div className="relative w-full">
-//             <input
-//               type="text"
-//               name='username'
-//               className="border border-gray-400 w-full rounded-full py-2 px-4 pl-10 my-2 bg-transparent focus:outline-none text-white placeholder-white"
-//               placeholder="Username"
-//               required
-//               onChange={(e) => setUsername(e.target.value)}
-//             />
-//             <span className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-300">
-//               <FaUserAlt />
-//             </span>
-//           </div>
-//           <div className="relative w-full">
-//             <input
-//               type="email"
-//               name='email'
-//               className="border border-gray-400 w-full rounded-full py-2 px-4 pl-10 my-2 bg-transparent focus:outline-none text-white placeholder-white"
-//               placeholder="Email"
-//               required
-//               onChange={(e) => setEmail(e.target.value)}
-//             />
-//             <span className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-300">
-//               <MdOutlineMail />
-//             </span>
-//           </div>
-//           <div className="relative w-full">
-//             <input
-//               type="tel"
-//               name='contact'
-//               className="border border-gray-400 w-full rounded-full py-2 px-4 pl-10 my-2 bg-transparent focus:outline-none text-white placeholder-white"
-//               placeholder="Phone Number"
-//               required
-//               onChange={(e) => setContact(e.target.value)}
-//             />
-//             <span className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-300">
-//               <FaPhoneAlt />
-//             </span>
-//           </div>
-//           <div className="relative w-full">
-//             <input
-//               type="password"
-//               name='password'
-//               className="border border-gray-400 w-full rounded-full py-2 px-4 pl-10 my-2 bg-transparent focus:outline-none text-white placeholder-white"
-//               placeholder="Password"
-//               required
-//               onChange={(e) => setPassword(e.target.value)}
-//             />
-//             <span className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-300">
-//               <FaLock />
-//             </span>
-//           </div>
-//           <div className="relative w-full">
-//             <input
-//               type="password"
-//               name='confirmPassword'
-//               className="border border-gray-400 w-full rounded-full py-2 px-4 pl-10 my-2 bg-transparent focus:outline-none text-white placeholder-white"
-//               placeholder="Confirm Password"
-//             />
-//             <span className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-300">
-//               <FaLock />
-//             </span>
-//           </div>
-//           <button className="my-2 py-2 w-full rounded-full bg-red-600 hover:bg-red-700 transition text-white" onClick={handleRegister}>
-//             Register
-//           </button>
-//           <span className="text-center text-white">
-//             Already have an account?{' '}
-//             <Link to="/login" className="cursor-pointer text-gray-300 underline" onClick={handleLogin}>
-//               Login
-//             </Link>
-//           </span>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default Register;
-
 import { useState } from 'react';
 import { FaUserAlt, FaLock, FaPhoneAlt, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { MdOutlineMail } from 'react-icons/md';
@@ -200,7 +51,7 @@ function Register() {
       })
       .then((result) => {
         console.log(result.data);
-        navigate('/login');
+        navigate('/user/login');
         setError('Registration Successful');
       })
       .catch((error) => {
@@ -360,7 +211,7 @@ function Register() {
           <div className="text-center text-white mt-4 group">
             Already have an account?{' '}
             <Link 
-              to="/login" 
+              to="/user/login" 
               className="font-medium text-red-400 hover:text-red-300 transition-colors duration-300 relative inline-block group-hover:underline"
             >
               <span>Login</span>
