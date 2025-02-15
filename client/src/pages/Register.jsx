@@ -3,13 +3,13 @@ import { FaUser, FaLock, FaPhone } from 'react-icons/fa';
 import { MdMail } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 
-function Register({ setOpen }) {
+function Register() {
   return (
     <div
-      className="flex items-center justify-center min-h-screen bg-cover bg-center transition-opacity duration-500"
+      className="flex items-center justify-center min-h-screen bg-cover bg-center"
       style={{ backgroundImage: "url('./src/assets/Cool-Red-and-Black-Wallpaper-Computer.jpg')" }}
     >
-      {/* Blurred and more transparent container */}
+      {/* Blurred container */}
       <div className="bg-transparent bg-opacity-20 backdrop-blur-2xl rounded-lg p-8 w-full max-w-md shadow-lg">
         <h2 className="text-3xl font-bold pb-6 text-center text-white">Register</h2>
         <form className="flex flex-col">
