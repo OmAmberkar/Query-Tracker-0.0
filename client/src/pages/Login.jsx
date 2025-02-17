@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { showToast } from '../components/notification.js';
 
 function Login() {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
@@ -11,10 +13,32 @@ function Login() {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log({ username });
-  };
+//   const handleSubmit = async (event) => {
+//     event.preventDefault();
+    
+//     try {
+//         const response = await axios.post("http://localhost:4000/user/login", { email, password });
+//         console.log("Login Success:", response.data);
+//     } 
+//     catch (error) {
+//         console.error("Login Error:", error.response?.data || error.message);
+//     }
+// };
+
+const handleSubmit = async (event) => {
+  event.preventDefault();
+  
+  try {
+    const response = await axios.post("http://localhost:4000/user/login", { email, password });
+    console.log("Login Success:", response.data);
+    showToast("Login successful!", "success");
+  } 
+  catch (error) {
+    console.error("Login Error:", error.response?.data || error.message);
+    showToast(error.response?.data?.message || "Login failed!", "error");
+  }
+};
+
 
   return (
     <div
@@ -30,15 +54,16 @@ function Login() {
         
         <h2 className="text-4xl font-bold mb-4 pb-6 text-center text-white text-shadow-sm">Login</h2>
         
-        <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
+        <form className="flex flex-col space-y-4" >
           {/* Username input */}
           <div className="relative w-full group">
             <input
-              type="text"
+              type="email"
               className="border border-gray-400/30 w-full rounded-full py-3 px-4 pl-10 bg-black/20 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-white placeholder-white/70 transition-all duration-300 group-hover:border-white/50"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Email"
+              value={email}
+              name='email'
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
             <span className="absolute top-1/2 left-3 transform -translate-y-1/2 text-white/70 group-hover:text-white transition-colors duration-300">
@@ -53,6 +78,7 @@ function Login() {
               className="border border-gray-400/30 w-full rounded-full py-3 px-4 pl-10 pr-10 bg-black/20 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-white placeholder-white/70 transition-all duration-300 group-hover:border-white/50"
               placeholder="Password"
               value={password}
+              name='password'
               onChange={(e) => setPassword(e.target.value)}
               required
             />
@@ -71,6 +97,7 @@ function Login() {
           {/* Login button */}
           <button 
             type="submit" 
+            onClick={handleSubmit}
             className="mt-4 py-3 w-full rounded-full bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-500 hover:to-purple-500 active:from-red-700 active:to-purple-700 transition-all duration-300 text-white font-semibold transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-red-500/50"
           >
             Login
