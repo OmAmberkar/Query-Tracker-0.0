@@ -6,7 +6,6 @@ function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -14,8 +13,7 @@ function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add your login logic here
-    console.log({ username, password, rememberMe });
+    console.log({ username });
   };
 
   return (
@@ -30,7 +28,7 @@ function Login() {
       <div className="relative bg-black/30 backdrop-blur-xl rounded-2xl p-8 w-full max-w-md shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-white/10 transform hover:scale-[1.01] transition-all duration-300">
         <div className="absolute -inset-0.5 bg-gradient-to-r from-red-500 to-purple-600 rounded-2xl blur opacity-20 x transition duration-300"></div>
         
-        <h2 className="text-4xl font-bold pb-6 text-center text-white text-shadow-sm">Login</h2>
+        <h2 className="text-4xl font-bold mb-4 pb-6 text-center text-white text-shadow-sm">Login</h2>
         
         <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
           {/* Username input */}
@@ -68,23 +66,6 @@ function Login() {
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
-          </div>
-          
-          {/* Remember me and forgot password */}
-          <div className="flex items-center justify-between">
-            {/* <label className="flex items-center text-white group cursor-pointer">
-              <input 
-                type="checkbox" 
-                className="mr-2 accent-red-600" 
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-              /> 
-              <span className="group-hover:text-red-300 transition-colors duration-300">Remember me</span>
-            </label> */}
-            {/* <span className="cursor-pointer text-white hover:text-red-300 transition-colors duration-300 relative inline-block group">
-              <span>Forgot password?</span>
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-400 group-hover:w-full transition-all duration-300"></span>
-            </span> */}
           </div>
           
           {/* Login button */}
