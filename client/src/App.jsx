@@ -16,6 +16,8 @@ function App() {
         <Routes>        
           <Route path="/user/login" element={<Login />} />
           <Route path="/user/register" element={<Register />} />
+          <Route path="/user/home" element={<Home />} />
+          <Route path="/user/query" element={<Query />} />
         </Routes>
         <ToastContainer />
       </BrowserRouter>
