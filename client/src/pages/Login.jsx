@@ -3,6 +3,10 @@ import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { showToast } from '../components/notification.js';
+import { useNavigate } from 'react-router-dom';
+
+const navigate= useNavigate()
+
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -32,6 +36,7 @@ const handleSubmit = async (event) => {
     const response = await axios.post("http://localhost:4000/user/login", { email, password });
     console.log("Login Success:", response.data);
     showToast("Login successful!", "success");
+    navigate('/user/login');
   } 
   catch (error) {
     console.error("Login Error:", error.response?.data || error.message);
