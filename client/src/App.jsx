@@ -1,6 +1,8 @@
 import "./App.css";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Query from "./pages/Ticket-Page";
+import Home from "./pages/Home"
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ToastContainer } from 'react-toastify'; 
 import 'react-toastify/dist/ReactToastify.css'; 
