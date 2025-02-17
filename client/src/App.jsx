@@ -14,7 +14,6 @@ function App() {
         <Routes>        
           <Route path="/user/login" element={<Login />} />
           <Route path="/user/register" element={<Register />} />
-
         </Routes>
         <ToastContainer />
       </BrowserRouter>
