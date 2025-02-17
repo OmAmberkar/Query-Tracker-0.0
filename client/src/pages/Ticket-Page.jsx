@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-// const TicketPage = () => {
-//   const [formData, setFormData] = useState({
-//     title: "",
-//     description: "",
-//     priority: "low",
-//   });
+const TicketPage = () => {
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    priority: "low",
+  });
 
 
   const [tickets, setTickets] = useState([]); // Ensure tickets is an array
@@ -89,6 +89,6 @@ import axios from "axios";
       )}
     </div>
   );
-};
+  };
 
 export default TicketPage;

@@ -53,8 +53,8 @@ const HomePage = () => {
       
       {/* Navigation Button */}
       <button
-        onClick={() => handleSubmit}
-        className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition"
+        onClick={handleSubmit}
+        className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-300 transition"
       >
         Raise a Ticket
       </button>
