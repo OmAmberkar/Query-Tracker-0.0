@@ -4,6 +4,8 @@ import Register from "./pages/Register";
 import Query from "./pages/Ticket-Page";
 import Home from "./pages/Home"
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { ToastContainer } from 'react-toastify'; 
+import 'react-toastify/dist/ReactToastify.css'; 
 // import Notification from "./components/notification.js";
 
 function App() {
@@ -14,10 +16,8 @@ function App() {
         <Routes>        
           <Route path="/user/login" element={<Login />} />
           <Route path="/user/register" element={<Register />} />
-          <Route path="/user/query" element={<Query />} />
-          <Route path="/user/home" element={< Home/>} />
-          
         </Routes>
+        <ToastContainer />
       </BrowserRouter>
     </>
   );
