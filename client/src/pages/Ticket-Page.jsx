@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const TicketPage = () => {
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    priority: "low",
-  });
+// const TicketPage = () => {
+//   const [formData, setFormData] = useState({
+//     title: "",
+//     description: "",
+//     priority: "low",
+//   });
+
 
   const [tickets, setTickets] = useState([]); // Ensure tickets is an array
 
@@ -56,7 +57,7 @@ const TicketPage = () => {
           className="border p-2 w-full mb-2"
           required
         ></textarea>
-        <select
+        {/* <select
           name="priority"
           value={formData.priority}
           onChange={handleChange}
@@ -65,7 +66,7 @@ const TicketPage = () => {
           <option value="low">Low</option>
           <option value="medium">Medium</option>
           <option value="high">High</option>
-        </select>
+        </select> */}
         <button type="submit" className="bg-blue-500 text-white p-2 w-full">
           Submit Ticket
         </button>

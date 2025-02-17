@@ -115,7 +115,6 @@ import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { showToast } from '../components/notification.js';
-import { useNavigate } from 'react-router-dom';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -128,23 +127,32 @@ function Login() {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+//   const handleSubmit = async (event) => {
+//     event.preventDefault();
+    
+//     try {
+//         const response = await axios.post("http://localhost:4000/user/login", { email, password });
+//         console.log("Login Success:", response.data);
+//     } 
+//     catch (error) {
+//         console.error("Login Error:", error.response?.data || error.message);
+//     }
+// };
 
-    setLoading(true);
+const handleSubmit = async (event) => {
+  event.preventDefault();
+  
+  try {
+    const response = await axios.post("http://localhost:4000/user/login", { email, password });
+    console.log("Login Success:", response.data);
+    showToast("Login successful!", "success");
+  } 
+  catch (error) {
+    console.error("Login Error:", error.response?.data || error.message);
+    showToast(error.response?.data?.message || "Login failed!", "error");
+  }
+};
 
-    try {
-      const response = await axios.post("http://localhost:4000/user/login", { email, password });
-      console.log("Login Success:", response.data);
-      showToast("Login successful!", "success");
-      navigate("/user/home")
-    } catch (error) {
-      console.error("Login Error:", error.response?.data || error.message);
-      showToast(error.response?.data?.message || "Login failed!", "error");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div
