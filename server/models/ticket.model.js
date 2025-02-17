@@ -34,7 +34,17 @@ const TicketSchema = new mongoose.Schema(
       enum: ["low", "medium", "high"],
       default: "medium",
     },
-  },{ timestamps: true }
+
+    // ✅ Embedded Comments (Fixed Placement)
+    comments: [
+      {
+        user: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Who added the comment
+        message: { type: String, required: true },
+        createdAt: { type: Date, default: Date.now },
+      }
+    ],
+  },
+  { timestamps: true }
 );
 
-module.exports = mongoose.model("Ticket", TicketSchema);
+export default mongoose.model("Ticket", TicketSchema);
