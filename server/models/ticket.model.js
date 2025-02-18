@@ -7,6 +7,16 @@ const TicketSchema = new mongoose.Schema(
       required: true,
     },
 
+    name:{
+      type:String,
+      required: true,
+    },
+    
+    grpno:{
+      type:String,
+      required: true,
+    },
+
     description: { 
       type: String, 
       required: true 
@@ -18,10 +28,10 @@ const TicketSchema = new mongoose.Schema(
       required: true
     }, 
 
-    assignedTo: { 
-      type: mongoose.Schema.Types.ObjectId, 
-      ref: "User" 
-    },
+    // assignedTo: { 
+    //   type: mongoose.Schema.Types.ObjectId, 
+    //   ref: "User" 
+    // },
     
     status: {
       type: String,
