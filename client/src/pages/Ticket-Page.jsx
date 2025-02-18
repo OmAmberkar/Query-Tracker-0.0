@@ -12,7 +12,7 @@ const TicketPage = () => {
   const [tickets, setTickets] = useState([]); // Ensure tickets is an array
 
   useEffect(() => {
-    axios.get("http://localhost:5000/tickets") // Adjust the URL to your backend
+    axios.get("http://localhost:4000/user/tickets") // Adjust the URL to your backend
       .then((response) => setTickets(response.data))
       .catch((error) => console.error("Error fetching tickets:", error));
   }, []);
@@ -27,7 +27,7 @@ const TicketPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/tickets", formData);
+      const response = await axios.post("http://localhost:4000/user/tickets", formData);
       setTickets([...tickets, response.data]); // Add new ticket to the list
       setFormData({ title: "", description: "", priority: "low" }); // Reset form
     } catch (error) {
