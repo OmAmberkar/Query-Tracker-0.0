@@ -1,18 +1,18 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-// const TicketPage = () => {
-//   const [formData, setFormData] = useState({
-//     title: "",
-//     description: "",
-//     priority: "low",
-//   });
+const TicketPage = () => {
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    priority: "low",
+  });
 
-
-  const [tickets, setTickets] = useState([]); // Ensure tickets is an array
+  const [tickets, setTickets] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/tickets") // Adjust the URL to your backend
+    axios
+      .get("http://localhost:5000/tickets")
       .then((response) => setTickets(response.data))
       .catch((error) => console.error("Error fetching tickets:", error));
   }, []);
@@ -28,64 +28,73 @@ import axios from "axios";
     e.preventDefault();
     try {
       const response = await axios.post("http://localhost:5000/tickets", formData);
-      setTickets([...tickets, response.data]); // Add new ticket to the list
-      setFormData({ title: "", description: "", priority: "low" }); // Reset form
+      setTickets([...tickets, response.data]);
+      setFormData({ title: "", description: "", priority: "low" });
     } catch (error) {
       console.error("Error submitting ticket:", error);
     }
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Ticket System</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white p-10 relative space-y-10 overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-purple-600/20 blur-xl"></div>
       
-      <form onSubmit={handleSubmit} className="mb-4">
+      <h1 className="text-5xl font-extrabold text-white text-shadow-md">Ticket System</h1>
+      <p className="text-lg text-gray-300">Create and manage your support tickets easily.</p>
+      
+      {/* Ticket Form */}
+      <form onSubmit={handleSubmit} className="w-full max-w-2xl bg-black/70 border border-gray-700 rounded-2xl p-10 shadow-lg text-center space-y-6 backdrop-blur-md">
         <input
           type="text"
           name="title"
-          placeholder="Title"
+          placeholder="Ticket Title"
           value={formData.title}
           onChange={handleChange}
-          className="border p-2 w-full mb-2"
+          className="bg-transparent border-b border-gray-400 text-white text-xl p-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
         />
         <textarea
           name="description"
-          placeholder="Description"
+          placeholder="Ticket Description"
           value={formData.description}
           onChange={handleChange}
-          className="border p-2 w-full mb-2"
+          className="bg-transparent border-b border-gray-400 text-white text-xl p-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
         ></textarea>
-        {/* <select
+        
+        <select
           name="priority"
           value={formData.priority}
           onChange={handleChange}
-          className="border p-2 w-full mb-2"
+          className="bg-transparent border border-gray-500 text-gray-300 text-xl p-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
         >
           <option value="low">Low</option>
           <option value="medium">Medium</option>
           <option value="high">High</option>
-        </select> */}
-        <button type="submit" className="bg-blue-500 text-white p-2 w-full">
+        </select>
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-8 py-4 rounded-xl shadow-md hover:bg-blue-700 transition transform hover:scale-105"
+        >
           Submit Ticket
         </button>
       </form>
-      
-      <h2 className="text-xl font-bold mb-2">Existing Tickets</h2>
+
+      {/* Existing Tickets */}
+      <h2 className="text-3xl font-bold text-white">Existing Tickets</h2>
       {Array.isArray(tickets) && tickets.length > 0 ? (
-        <ul>
+        <ul className="w-full max-w-4xl space-y-6">
           {tickets.map((ticket) => (
-            <li key={ticket._id} className="border p-2 mb-2">
-              <h3 className="font-bold">{ticket.title}</h3>
-              <p>{ticket.description}</p>
-              <p className="text-sm">Priority: {ticket.priority}</p>
-              <p className="text-sm">Status: {ticket.status || "Open"}</p>
+            <li key={ticket._id} className="bg-black/70 border border-gray-700 rounded-2xl p-8 shadow-lg text-center transform hover:scale-105 transition-all">
+              <h3 className="text-2xl font-bold text-pink-500">{ticket.title}</h3>
+              <p className="text-lg text-gray-300">{ticket.description}</p>
+              <p className="text-sm text-gray-400">Priority: {ticket.priority}</p>
+              <p className="text-sm text-gray-400">Status: {ticket.status || "Open"}</p>
             </li>
           ))}
         </ul>
       ) : (
-        <p>No tickets found.</p>
+        <p className="text-lg text-gray-300">No tickets found.</p>
       )}
     </div>
   );
