@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-// import Ticket from "./Ticket-Page";
+import Ticket from "./Ticket-Page";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ const HomePage = () => {
     navigate('/user/query');
   }
   useEffect(() => {
-    axios.get("http://localhost:5000/tickets")
+    axios.get("http://localhost:4000/user/tickets")
       .then((response) => {
         const tickets = response.data;
         setStats({
@@ -53,11 +53,14 @@ const HomePage = () => {
       
       {/* Navigation Button */}
       <button
+        type="button"
         onClick={handleSubmit}
         className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-300 transition"
+        
       >
         Raise a Ticket
       </button>
+     
     </div>
   );
 };
