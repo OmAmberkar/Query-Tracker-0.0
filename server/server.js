@@ -5,6 +5,7 @@ import connectDB from "./db/connect.db.js";
 import userRoute from "./routes/registration.routes.js";
 import userLogin from "./routes/login.routes.js";
 import ticketRoutes from './routes/ticket.routes.js';
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 const app = express();
@@ -13,6 +14,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors({ credentials: true }))
+app.use(cookieParser());
 
 //controllers routers
 app.use('/user',userRoute);

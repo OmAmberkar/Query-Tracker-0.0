@@ -1,15 +1,11 @@
 import mongoose from "mongoose";
+import User from "./user.model.js";
 
 const TicketSchema = new mongoose.Schema(
   {
-    title: {
-      type: String,
-      required: true,
-    },
-
     name:{
       type:String,
-      required: true,
+      // required: true,
     },
     
     grpno:{
@@ -17,15 +13,25 @@ const TicketSchema = new mongoose.Schema(
       required: true,
     },
 
+    email:{
+      type: String,
+      required: true,
+    },
+
+    subject: {
+      type: String,
+      // required: true,
+    },
+
     description: { 
       type: String, 
-      required: true 
+      // required: true 
     },
     
     user: { 
       type: mongoose.Schema.Types.ObjectId, 
-      ref: "User", 
-      required: true
+      ref: User, 
+      // required: true,
     }, 
 
     // assignedTo: { 
@@ -47,4 +53,6 @@ const TicketSchema = new mongoose.Schema(
   },{ timestamps: true }
 );
 
-module.exports = mongoose.model("Ticket", TicketSchema);
+const Ticket = mongoose.model("Ticket", TicketSchema);
+
+export default Ticket;
