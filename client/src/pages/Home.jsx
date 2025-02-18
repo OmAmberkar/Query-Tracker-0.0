@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Ticket from "./Ticket-Page";
+// import Ticket from "./Ticket-Page";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -55,8 +55,7 @@ const HomePage = () => {
       <button
         type="button"
         onClick={handleSubmit}
-        className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-300 transition"
-        
+        className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-300 transition z-10"
       >
         Raise a Ticket
       </button>
