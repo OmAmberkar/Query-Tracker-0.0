@@ -1,38 +1,33 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 
 const TicketPage = () => {
+  
   const [formData, setFormData] = useState({
-    title: "",
+    name: "",
+    grpno : "",
+    email: "",
+    subject: "",
     description: "",
-    priority: "low",
   });
 
-  const [tickets, setTickets] = useState([]);
-
-  useEffect(() => {
-    axios
-      .get("http://localhost:5000/tickets")
-      .then((response) => setTickets(response.data))
-      .catch((error) => console.error("Error fetching tickets:", error));
-  }, []);
+  axios.post('http://localhost:4000/user/register',{
+    name: "",
+    grpno : "",
+    email: "",
+    subject: "",
+    description: "",
+  });
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.post("http://localhost:5000/tickets", formData);
-      setTickets([...tickets, response.data]);
-      setFormData({ title: "", description: "", priority: "low" });
-    } catch (error) {
-      console.error("Error submitting ticket:", error);
-    }
+    console.log(formData);
+    // Submit logic goes here
   };
 
   return (

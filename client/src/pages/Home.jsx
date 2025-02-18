@@ -16,7 +16,7 @@ const HomePage = () => {
     navigate('/user/query');
   }
   useEffect(() => {
-    axios.get("http://localhost:5000/tickets")
+    axios.get("http://localhost:4000/user/tickets")
       .then((response) => {
         const tickets = response.data;
         setStats({
@@ -53,11 +53,13 @@ const HomePage = () => {
       
       {/* Navigation Button */}
       <button
-        onClick={() => navigate(<Ticket/>)}
-        className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition"
+        type="button"
+        onClick={handleSubmit}
+        className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-300 transition z-10"
       >
         Raise a Ticket
       </button>
+     
     </div>
   );
 };
