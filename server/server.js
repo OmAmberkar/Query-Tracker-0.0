@@ -4,6 +4,7 @@ import cors from "cors";
 import connectDB from "./db/connect.db.js";
 import userRoute from "./routes/registration.routes.js";
 import userLogin from "./routes/login.routes.js";
+import ticketRoutes from './routes/ticket.routes.js';
 
 dotenv.config();
 const app = express();
@@ -16,6 +17,7 @@ app.use(cors({ credentials: true }))
 //controllers routers
 app.use('/user',userRoute);
 app.use('/user',userLogin);
+app.use('/user',ticketRoutes);
 
 //connect to database
 connectDB()
