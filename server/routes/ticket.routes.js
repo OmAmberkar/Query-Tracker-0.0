@@ -1,8 +1,12 @@
-import { ticketData } from "../controllers/ticketgeneration.controller.js";
-import express from "express";
+import express from 'express';
+import { createTicket, getAllTickets } from '../controllers/ticketController.js';
 
 const router = express.Router();
 
-router.post("/query", ticketData);
+// Route to get all tickets
+router.get('/tickets', getAllTickets);
 
-export default router ;
+// Route to create a new ticket
+router.post('/tickets', createTicket);
+
+export default router;

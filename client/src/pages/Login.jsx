@@ -222,8 +222,9 @@ const handleSubmit = async (event) => {
           </button>
 
           <p className="mt-3 text-sm text-white text-center">
-            Don&apos;t have an account? 
-            <Link to="/user/register" className="font-semibold text-red-500">Register here</Link>
+            Don&apos;t have an account?  
+
+            <Link to="/user/register" className="font-semibold text-red-500"> Register here</Link>
           </p>
         </form>
       </div>
