@@ -2,7 +2,8 @@ import "./App.css";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Query from "./pages/Ticket-Page";
-import Home from "./pages/Home"
+import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ToastContainer } from 'react-toastify'; 
 import 'react-toastify/dist/ReactToastify.css'; 
@@ -18,6 +19,7 @@ function App() {
           <Route path="/user/register" element={<Register />} />
           <Route path="/user/home" element={<Home />} />
           <Route path="/user/query" element={<Query />} />
+          <Route path="/user/dashboard" element={<Dashboard />} />
         </Routes>
         <ToastContainer />
       </BrowserRouter>
