@@ -13,7 +13,7 @@ const HomePage = () => {
 
   const handleSubmit = async (e) =>{
     e.preventDefault();
-    navigate('/user/query');
+    navigate('/user/createTicket');
   }
   useEffect(() => {
     axios.get("http://localhost:4000/user/tickets")

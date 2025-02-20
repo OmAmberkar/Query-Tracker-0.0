@@ -35,7 +35,7 @@ const TicketPage = () => {
 
       // Redirect after tick appears
       setTimeout(() => {
-        navigate("/user/dashboard");
+        navigate("/user/getTickets");
       }, 4000);
 
     } catch (error) {
