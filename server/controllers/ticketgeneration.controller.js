@@ -21,8 +21,8 @@ export const createTicket = async (req, res) => {
 
         const newTicket = new Ticket({
             name,
-            grpno,
             email,
+            grpno,
             subject,
             description,
         });

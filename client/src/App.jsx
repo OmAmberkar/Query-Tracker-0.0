@@ -18,8 +18,8 @@ function App() {
           <Route path="/user/login" element={<Login />} />
           <Route path="/user/register" element={<Register />} />
           <Route path="/user/home" element={<Home />} />
-          <Route path="/user/query" element={<Query />} />
-          <Route path="/user/dashboard" element={<Dashboard />} />
+          <Route path="/user/createTicket" element={<Query />} />
+          <Route path="/user/getTickets" element={<Dashboard />} />
         </Routes>
         <ToastContainer />
       </BrowserRouter>
