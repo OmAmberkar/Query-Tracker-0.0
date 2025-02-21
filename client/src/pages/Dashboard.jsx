@@ -47,7 +47,7 @@ const Dashboard = () => {
 
   // Delete Ticket
   const handleDelete = (ticketId) => {
-    axios.delete(`http://localhost:4000/user/getTickets/${ticketId}`)
+    axios.delete(`http://localhost:4000/user/deleteTicket/${ticketId}`)
       .then(() => {
         setTickets(tickets.filter(ticket => ticket._id !== ticketId)); // Remove ticket from UI
       })
@@ -62,7 +62,7 @@ const Dashboard = () => {
 
   // Save Edited Description
   const handleComplete = (ticketId) => {
-    axios.put(`http://localhost:4000/user/createTicket/${ticketId}`, { description: editedDescription })
+    axios.put(`http://localhost:4000/user/updateTicket/${ticketId}`, { description: editedDescription })
       .then(() => {
         setTickets(tickets.map(ticket => 
           ticket._id === ticketId ? { ...ticket, description: editedDescription } : ticket
