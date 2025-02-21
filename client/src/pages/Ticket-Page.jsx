@@ -461,73 +461,280 @@
 
 
 
-"use client";
-import React, { useState, useEffect } from "react";
-import Slider from "react-slick";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import { useState } from "react";
+// import { Link, useNavigate } from "react-router-dom";
+// import axios from "axios";
+
+// const TicketPage = () => {
+//   const navigate = useNavigate();
+
+//   const [formData, setFormData] = useState({
+//     name: "",
+//     grpno: "",
+//     email: "",
+//     subject: "",
+//     description: "",
+//   });
+
+//   const [loading, setLoading] = useState(false);
+//   const [submitted, setSubmitted] = useState(false);
+
+//   const handleChange = (e) => {
+//     setFormData({ ...formData, [e.target.name]: e.target.value });
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setLoading(true);
+
+//     try {
+//       await axios.post("http://localhost:4000/user/createTicket", formData);
+
+//       setTimeout(() => {
+//         setLoading(false);
+//         setSubmitted(true);
+//       }, 2000);
+
+//       setTimeout(() => {
+//         navigate("/user/home");
+//       }, 4000);
+//     } catch (error) {
+//       console.error("Error submitting ticket:", error);
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white p-10 relative overflow-hidden">
+//       <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-purple-600/20 blur-xl"></div>
+
+//       <div className="bg-black/50 border border-gray-700 rounded-2xl p-8 shadow-lg backdrop-blur-md w-full max-w-xl z-10">
+//         <h2 className="text-3xl font-bold mb-6 text-center">Raise a Ticket</h2>
+
+//         <form onSubmit={handleSubmit} className="space-y-6">
+//           <div className="grid grid-cols-2 gap-4">
+//             <div>
+//               <label className="block text-sm font-medium text-gray-300 mb-2">Name</label>
+//               <input type="text" name="name" value={formData.name} onChange={handleChange}
+//                 className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white" required />
+//             </div>
+//             <div>
+//               <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+//               <input type="email" name="email" value={formData.email} onChange={handleChange}
+//                 className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white" required />
+//             </div>
+//           </div>
+
+//           <div className="grid grid-cols-2 gap-4">
+//             <div>
+//               <label className="block text-sm font-medium text-gray-300 mb-2">Group No.</label>
+//               <input type="text" name="grpno" value={formData.grpno} onChange={handleChange}
+//                 className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white" required />
+//             </div>
+//             <div>
+//               <label className="block text-sm font-medium text-gray-300 mb-2">Subject</label>
+//               <input type="text" name="subject" value={formData.subject} onChange={handleChange}
+//                 className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white" required />
+//             </div>
+//           </div>
+
+//           <div>
+//             <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
+//             <textarea name="description" value={formData.description} onChange={handleChange}
+//               className="w-full px-8 py-2 bg-gray-800/50 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white min-h-32" required></textarea>
+//           </div>
+
+//           <button type="submit"
+//             className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-500 transition duration-200 font-medium">
+//             Submit Ticket
+//           </button>
+//         </form>
+
+//         {loading && (
+//           <div className="absolute inset-0 flex items-center justify-center bg-black/70">
+//             <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
+//               <div className="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+//               <p className="mt-4 text-green-700 font-bold">Submitting Ticket...</p>
+//             </div>
+//           </div>
+//         )}
+
+//         {submitted && !loading && (
+//           <div className="absolute inset-0 flex items-center justify-center bg-black/70">
+//             <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
+//               <svg className="w-16 h-16 text-green-500" fill="none" stroke="currentColor" strokeWidth="2"
+//                 viewBox="0 0 24 24">
+//                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
+//               </svg>
+//               <p className="mt-4 text-green-700 font-bold">Ticket Submitted Successfully!</p>
+//             </div>
+//           </div>
+//         )}
+
+//         <p className="mt-6 text-sm text-center">
+//           <Link to="/user/home" className="text-blue-400 hover:text-blue-300 hover:underline transition">
+//             Back to Home
+//           </Link>
+//         </p>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default TicketPage;   
+
+
+
+
+
+
+
+
+
+
+
+
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 
-const Page = () => {
-  const [tickets, setTickets] = useState([]);
+const TicketPage = () => {
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:3001/api/tickets")
-      .then((response) => {
-        setTickets(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching tickets:", error);
-      });
-  }, []);
+  const [formData, setFormData] = useState({
+    name: "",
+    grpno: "",
+    email: "",
+    subject: "",
+    description: "",
+  });
 
-  const sliderSettings = {
-    dots: true,
-    infinite: true,
-    speed: 600,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 3000,
-    arrows: false,
-    cssEase: "cubic-bezier(0.4, 0, 0.2, 1)", // Smooth animation
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      await axios.post("http://localhost:4000/user/createTicket", formData);
+
+      setTimeout(() => {
+        setLoading(false);
+        setSubmitted(true);
+      }, 2000);
+
+      setTimeout(() => {
+        navigate("/user/home");
+      }, 4000);
+    } catch (error) {
+      console.error("Error submitting ticket:", error);
+      setError("Failed to submit ticket. Please try again.");
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#0f172a] to-[#1e293b] text-white p-6">
-      {/* Header */}
-      <h1 className="text-4xl font-bold mb-8">Ticket Management System</h1>
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white p-10 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-purple-600/20 blur-xl"></div>
 
-      {/* Container (Submit a Ticket) */}
-      <div className="bg-gradient-to-br from-[#0f172a]/70 to-[#1e293b]/70 p-8 rounded-2xl shadow-xl max-w-4xl w-full border border-gray-700 backdrop-blur-md">
-        <h2 className="text-2xl font-semibold mb-4 text-center">Submit a Ticket</h2>
-        {/* Your form can be added here */}
-      </div>
+      <div className="bg-black/50 border border-gray-700 rounded-2xl p-8 shadow-lg backdrop-blur-md w-full max-w-xl z-10 relative">
+        <h2 className="text-3xl font-bold mb-6 text-center">Raise a Ticket</h2>
 
-      {/* Your Tickets Section (Same Gradient as Background) */}
-      <div className="w-full max-w-3xl mt-10">
-        <h2 className="text-2xl font-bold text-center mb-4">Your Tickets</h2>
-        <div className="bg-gradient-to-br from-[#0f172a]/70 to-[#1e293b]/70 p-6 rounded-2xl shadow-xl border border-gray-700 backdrop-blur-md">
-          <Slider {...sliderSettings}>
-            {tickets.map((ticket) => (
-              <div
-                key={ticket._id}
-                className="p-6 rounded-xl transition-all duration-500 transform hover:scale-105"
-              >
-                {/* Ticket Content */}
-                <h3 className="text-xl font-semibold text-white">{ticket.subject}</h3>
-                <p className="text-gray-400 text-sm">
-                  By: {ticket.name} | {ticket.email}
-                </p>
-                <p className="mt-2 text-gray-300">{ticket.description}</p>
-              </div>
-            ))}
-          </Slider>
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Name</label>
+              <input type="text" name="name" value={formData.name} onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white" required />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+              <input type="email" name="email" value={formData.email} onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white" required />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Group No.</label>
+              <input type="text" name="grpno" value={formData.grpno} onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white" required />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Subject</label>
+              <input type="text" name="subject" value={formData.subject} onChange={handleChange}
+                className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white" required />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
+            <textarea name="description" value={formData.description} onChange={handleChange}
+              className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white min-h-32" required></textarea>
+          </div>
+
+          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+
+          <button type="submit"
+            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-500 transition duration-200 font-medium cursor-pointer">
+            Submit Ticket
+          </button>
+        </form>
+
+        {loading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/70">
+            <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
+              <div className="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+              <p className="mt-4 text-green-700 font-bold">Submitting Ticket...</p>
+            </div>
+          </div>
+        )}
+
+        {submitted && !loading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/70">
+            <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
+              <svg className="w-16 h-16 text-green-500" fill="none" stroke="currentColor" strokeWidth="2"
+                viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <p className="mt-4 text-green-700 font-bold">Ticket Submitted Successfully!</p>
+            </div>
+          </div>
+        )}
+
+        <p className="mt-6 text-sm text-center">
+          <Link to="/user/home" className="text-blue-400 hover:text-blue-300 hover:underline transition">
+            Back to Home
+          </Link>
+        </p>
       </div>
     </div>
   );
 };
 
-export default Page;
+export default TicketPage;
+
+
+
