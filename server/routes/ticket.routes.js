@@ -34,6 +34,6 @@ router.delete('/deleteTicket/:id', deleteTicket);
 // Route to update ticket description by ID
 router.put('/updateTicket/:id', updateTicket);
 
-router.put('/taskComplete/:id' , completeTicket);
+router.patch('/taskComplete/:id' , completeTicket);
 
 export default router;

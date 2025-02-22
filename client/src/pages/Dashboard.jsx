@@ -171,8 +171,8 @@ const Dashboard = () => {
     const ticketToComplete = tickets.find(ticket => ticket._id === ticketId);
     console.log(ticketId)
     // Only update the status if it's "open"
-    if (ticketToComplete && ticketToComplete.status === "open") {
-      axios.put(`http://localhost:4000/user/updateTicket/${ticketId}`, { status: "resolved" })
+    if (ticketToComplete && ticketToComplete.status === "open") { 
+      axios.patch(`http://localhost:4000/user/updateTicket/${ticketId}`, { status: "resolved" })
         .then(() => {
           // Update local tickets state after successful status update
           setTickets(tickets.map(ticket =>
