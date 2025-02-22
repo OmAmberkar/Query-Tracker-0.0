@@ -70,7 +70,7 @@ function Register() {
     >
       <div className="absolute inset-0 bg-gradient-to-br from-blue-900/70 via-purple-900/60 to-red-900/70 animate-gradient-shift"></div>
 
-      <div className="relative bg-black/30 backdrop-blur-xl rounded-2xl p-8 w-full max-w-md shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-white/10 transform hover:scale-[1.01] hover:filter-blur transition-all duration-300">
+      <div className="relative bg-black/30  rounded-2xl p-8 w-full max-w-md shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-white/10 transform hover:scale-[1.01]  transition-all duration-300">
         <h2 className="text-4xl font-bold pb-6 text-center text-white text-shadow-sm">Register</h2>
         
         {error && (

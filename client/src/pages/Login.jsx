@@ -42,7 +42,7 @@ const handleSubmit = async (event) => {
     >
       <div className="absolute inset-0 bg-gradient-to-br from-red-900/60 via-purple-900/50 to-black/70 animate-gradient-shift"></div>
 
-      <div className="relative bg-black/30 backdrop-blur-xl rounded-2xl p-8 w-full max-w-md shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-white/10 transform hover:scale-[1.01] transition-all duration-300">
+      <div className="relative bg-black/30  rounded-2xl p-8 w-full max-w-md shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-white/10 transform hover:scale-[1.01] transition-all duration-300">
         <div className="absolute -inset-0.5 bg-gradient-to-r from-red-500 to-purple-600 rounded-2xl blur opacity-20 transition duration-300"></div>
 
         <h2 className="text-4xl font-bold pb-6 text-center text-white text-shadow-sm">Login</h2>
