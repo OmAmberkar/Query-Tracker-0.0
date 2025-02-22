@@ -29,7 +29,7 @@ connectDB()
 })
 )
 .catch(
-  (error) => console.log("mongoDB connection failed", error)
+  (error) => console.log("MongoDB connection failed", error)
 );
 
 //routes

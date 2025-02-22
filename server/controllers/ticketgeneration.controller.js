@@ -116,4 +116,24 @@ export const updateTicket = async (req, res) => {
     }
 };
 
-export default { getAllTickets, createTicket, deleteTicket, updateTicket };
+export const completeTicket = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+        
+        // Only update once, the `status` is passed correctly
+        const updatedTicket = await Ticket.findByIdAndUpdate(id, { status : 'resolved' }, { new: true });
+
+        if (updatedTicket) {
+            res.status(200).json({ message: `Ticket status updated to ${status}`, updatedTicket });
+        } else {
+            res.status(404).json({ message: "Ticket not found" });
+        }
+
+    } catch (error) {
+        res.status(500).json({ message: "Error updating ticket", error });
+    }
+}
+
+
+export default { getAllTickets, createTicket, deleteTicket, updateTicket , completeTicket};
