@@ -23,8 +23,8 @@ const HomePage = () => {
         setTickets(ticketsData);
         setStats({
           totalTickets: ticketsData.length,
-          pendingTickets: ticketsData.filter(ticket => ticket.status === "Pending").length,
-          resolvedTickets: ticketsData.filter(ticket => ticket.status === "Resolved").length,
+          pendingTickets: ticketsData.length - ticketsData.filter(ticket => ticket.status === "resolved").length,
+          resolvedTickets: ticketsData.filter(ticket => ticket.status === "resolved").length,
         });
       })
       .catch((error) => console.error("Error fetching tickets:", error));
