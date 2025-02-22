@@ -495,19 +495,25 @@ const HomePage = () => {
       {/* Stats Section */}
       <div className="flex flex-col sm:flex-row items-center justify-center gap-10 w-full max-w-4xl">
         <div className="bg-black/50 border border-gray-700 rounded-2xl p-8 shadow-lg text-center backdrop-blur-md hover:scale-105 transition-transform w-64">
-          <h2 className="text-3xl font-bold text-red-400">{stats.totalTickets}</h2>
+          <h2 className="text-3xl font-bold text-red-400">
+            {stats.totalTickets}
+          </h2>
           <p className="text-lg text-gray-300">Total Tickets</p>
         </div>
         <div className="bg-black/50 border border-gray-700 rounded-2xl p-8 shadow-lg text-center backdrop-blur-md hover:scale-105 transition-transform w-64">
-          <h2 className="text-3xl font-bold text-yellow-400">{stats.pendingTickets}</h2>
+          <h2 className="text-3xl font-bold text-yellow-400">
+            {stats.pendingTickets}
+          </h2>
           <p className="text-lg text-gray-300">Pending Tickets</p>
         </div>
         <div className="bg-black/50 border border-gray-700 rounded-2xl p-8 shadow-lg text-center backdrop-blur-md hover:scale-105 transition-transform w-64">
-          <h2 className="text-3xl font-bold text-green-400">{stats.resolvedTickets}</h2>
+          <h2 className="text-3xl font-bold text-green-400">
+            {stats.resolvedTickets}
+          </h2>
           <p className="text-lg text-gray-300">Resolved Tickets</p>
         </div>
       </div>
-      
+
       {/* Navigation Button */}
       <button
         type="button"
