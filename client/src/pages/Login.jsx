@@ -22,11 +22,16 @@ const handleSubmit = async (event) => {
   event.preventDefault();
   
   try {
-    const response = await axios.post("http://localhost:4000/user/login", { email, password });
+    const response = await axios.post("http://localhost:4000/user/login", { email, password});
+    const { role } = response.data;
     console.log("Login Success:", response.data);
     showToast("Login successful!", "success");
     Cookies.set('email', email, { expires: 1 }); 
-    navigate("/user/home");
+    if (role === "admin") {
+      navigate("/user/getTickets");
+    } else {
+      navigate("/user/home");
+    }
   } 
   catch (error) {
     console.error("Login Error:", error.response?.data || error.message);
