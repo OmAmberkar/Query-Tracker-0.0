@@ -1,11 +1,9 @@
-/* eslint-disable no-unused-vars */
 import { useState } from 'react';
 import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
-import axios from 'axios';
-import { showToast } from '../components/notification.js';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import Cookies from 'js-cookie';
+import { showToast } from '../components/notification.js';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -17,98 +15,85 @@ function Login() {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-  
-const handleSubmit = async (event) => {
-  event.preventDefault();
-  
-  try {
-    const response = await axios.post("http://localhost:4000/user/login", { email, password});
-    const { role } = response.data;
-    console.log("Login Success:", response.data);
-    showToast("Login successful!", "success");
-    Cookies.set('email', email, { expires: 1 }); 
-    if (role === "admin") {
-      navigate("/user/getTickets");
-    } else {
-      navigate("/user/home");
-    }
-  } 
-  catch (error) {
-    console.error("Login Error:", error.response?.data || error.message);
-    showToast(error.response?.data?.message || "Login failed!", "error");
-  }
-};
 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+
+    try {
+      const response = await axios.post("http://localhost:4000/user/login", { email, password });
+      const { role } = response.data;
+      showToast("Login successful!", "success");
+      Cookies.set('email', email, { expires: 1 });
+
+      if (role === "admin") {
+        navigate("/user/getTickets");
+      } else {
+        navigate("/user/home");
+      }
+    } catch (error) {
+      showToast(error.response?.data?.message || "Login failed!", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div
-      className="flex items-center justify-center min-h-screen bg-cover bg-center transition-all duration-700 overflow-hidden relative"
-      style={{ backgroundImage: "url('./src/assets/Cool-Red-and-Black-Wallpaper-Computer.jpg')" }}
-    >
-      <div className="absolute inset-0 bg-gradient-to-br from-red-900/60 via-purple-900/50 to-black/70 animate-gradient-shift"></div>
-
-      <div className="relative bg-black/30  rounded-2xl p-8 w-full max-w-md shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-white/10 transform hover:scale-[1.01] transition-all duration-300">
-        <div className="absolute -inset-0.5 bg-gradient-to-r from-red-500 to-purple-600 rounded-2xl blur opacity-20 transition duration-300"></div>
-
-        <h2 className="text-4xl font-bold pb-6 text-center text-white text-shadow-sm">Login</h2>
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
+      <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-purple-600/20 blur-xl"></div>
+      <div className="relative bg-black/50 rounded-2xl p-8 w-full max-w-md shadow-lg border border-white/10">
+        <h2 className="text-4xl font-bold pb-6 text-center text-white">Login</h2>
 
         <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
-          {/* Email */}
-          <div className="relative w-full group">
+          <div className="relative w-full">
             <input
               type="email"
-              className="border border-gray-400/30 w-full rounded-full py-3 px-4 pl-10 bg-black/20 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-white placeholder-white/70 transition-all duration-300 group-hover:border-white/50"
+              className="border border-gray-400 w-full rounded-full py-3 px-4 pl-10 bg-black/20 text-white"
               placeholder="Email"
               required
               onChange={(e) => setEmail(e.target.value)}
             />
-            <span className="absolute top-1/2 left-3 transform -translate-y-1/2 text-white/70 group-hover:text-white transition-colors duration-300">
+            <span className="absolute top-1/2 left-3 transform -translate-y-1/2 text-white">
               <FaUser />
             </span>
           </div>
 
-          {/* Password */}
-          <div className="relative w-full group">
+          <div className="relative w-full">
             <input
               type={showPassword ? "text" : "password"}
-              className="border border-gray-400/30 w-full rounded-full py-3 px-4 pl-10 pr-10 bg-black/20 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-white placeholder-white/70 transition-all duration-300 group-hover:border-white/50"
+              className="border border-gray-400 w-full rounded-full py-3 px-4 pl-10 pr-10 bg-black/20 text-white"
               placeholder="Password"
               required
               onChange={(e) => setPassword(e.target.value)}
             />
-            <span className="absolute top-1/2 left-3 transform -translate-y-1/2 text-white/70 group-hover:text-white transition-colors duration-300">
+            <span className="absolute top-1/2 left-3 transform -translate-y-1/2 text-white">
               <FaLock />
             </span>
             <button
               type="button"
-              className="absolute top-1/2 right-3 transform -translate-y-1/2 text-white/70 hover:text-white transition-colors duration-300 focus:outline-none"
+              className="absolute top-1/2 right-3 transform -translate-y-1/2 text-white"
               onClick={togglePasswordVisibility}
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
-          
 
-          {/* Login Button */}
           <button 
             type="submit"
-            className="mt-6 py-3 w-full rounded-full bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-500 hover:to-purple-500 active:from-red-700 active:to-purple-700 transition-all duration-300 text-white font-semibold transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-red-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mt-6 py-3 w-full rounded-full bg-gradient-to-r from-red-600 to-purple-600 text-white font-semibold"
             disabled={loading}
           >
-            {loading ? (
-              <svg className="animate-spin h-5 w-5 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-            ) : (
-              'Login'
-            )}
+            {loading ? "Logging in..." : "Login"}
           </button>
 
           <p className="mt-3 text-sm text-white text-center">
             Don&apos;t have an account?  
-
-            <Link to="/user/register" className="font-semibold text-red-500"> Register here</Link>
+            <button
+              onClick={() => navigate("/user/register")}
+              className="font-semibold text-red-500 ml-1"
+            >
+              Register here
+            </button>
           </p>
         </form>
       </div>

@@ -63,14 +63,14 @@ function Register() {
       });
   };
 
-  return (
-    <div
-      className="flex items-center justify-center min-h-screen bg-cover bg-center relative "
-      
-    >
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-900/70 via-purple-900/60 to-red-900/70 animate-gradient-shift"></div>
+  return ( 
+    
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 ">
+ <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-purple-600/20 blur-xl"></div>
 
-      <div className="relative bg-black/30  rounded-2xl p-8 w-full max-w-md shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-white/10 transform hover:scale-[1.01]  transition-all duration-300">
+      
+
+      <div className="relative bg-black/50  rounded-2xl p-8 w-full max-w-md shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-white/10 transform hover:scale-[1.01]  transition-all duration-300">
         <h2 className="text-4xl font-bold pb-6 text-center text-white text-shadow-sm">Register</h2>
         
         {error && (

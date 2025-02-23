@@ -35,7 +35,7 @@ const TicketPage = () => {
       }, 2000);
 
       setTimeout(() => {
-        navigate("/user/getTickets");
+        navigate("/user/home");
       }, 4000);
     } catch (error) {
       console.error("Error submitting ticket:", error);
