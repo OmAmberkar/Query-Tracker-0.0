@@ -128,7 +128,7 @@ const Dashboard = () => {
                 hover:scale-105 hover:shadow-xl
               `}
             >
-              <div className={`transition-opacity duration-300 ${isCompleting ? "opacity-0" : "opacity-100"}`}>
+              <div className={`transition-opacity duration-200 ${isCompleting ? "opacity-0" : "opacity-100"}`}>
                 <h3 className="text-2xl font-bold text-center mb-3 tracking-tight">
                   {ticket.subject}
                 </h3>

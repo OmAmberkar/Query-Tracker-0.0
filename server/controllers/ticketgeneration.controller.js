@@ -116,16 +116,37 @@ export const updateTicket = async (req, res) => {
     }
 };
 
+// export const completeTicket = async (req, res) => {
+//     try {
+//         const { id } = req.params;
+//         const { status } = req.body;
+        
+//         // Only update once, the `status` is passed correctly
+//         const updatedTicket = await Ticket.findByIdAndUpdate(id, { status : 'resolved' }, { new: true });
+
+//         if (updatedTicket) {
+//             res.status(200).json({ message: `Ticket status updated to ${status}`, updatedTicket });
+//         } else {
+//             res.status(404).json({ message: "Ticket not found" });
+//         }
+
+//     } catch (error) {
+//         res.status(500).json({ message: "Error updating ticket", error });
+//     }
+// }
+
 export const completeTicket = async (req, res) => {
     try {
         const { id } = req.params;
         const { status } = req.body;
         
-        // Only update once, the `status` is passed correctly
-        const updatedTicket = await Ticket.findByIdAndUpdate(id, { status : 'resolved' }, { new: true });
+        // Check if the status is 'resolved' or 'open' and update accordingly
+        let newStatus = status === 'incomplete' ? 'open' : 'resolved';
+
+        const updatedTicket = await Ticket.findByIdAndUpdate(id, { status: newStatus }, { new: true });
 
         if (updatedTicket) {
-            res.status(200).json({ message: `Ticket status updated to ${status}`, updatedTicket });
+            res.status(200).json({ message: `Ticket status updated to ${newStatus}`, updatedTicket });
         } else {
             res.status(404).json({ message: "Ticket not found" });
         }
@@ -134,6 +155,7 @@ export const completeTicket = async (req, res) => {
         res.status(500).json({ message: "Error updating ticket", error });
     }
 }
+
 
 
 export default { getAllTickets, createTicket, deleteTicket, updateTicket , completeTicket};
