@@ -141,7 +141,7 @@ export const completeTicket = async (req, res) => {
         const { status } = req.body;
         
         // Check if the status is 'resolved' or 'open' and update accordingly
-        let newStatus = status === 'incomplete' ? 'open' : 'resolved';
+        let newStatus = status === 'open' ? 'open' : 'resolved';
 
         const updatedTicket = await Ticket.findByIdAndUpdate(id, { status: newStatus }, { new: true });
 
