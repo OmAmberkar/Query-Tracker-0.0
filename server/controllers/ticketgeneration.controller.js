@@ -35,6 +35,25 @@
 //     }
 // };
 
+// export const completeTicket = async (req, res) => {
+//     try {
+//         const { id } = req.params;
+//         const { status } = req.body;
+        
+//         // Only update once, the `status` is passed correctly
+//         const updatedTicket = await Ticket.findByIdAndUpdate(id, { status : 'resolved' }, { new: true });
+
+//         if (updatedTicket) {
+//             res.status(200).json({ message: `Ticket status updated to ${status}`, updatedTicket });
+//         } else {
+//             res.status(404).json({ message: "Ticket not found" });
+//         }
+
+//     } catch (error) {
+//         res.status(500).json({ message: "Error updating ticket", error });
+//     }
+// }
+
 // export default { getAllTickets, createTicket };
 
 
@@ -43,16 +62,25 @@
 
 
 import Ticket from '../models/ticket.model.js';
-
 // Get all tickets
 export const getAllTickets = async (req, res) => {
-    try {
-        const tickets = await Ticket.find();
-        res.status(200).json(tickets);
-    } catch (error) {
-        res.status(500).json({ message: "Error fetching tickets", error });
-    }
+  try {
+    const { status, sort } = req.query; // Extract query parameters
+
+    let filter = {}; // Default: no filter
+    if (status) filter.status = status; // Filter by status (open or resolved)
+
+    let sortOption = { createdAt: -1 }; // Default: Newest first
+    if (sort === "oldest") sortOption = { createdAt: 1 }; // Sort by oldest first
+
+    const tickets = await Ticket.find(filter).sort(sortOption); // Apply filter & sorting
+
+    res.status(200).json(tickets);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
 };
+
 
 // Create a new ticket
 export const createTicket = async (req, res) => {
@@ -116,24 +144,7 @@ export const updateTicket = async (req, res) => {
     }
 };
 
-// export const completeTicket = async (req, res) => {
-//     try {
-//         const { id } = req.params;
-//         const { status } = req.body;
-        
-//         // Only update once, the `status` is passed correctly
-//         const updatedTicket = await Ticket.findByIdAndUpdate(id, { status : 'resolved' }, { new: true });
 
-//         if (updatedTicket) {
-//             res.status(200).json({ message: `Ticket status updated to ${status}`, updatedTicket });
-//         } else {
-//             res.status(404).json({ message: "Ticket not found" });
-//         }
-
-//     } catch (error) {
-//         res.status(500).json({ message: "Error updating ticket", error });
-//     }
-// }
 
 export const completeTicket = async (req, res) => {
     try {
@@ -155,7 +166,3 @@ export const completeTicket = async (req, res) => {
         res.status(500).json({ message: "Error updating ticket", error });
     }
 }
-
-
-
-export default { getAllTickets, createTicket, deleteTicket, updateTicket , completeTicket};
