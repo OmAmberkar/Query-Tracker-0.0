@@ -32,7 +32,7 @@ const TicketPage = () => {
       setTimeout(() => {
         setLoading(false);
         setSubmitted(true);
-      }, 2000);
+      }, 1000);
 
       setTimeout(() => {
         navigate("/user/home");
@@ -93,22 +93,22 @@ const TicketPage = () => {
         </form>
 
         {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/70">
-            <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
-              <div className="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
-              <p className="mt-4 text-green-700 font-bold">Submitting Ticket...</p>
+          <div className="absolute inset-0 flex items-center justify-center bg-black/70 ">
+            <div className="bg-transparent p-6 rounded-lg shadow-lg flex flex-col items-center animate-bounce">
+              <div className="w-16 h-16 border-4 border-red-600 border-t-green-800 rounded-full animate-spin"></div>
+              <p className="mt-4 text-yellow-500 font-bold animate-pulse">Submitting Ticket...</p>
             </div>
           </div>
         )}
 
         {submitted && !loading && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/70">
-            <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
+            <div className="bg-transparent p-6 rounded-lg shadow-lg flex flex-col items-center animate-ping">
               <svg className="w-16 h-16 text-green-500" fill="none" stroke="currentColor" strokeWidth="2"
                 viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" className="animate-bounce"></path>
               </svg>
-              <p className="mt-4 text-green-700 font-bold">Ticket Submitted Successfully!</p>
+              <p className="mt-4 text-green-700 font-bold animate-bounce">Ticket Submitted Successfully!</p>
             </div>
           </div>
         )}
