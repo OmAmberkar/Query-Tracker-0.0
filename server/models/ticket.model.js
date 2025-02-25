@@ -45,11 +45,7 @@ const TicketSchema = new mongoose.Schema(
       default: "open",
     },
 
-    priority: {
-      type: String,
-      enum: ["low", "medium", "high"],
-      default: "medium",
-    },
+
   },{ timestamps: true }
 );
 
