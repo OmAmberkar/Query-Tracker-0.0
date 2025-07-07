@@ -16,7 +16,7 @@ function App() {
         {/* <Notification /> */}
         <Routes>        
           <Route path="/user/login" element={<Login />} />
-          <Route path="/" element={<Register />} />
+          <Route path="/user/register" element={<Register />} />
           <Route path="/user/home" element={<Home />} />
           <Route path="/user/createTicket" element={<Query />} />
           <Route path="/user/getTickets" element={<Dashboard />} />
