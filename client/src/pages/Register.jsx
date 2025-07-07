@@ -44,7 +44,7 @@ function Register() {
 
     setLoading(true);
     axios
-      .post('http://localhost:4000/user/register', {
+      .post('http://localhost:4000/', {
         name,
         username,
         email,
