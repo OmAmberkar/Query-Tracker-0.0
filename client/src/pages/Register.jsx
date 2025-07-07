@@ -201,7 +201,7 @@ function Register() {
         
         <p className="mt-6 text-center text-sm text-white/70">
           Already have an account?{' '}
-          <Link to="/user/login" className="font-semibold text-white hover:text-gray-300">Login</Link>
+          <Link to="/user/register" className="font-semibold text-white hover:text-gray-300">Login</Link>
         </p>
       </div>
     </div>
