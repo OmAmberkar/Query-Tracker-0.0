@@ -89,7 +89,7 @@ function Login() {
           <p className="mt-3 text-sm text-white text-center">
             Don&apos;t have an account?  
             <button
-              onClick={() => navigate("/user/register")}
+              onClick={() => navigate("/")}
               className="font-semibold text-red-500 ml-1"
             >
               Register here
