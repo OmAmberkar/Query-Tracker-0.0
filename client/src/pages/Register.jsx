@@ -1,208 +1,209 @@
-/* eslint-disable no-unused-vars */
-import { useState } from 'react';
-import { FaUserAlt, FaLock, FaPhoneAlt, FaEye, FaEyeSlash } from 'react-icons/fa';
-import { MdOutlineMail } from 'react-icons/md';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';  // Import the styles
+/* eslint-disable */
+import React, { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 function Register() {
-  const [name, setName] = useState('');
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [contact, setContact] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [formData, setFormData] = useState({
+    name: "",
+    username: "",
+    email: "",
+    contact: "",
+    password: "",
+    confirmPassword: "",
+    role: "user",
+  });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [passwordMatch, setPasswordMatch] = useState(true);
-  const navigate = useNavigate();
+  const [errors, setErrors] = useState({});
+  const [participants, setParticipants] = useState(523); // starting fake count
+  const [recent, setRecent] = useState(["Neo_99", "CodeSamurai", "ByteQueen"]);
 
-  const handleConfirmPasswordChange = (e) => {
-    const value = e.target.value;
-    setConfirmPassword(value);
-    setPasswordMatch(value === password || value === '');
-  };
+  const canvasRef = useRef(null);
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
+  // Matrix rain effect
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    canvas.height = window.innerHeight;
+    canvas.width = canvas.offsetWidth;
 
-  const toggleConfirmPasswordVisibility = () => {
-    setShowConfirmPassword(!showConfirmPassword);
-  };
+    const letters = "01HACKTHON@$%#*";
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      toast.error('Passwords do not match');
-      return;
+    function draw() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#00FF41"; // matrix green
+      ctx.font = fontSize + "px monospace";
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters.charAt(Math.floor(Math.random() * letters.length));
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
     }
+    const interval = setInterval(draw, 35);
+    return () => clearInterval(interval);
+  }, []);
 
-    setLoading(true);
-    axios
-      .post('http://localhost:4000/user/register', {
-        name,
-        username,
-        email,
-        contact,
-        password
-      })
-      .then((result) => {
-        toast.success('Registration Successful! Please login.');
-        navigate('/user/login');
-      })
-      .catch((error) => {
-        toast.error('Registration failed. Please try again.');
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+  // Fake participant increment
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setParticipants((prev) => prev + Math.floor(Math.random() * 3));
+      setRecent((prev) => [
+        `User${Math.floor(Math.random() * 9999)}`,
+        ...prev.slice(0, 6),
+      ]);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    if (errors[name]) setErrors({ ...errors, [name]: "" });
   };
 
-  return ( 
-    
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 ">
- <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-purple-600/20 blur-xl"></div>
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.name.trim()) newErrors.name = "Name is required";
+    if (!formData.email.trim()) newErrors.email = "Email is required";
+    if (!formData.username.trim()) newErrors.username = "Username is required";
+    if (!formData.contact.trim()) {
+      newErrors.contact = "Contact is required";
+    } else if (!/^[0-9]{10}$/.test(formData.contact)) {
+      newErrors.contact = "Contact must be 10 digits";
+    }
+    if (!formData.password) newErrors.password = "Password is required";
+    if (formData.password !== formData.confirmPassword)
+      newErrors.confirmPassword = "Passwords do not match";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-      
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      setLoading(true);
+      setTimeout(() => setLoading(false), 2000);
+    }
+  };
 
-      <div className="relative bg-black/50  rounded-2xl p-8 w-full max-w-md shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-white/10 transform hover:scale-[1.01]  transition-all duration-300">
-        <h2 className="text-4xl font-bold pb-6 text-center text-white text-shadow-sm">Register</h2>
-        
-        {error && (
-          <div className={`mb-4 p-3 rounded-lg text-sm ${error.includes('Success') ? 'bg-green-500/20 text-green-200' : 'bg-red-500/20 text-red-200'}`}>
-            {error}
-          </div>
-        )}
-        
-        <form className="flex flex-col space-y-3" onSubmit={handleRegister}>
-          {/* Full Name */}
-          <div className="relative w-full group">
-            <input
-              type="text"
-              name="name"
-              className="border border-gray-400/30 w-full rounded-full py-3 px-4 pl-10 bg-black/20 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-white placeholder-white/70 transition-all duration-300 group-hover:border-white/50"
-              placeholder="Full Name"
-              required
-              onChange={(e) => setName(e.target.value)}
-            />
-            <span className="absolute top-1/2 left-3 transform -translate-y-1/2 text-white/70 group-hover:text-white transition-colors duration-300">
-              <FaUserAlt />
-            </span>
-          </div>
+  return (
+    <div className="h-screen w-full flex flex-col md:flex-row">
+      {/* Left: Form */}
+      <div className="flex-1 flex items-center justify-center bg-gray-900 p-6">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+          className="w-full max-w-md bg-gray-800 rounded-2xl shadow-lg p-8"
+        >
+          <h1 className="text-3xl font-bold text-white mb-6">
+            Join the Hackathon 🚀
+          </h1>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {[
+              { name: "name", placeholder: "Full Name" },
+              { name: "username", placeholder: "Username" },
+              { name: "email", placeholder: "Email" },
+              { name: "contact", placeholder: "Contact Number" },
+              { name: "password", placeholder: "Password", type: "password" },
+              {
+                name: "confirmPassword",
+                placeholder: "Confirm Password",
+                type: "password",
+              },
+            ].map((field) => (
+              <div key={field.name}>
+                <input
+                  type={field.type || "text"}
+                  name={field.name}
+                  value={formData[field.name]}
+                  onChange={handleChange}
+                  placeholder={field.placeholder}
+                  className={`w-full bg-gray-900 border ${
+                    errors[field.name]
+                      ? "border-red-500"
+                      : "border-gray-700 focus:border-blue-500"
+                  } rounded-lg px-4 py-3 text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-200`}
+                />
+                {errors[field.name] && (
+                  <p className="text-red-400 text-xs mt-1">
+                    {errors[field.name]}
+                  </p>
+                )}
+              </div>
+            ))}
 
-          {/* Username */}
-          <div className="relative w-full group">
-            <input
-              type="text"
-              name="username"
-              className="border border-gray-400/30 w-full rounded-full py-3 px-4 pl-10 bg-black/20 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-white placeholder-white/70 transition-all duration-300 group-hover:border-white/50"
-              placeholder="Username"
-              required
-              onChange={(e) => setUsername(e.target.value)}
-            />
-            <span className="absolute top-1/2 left-3 transform -translate-y-1/2 text-white/70 group-hover:text-white transition-colors duration-300">
-              <FaUserAlt />
-            </span>
-          </div>
-
-          {/* Email */}
-          <div className="relative w-full group">
-            <input
-              type="email"
-              name="email"
-              className="border border-gray-400/30 w-full rounded-full py-3 px-4 pl-10 bg-black/20 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-white placeholder-white/70 transition-all duration-300 group-hover:border-white/50"
-              placeholder="Email"
-              required
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <span className="absolute top-1/2 left-3 transform -translate-y-1/2 text-white/70 group-hover:text-white transition-colors duration-300">
-              <MdOutlineMail />
-            </span>
-          </div>
-
-          {/* Phone Number */}
-          <div className="relative w-full group">
-            <input
-              type="tel"
-              name="contact"
-              className="border border-gray-400/30 w-full rounded-full py-3 px-4 pl-10 bg-black/20 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-white placeholder-white/70 transition-all duration-300 group-hover:border-white/50"
-              placeholder="Phone Number"
-              required
-              onChange={(e) => setContact(e.target.value)}
-            />
-            <span className="absolute top-1/2 left-3 transform -translate-y-1/2 text-white/70 group-hover:text-white transition-colors duration-300">
-              <FaPhoneAlt />
-            </span>
-          </div>
-
-          {/* Password */}
-          <div className="relative w-full group">
-            <input
-              type={showPassword ? "text" : "password"}
-              name="password"
-              className="border border-gray-400/30 w-full rounded-full py-3 px-4 pl-10 pr-10 bg-black/20 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-white placeholder-white/70 transition-all duration-300 group-hover:border-white/50"
-              placeholder="Password"
-              required
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <span className="absolute top-1/2 left-3 transform -translate-y-1/2 text-white/70 group-hover:text-white transition-colors duration-300">
-              <FaLock />
-            </span>
-            <button
-              type="button"
-              className="absolute top-1/2 right-3 transform -translate-y-1/2 text-white/70 hover:text-white transition-colors duration-300 focus:outline-none"
-              onClick={togglePasswordVisibility}
+            <select
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-gray-100 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
             >
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
-            </button>
-          </div>
+              <option value="user">Hackathon Participant</option>
+              <option value="admin">Mentor/Organizer</option>
+            </select>
 
-          {/* Confirm Password */}
-          <div className="relative w-full group">
-            <input
-              type={showConfirmPassword ? "text" : "password"}
-              name="confirmPassword"
-              className={`border ${!passwordMatch ? 'border-red-500' : 'border-gray-400/30'} w-full rounded-full py-3 px-4 pl-10 pr-10 bg-black/20 focus:outline-none focus:ring-2 ${!passwordMatch ? 'focus:ring-red-500' : 'focus:ring-red-500/50'} text-white placeholder-white/70 transition-all duration-300 group-hover:border-white/50`}
-              placeholder="Confirm Password"
-              required
-              value={confirmPassword}
-              onChange={handleConfirmPasswordChange}
-            />
-            <span className="absolute top-1/2 left-3 transform -translate-y-1/2 text-white/70 group-hover:text-white transition-colors duration-300">
-              <FaLock />
-            </span>
-            <button
-              type="button"
-              className="absolute top-1/2 right-3 transform -translate-y-1/2 text-white/70 hover:text-white transition-colors duration-300 focus:outline-none"
-              onClick={toggleConfirmPasswordVisibility}
+            <motion.button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg py-3 transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center disabled:opacity-70"
+              whileHover={{ scale: loading ? 1 : 1.02 }}
+              whileTap={{ scale: loading ? 1 : 0.98 }}
+              disabled={loading}
             >
-              {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-            </button>
+              {loading ? "Creating Account..." : "Create Account"}
+            </motion.button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <p className="text-gray-400 text-sm">
+              Already have an account?{" "}
+              <Link
+                to="/user/login"
+                className="text-blue-400 hover:text-blue-300 font-medium"
+              >
+                Sign in
+              </Link>
+            </p>
           </div>
+        </motion.div>
+      </div>
 
-          {!passwordMatch && (
-            <p className="text-red-400 text-sm -mt-1">Passwords do not match</p>
-          )}
+      {/* Right: Hackathon Crazy Side */}
+      <div className="flex-1 relative bg-black overflow-hidden">
+        {/* Canvas Rain */}
+        <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full"></canvas>
 
-          {/* Register Button */}
-          <button 
-            type="submit"
-            className="mt-6 py-3 w-full rounded-full bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-500 hover:to-purple-500 active:from-red-700 active:to-purple-700 focus:outline-none text-white font-semibold tracking-wide text-lg transition-all duration-300"
-            disabled={loading}
-          >
-            {loading ? 'Registering...' : 'Register'}
-          </button>
-        </form>
-        
-        <p className="mt-6 text-center text-sm text-white/70">
-          Already have an account?{' '}
-          <Link to="/user/login" className="font-semibold text-white hover:text-gray-300">Login</Link>
-        </p>
+        {/* Overlay Content */}
+        <div className="relative z-10 flex flex-col items-center justify-center h-full p-6 text-green-400">
+          <h2 className="text-3xl font-bold mb-4 animate-pulse">
+            Hackathon Live Feed
+          </h2>
+          <p className="mb-6 text-lg">
+            Participants Registered:{" "}
+            <span className="text-green-300 font-bold">{participants}</span>
+          </p>
+
+          {/* Recent Joiners */}
+          <div className="bg-gray-900 bg-opacity-70 rounded-lg p-4 w-64 overflow-hidden">
+            <h3 className="text-sm font-semibold mb-2 text-green-300">
+              Recent Joiners
+            </h3>
+            <div className="space-y-1 text-sm">
+              {recent.map((user, i) => (
+                <p key={i} className="truncate">{user}</p>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
