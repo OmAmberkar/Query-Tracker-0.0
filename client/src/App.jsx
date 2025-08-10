@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ToastContainer } from 'react-toastify'; 
 import 'react-toastify/dist/ReactToastify.css'; 
+import Landing from "./pages/Landing";
 // import Notification from "./components/notification.js";
 
 function App() {
@@ -14,7 +15,8 @@ function App() {
     <>
       <BrowserRouter>
         {/* <Notification /> */}
-        <Routes>        
+        <Routes>  
+          <Route path="/" element={<Landing/>}/>      
           <Route path="/user/login" element={<Login />} />
           <Route path="/user/register" element={<Register />} />
           <Route path="/user/home" element={<Home />} />
