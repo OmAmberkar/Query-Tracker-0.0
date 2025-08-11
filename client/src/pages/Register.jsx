@@ -1,7 +1,51 @@
 /* eslint-disable */
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axiosInterceptor from "../utils/axiosInterceptor";
+import { toast } from "react-toastify";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+
+const sampleUsers = [
+  "CyberNinja", "ByteWizard", "CodeSurfer", "AlgoQueen", "HackGuru",
+  "PixelPirate", "DataSage", "QuantumByte", "NullPointer", "ScriptKid",
+  "BitCrusher", "StackRider", "LogicLord", "CryptoMage", "BugHunter"
+];
+
+function useLiveParticipants() {
+  const [participants, setParticipants] = useState(523);
+  const [recent, setRecent] = useState(["Neo_99", "CodeSamurai", "ByteQueen"]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Increment participants randomly by 1-5 to simulate bursts
+      setParticipants((prev) => prev + Math.floor(Math.random() * 5) + 1);
+
+      // Add 1 or 2 new joiners randomly
+      const newJoinersCount = Math.floor(Math.random() * 2) + 1;
+      const newJoiners = [];
+
+      for (let i = 0; i < newJoinersCount; i++) {
+        // Pick random username from sampleUsers and append random number
+        const user =
+          sampleUsers[Math.floor(Math.random() * sampleUsers.length)] +
+          Math.floor(Math.random() * 9999);
+        newJoiners.push(user);
+      }
+
+      setRecent((prev) => {
+        // Add new joiners at the start and keep max 7 recent
+        const updated = [...newJoiners, ...prev].slice(0, 7);
+        return updated;
+      });
+    }, 3000 + Math.random() * 2000); // Interval varies 3-5 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return { participants, recent };
+}
+
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -11,13 +55,16 @@ function Register() {
     contact: "",
     password: "",
     confirmPassword: "",
-    role: "user",
   });
+
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const [participants, setParticipants] = useState(523); // starting fake count
-  const [recent, setRecent] = useState(["Neo_99", "CodeSamurai", "ByteQueen"]);
-
+  const { participants, recent } = useLiveParticipants();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  
+  
+  const navigate = useNavigate();
   const canvasRef = useRef(null);
 
   // Matrix rain effect
@@ -27,7 +74,7 @@ function Register() {
     canvas.height = window.innerHeight;
     canvas.width = canvas.offsetWidth;
 
-    const letters = "01HACKTHON@$%#*";
+    const letters = "HACKTHON@123$%#*@$%&#";
     const fontSize = 14;
     const columns = canvas.width / fontSize;
     const drops = Array(Math.floor(columns)).fill(1);
@@ -35,13 +82,12 @@ function Register() {
     function draw() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#00FF41"; // matrix green
+      ctx.fillStyle = "#00FF41";
       ctx.font = fontSize + "px monospace";
 
       for (let i = 0; i < drops.length; i++) {
         const text = letters.charAt(Math.floor(Math.random() * letters.length));
         ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
         if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
           drops[i] = 0;
         }
@@ -52,17 +98,7 @@ function Register() {
     return () => clearInterval(interval);
   }, []);
 
-  // Fake participant increment
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setParticipants((prev) => prev + Math.floor(Math.random() * 3));
-      setRecent((prev) => [
-        `User${Math.floor(Math.random() * 9999)}`,
-        ...prev.slice(0, 6),
-      ]);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -87,70 +123,127 @@ function Register() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      setLoading(true);
-      setTimeout(() => setLoading(false), 2000);
+
+    if (!validateForm()) return;
+
+    setLoading(true);
+
+    try {
+      const res = await axiosInterceptor.post("/user/register", {
+        name: formData.name,
+        email: formData.email,
+        username: formData.username,
+        contact: formData.contact,
+        password: formData.password,
+        role :"user",
+      });
+
+      if (res.status === 201 || res.data?.status === "success") {
+        navigate("/user/home");
+        toast.success("Registration successful! ");
+      }
+    } catch (err) {
+      if (err.response?.status === 409 || err.response?.status === 400) {
+        toast.error(err.response.data?.message || "Username or Email already taken.");
+        navigate("/user/login");
+      } else {
+        toast.error(err.response?.data?.message || "Something went wrong.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="h-screen w-full flex flex-col md:flex-row">
       {/* Left: Form */}
-      <div className="flex-1 flex items-center justify-center bg-gray-900 p-6">
+      <div className="flex-1 flex items-center justify-center bg-black p-6">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
-          className="w-full max-w-md bg-gray-800 rounded-2xl shadow-lg p-8"
+          className="w-full max-w-md bg-gray-900 rounded-2xl border border-blue-400 p-8 shadow-[0px_0px_20px_0px_blue]"
         >
           <h1 className="text-3xl font-bold text-white mb-6">
-            Join the Hackathon 🚀
+            Join the Hackathon
           </h1>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {[
+          <form onSubmit={handleSubmit} className="space-y-4 ">
+            {[ 
               { name: "name", placeholder: "Full Name" },
               { name: "username", placeholder: "Username" },
               { name: "email", placeholder: "Email" },
               { name: "contact", placeholder: "Contact Number" },
-              { name: "password", placeholder: "Password", type: "password" },
-              {
-                name: "confirmPassword",
-                placeholder: "Confirm Password",
-                type: "password",
-              },
             ].map((field) => (
               <div key={field.name}>
                 <input
-                  type={field.type || "text"}
+                  type="text"
                   name={field.name}
                   value={formData[field.name]}
                   onChange={handleChange}
                   placeholder={field.placeholder}
-                  className={`w-full bg-gray-900 border ${
+                  className={`w-full bg-black border ${
                     errors[field.name]
                       ? "border-red-500"
-                      : "border-gray-700 focus:border-blue-500"
+                      : "border-gray-700 focus:border-blue-400"
                   } rounded-lg px-4 py-3 text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-200`}
                 />
                 {errors[field.name] && (
-                  <p className="text-red-400 text-xs mt-1">
-                    {errors[field.name]}
-                  </p>
+                  <p className="text-red-400 text-xs mt-1">{errors[field.name]}</p>
                 )}
               </div>
             ))}
 
-            <select
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-gray-100 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
-            >
-              <option value="user">Hackathon Participant</option>
-              <option value="admin">Mentor/Organizer</option>
-            </select>
+            {/* Password */}
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Password"
+                className={`w-full bg-black border ${
+                  errors.password
+                    ? "border-red-500"
+                    : "border-gray-700 focus:border-blue-500"
+                } rounded-lg px-4 py-3 text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-200`}
+              />
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-400 cursor-pointer"
+              >
+                {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+              </span>
+              {errors.password && (
+                <p className="text-red-400 text-xs mt-1">{errors.password}</p>
+              )}
+            </div>
+
+            {/* Confirm Password */}
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholder="Confirm Password"
+                className={`w-full bg-black border ${
+                  errors.confirmPassword
+                    ? "border-red-500"
+                    : "border-gray-700 focus:border-blue-500"
+                } rounded-lg px-4 py-3 text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-200`}
+              />
+              <span
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-400 cursor-pointer"
+              >
+                {showConfirmPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+              </span>
+              {errors.confirmPassword && (
+                <p className="text-red-400 text-xs mt-1">{errors.confirmPassword}</p>
+              )}
+            </div>
 
             <motion.button
               type="submit"
@@ -179,27 +272,22 @@ function Register() {
 
       {/* Right: Hackathon Crazy Side */}
       <div className="flex-1 relative bg-black overflow-hidden">
-        {/* Canvas Rain */}
         <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full"></canvas>
-
-        {/* Overlay Content */}
-        <div className="relative z-10 flex flex-col items-center justify-center h-full p-6 text-green-400">
-          <h2 className="text-3xl font-bold mb-4 animate-pulse">
+        <div className="relative z-10 flex flex-col items-center justify-center h-full p-6 text-white">
+          <h2 className="text-4xl font-bold mb-4 ">
             Hackathon Live Feed
           </h2>
           <p className="mb-6 text-lg">
             Participants Registered:{" "}
-            <span className="text-green-300 font-bold">{participants}</span>
+            <span className="text-white font-bold animate-pulse">{participants}</span>
           </p>
-
-          {/* Recent Joiners */}
-          <div className="bg-gray-900 bg-opacity-70 rounded-lg p-4 w-64 overflow-hidden">
-            <h3 className="text-sm font-semibold mb-2 text-green-300">
+          <div className="bg-transparent backdrop-blur-sm rounded-lg p-4 w-64 overflow-hidden">
+            <h3 className="text-sm text-center font-semibold mb-2 text-green-300">
               Recent Joiners
             </h3>
             <div className="space-y-1 text-sm">
               {recent.map((user, i) => (
-                <p key={i} className="truncate">{user}</p>
+                <p key={i} className="truncate animate-pulse">{user}</p>
               ))}
             </div>
           </div>

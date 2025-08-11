@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axiosInterceptor from "../utils/axiosInterceptor.js";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -20,14 +20,16 @@ const HomePage = () => {
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
 
-    axios.get("http://localhost:4000/user/getTickets")
+    axiosInterceptor
+      .get("/user/getTickets")
       .then((res) => {
         const t = res.data;
         setTickets(t);
         setStats({
           totalTickets: t.length,
-          pendingTickets: t.length - t.filter(x => x.status === "resolved").length,
-          resolvedTickets: t.filter(x => x.status === "resolved").length,
+          pendingTickets:
+            t.length - t.filter((x) => x.status === "resolved").length,
+          resolvedTickets: t.filter((x) => x.status === "resolved").length,
         });
       })
       .catch(console.error);
@@ -37,7 +39,7 @@ const HomePage = () => {
     const ctx = canvas.getContext("2d");
     canvas.width = window.innerWidth / 2;
     canvas.height = window.innerHeight;
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@$%&#".split("");
+    const chars = "HACKTHON@123$%#*@$%&#".split("");
     const fontSize = 14;
     const columns = Math.floor(canvas.width / fontSize);
     const drops = Array(columns).fill(1);
@@ -50,7 +52,8 @@ const HomePage = () => {
       for (let i = 0; i < drops.length; i++) {
         const text = chars[Math.floor(Math.random() * chars.length)];
         ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975)
+          drops[i] = 0;
         drops[i]++;
       }
     }
@@ -75,28 +78,41 @@ const HomePage = () => {
   };
 
   const formatTime = (date) =>
-    date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
+    date.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
   const formatDate = (date) =>
-    date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+    date.toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
 
   return (
     <div className="flex min-h-screen bg-transparent text-white relative overflow-hidden">
       {/* Left Content */}
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full"></canvas>
-<div className="absolute w-full inset-0  bg-transparent"></div>
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full"
+      ></canvas>
+      <div className="absolute w-full inset-0  bg-transparent"></div>
       <div className="flex-1 p-8 overflow-y-auto z-10">
         {/* Header */}
-        
-        
-        <div className="text-center mb-12 ">
-          <h1 className="text-5xl font-extrabold backdrop-blur-md bg-gradient-to-r from-cyan-400 to-yellow-300 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(0,255,255,0.5)]">
+
+        <div className="text-center mb-10 ">
+          <h1 className="text-5xl font-extrabold bg-gradient-to-r from-cyan-400 to-yellow-300 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(0,255,255,0.5)]">
             Hackathon Support Hub
           </h1>
-          <p className="text-lg text-gray-300 mt-3 backdrop-blur-md">
+          <p className="text-lg text-gray-300 mt-3 ">
             Real-time assistance, updates, and mentor connections
           </p>
-          <div className="mt-6 px-6 py-3 bg-gray-900 backdrop-blur-xl rounded-xl border border-gray-700 shadow-lg">
-            <div className="text-2xl font-bold text-cyan-300">{formatTime(currentTime)}</div>
+          <div className="mt-6 px-4 py-3 bg-transparent ">
+            <div className="text-3xl font-bold text-white">
+              {formatTime(currentTime)}
+            </div>
             <div className="text-gray-400">{formatDate(currentTime)}</div>
           </div>
         </div>
@@ -104,16 +120,35 @@ const HomePage = () => {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {[
-            { label: "Total Queries", value: stats.totalTickets, color: "cyan", sub: "All hackathon requests" },
-            { label: "Pending Issues", value: stats.pendingTickets, color: "yellow", sub: "Awaiting mentor response" },
-            { label: "Resolved Issues", value: stats.resolvedTickets, color: "green", sub: "Successfully completed" },
+            {
+              label: "Total Queries",
+              value: stats.totalTickets,
+              color: "cyan",
+              sub: "All hackathon requests",
+            },
+            {
+              label: "Pending Issues",
+              value: stats.pendingTickets,
+              color: "red",
+              sub: "Awaiting mentor response",
+            },
+            {
+              label: "Resolved Issues",
+              value: stats.resolvedTickets,
+              color: "green",
+              sub: "Successfully completed",
+            },
           ].map((card, idx) => (
             <div
               key={idx}
-              className={`p-6 rounded-xl bg-gray-900 backdrop-blur-xl border border-gray-700 shadow-lg text-center transition-all hover:scale-105 hover:shadow-[0_0_15px_${card.color}]`}
-              style={{ boxShadow: `0 0 15px rgba(var(--${card.color}-rgb,0,255,255),0.4)` }}
+              className={`p-6 rounded-xl bg-gray-900 backdrop-blur-xl border border-blue-700 shadow-lg text-center transition-all hover:scale-105 hover:shadow-[0_0_15px_${card.color}]`}
+              style={{
+                boxShadow: `0 0 15px rgba(var(--${card.color}-rgb,0,255,255),0.4)`,
+              }}
             >
-              <div className={`text-4xl font-bold text-${card.color}-400`}>{card.value}</div>
+              <div className={`text-4xl font-bold text-${card.color}-400`}>
+                {card.value}
+              </div>
               <div className="text-lg">{card.label}</div>
               <div className="text-sm text-gray-400">{card.sub}</div>
             </div>
@@ -121,7 +156,7 @@ const HomePage = () => {
         </div>
 
         {/* Buttons */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-7">
           <button
             onClick={() => navigate("/user/createTicket")}
             className="px-8 py-3 text-lg font-semibold rounded-lg bg-blue-600 hover:from-cyan-300 hover:to-blue-400 shadow-lg mr-4 transition-all"
@@ -137,38 +172,43 @@ const HomePage = () => {
         </div>
 
         {/* Recent Tickets */}
-        <div className="mb-12 items-center">
-          <h2 className="text-3xl font-bold text-cyan-300 mb-6 text-center">Recent Support Queries</h2>
-          <Slider {...sliderSettings} ref={sliderRef}>
-            {tickets.map((ticket) => {
-              const words = ticket.description.split(" ");
-              const shortDescription =
-                words.length > 20 ? words.slice(0, 20).join(" ") + "..." : ticket.description;
-              return (
-                <div key={ticket._id} className="flex items-center text-center">
-                  <div className="p-6 rounded-xl bg-gray-900 w-200 backdrop-blur-xl border border-blue-700 shadow-lg">
-                    <div className="flex justify-between mb-2">
-                      <h3 className="text-xl font-semibold text-cyan-300">{ticket.subject}</h3>
-                      <span
-                        className={`px-3 py-1 text-sm rounded-full ${
-                          ticket.status === "resolved"
-                            ? "bg-green-500/20 text-green-300"
-                            : "bg-yellow-500/20 text-yellow-300"
-                        }`}
-                      >
-                        {ticket.status}
-                      </span>
-                    </div>
-                    <p className="text-gray-400 text-sm mb-2">
-                      By: {ticket.name} | {ticket.email}
-                    </p>
-                    <p className="text-gray-300">{shortDescription}</p>
+
+        <h2 className="text-3xl font-bold text-cyan-300 mb-6 text-center">
+          Recent Support Queries
+        </h2>
+        <Slider {...sliderSettings} ref={sliderRef}>
+          {tickets.map((ticket) => {
+            const words = ticket.description.split(" ");
+            const shortDescription =
+              words.length > 20
+                ? words.slice(0, 20).join(" ") + "..."
+                : ticket.description;
+            return (
+              <div key={ticket._id} className="flex items-center text-center">
+                <div className="p-6 rounded-xl bg-gray-900 backdrop-blur-xl border border-blue-700 shadow-lg">
+                  <div className="flex justify-between mb-2">
+                    <h3 className="text-2xl font-semibold text-cyan-300">
+                      {ticket.subject}
+                    </h3>
+                    <span
+                      className={`px-3 py-1 text-md rounded-full ${
+                        ticket.status === "resolved"
+                          ? "bg-green-500/20 text-green-300"
+                          : "bg-yellow-500/20 text-yellow-300"
+                      }`}
+                    >
+                      {ticket.status}
+                    </span>
                   </div>
+                  <p className="text-gray-400 text-lg mb-2">
+                    By: {ticket.name} | {ticket.email}
+                  </p>
+                  <p className="text-gray-300 text-md">{shortDescription}</p>
                 </div>
-              );
-            })}
-          </Slider>
-        </div>
+              </div>
+            );
+          })}
+        </Slider>
       </div>
     </div>
   );

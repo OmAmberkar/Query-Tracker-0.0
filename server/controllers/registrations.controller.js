@@ -27,12 +27,13 @@ const createUser = async (req, res) => {
       email,
       contact,
       password: hashedPassword,
+      role:"user"
     });
 
     await newUser.save();
 
     // 5. Respond
-    res.status(201).json({ message: "User created successfully", user: newUser });
+    res.status(201).json({ status:'success', message: "User created successfully", user: newUser, success:true });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Something went wrong" });

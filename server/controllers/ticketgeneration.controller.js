@@ -1,74 +1,21 @@
-// import Ticket from '../models/ticket.model.js';
-
-// // Get all tickets
-// export const getAllTickets = async (req, res) => {
-//     try {
-//         const tickets = await Ticket.find();
-//         res.status(200).json(tickets);
-//     } catch (error) {
-//         res.status(500).json({ message: "Error fetching tickets", error });
-//     }
-// };
-
-// // Create a new ticket
-// export const createTicket = async (req, res) => {
-//     try {
-//         const { name, grpno, email, subject, description } = req.body;
-
-//         if (!name || !grpno || !email || !subject || !description) {
-//             return res.status(400).json({ message: "All fields are required" });
-//         }
-
-//         const newTicket = new Ticket({
-//             name,
-//             email,
-//             grpno,
-//             subject,
-//             description,
-//         });
-
-//         await newTicket.save();
-//         res.status(201).json({ message: "Ticket created successfully", ticket: newTicket });
-
-//     } catch (error) {
-//         res.status(500).json({ message: "Error creating ticket", error });
-//     }
-// };
-
-// export const completeTicket = async (req, res) => {
-//     try {
-//         const { id } = req.params;
-//         const { status } = req.body;
-        
-//         // Only update once, the `status` is passed correctly
-//         const updatedTicket = await Ticket.findByIdAndUpdate(id, { status : 'resolved' }, { new: true });
-
-//         if (updatedTicket) {
-//             res.status(200).json({ message: `Ticket status updated to ${status}`, updatedTicket });
-//         } else {
-//             res.status(404).json({ message: "Ticket not found" });
-//         }
-
-//     } catch (error) {
-//         res.status(500).json({ message: "Error updating ticket", error });
-//     }
-// }
-
-// export default { getAllTickets, createTicket };
-
-
-
-
-
-
 import Ticket from '../models/ticket.model.js';
-// Get all tickets
+// Get all tickets 
+
 export const getAllTickets = async (req, res) => {
   try {
     const { status, sort } = req.query; // Extract query parameters
+    const user =req.user;
+
+    if(!user){
+        return res.status(401).json({message:"Unauthorized: User not authenticated"})
+    }
 
     let filter = {}; // Default: no filter
     if (status) filter.status = status; // Filter by status (open or resolved)
+
+    if(user.role != "admin"){
+        filter.email = user.email
+    }
 
     let sortOption = { createdAt: -1 }; // Default: Newest first
     if (sort === "oldest") sortOption = { createdAt: 1 }; // Sort by oldest first
