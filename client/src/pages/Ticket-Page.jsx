@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import axiosInterceptor from "../utils/axiosInterceptor.js";
+import { toast } from "react-toastify";
 
 const TicketPage = () => {
   const navigate = useNavigate();
@@ -12,6 +13,19 @@ const TicketPage = () => {
     subject: "",
     description: "",
   });
+
+  // fill email from localStorage (set on login) or from cookie as fallback
+  const getCookie = (name) => {
+    const match = document.cookie
+      .split("; ")
+      .find((c) => c.startsWith(name + "="));
+    return match ? decodeURIComponent(match.split("=")[1]) : "";
+  };
+
+  useEffect(() => {
+    const stored = localStorage.getItem("userEmail") || getCookie("email");
+    if (stored) setFormData((p) => ({ ...p, email: stored }));
+  }, []);
 
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -27,8 +41,10 @@ const TicketPage = () => {
     setError(null);
 
     try {
-      await axios.post("http://localhost:4000/user/createTicket", formData);
-
+      // server will use authenticated email, drop any client value
+      const { email, ...payload } = formData;
+      await axiosInterceptor.post("/user/createTicket", payload);
+      toast.success("Ticket created");
       setTimeout(() => {
         setLoading(false);
         setSubmitted(true);
@@ -39,6 +55,7 @@ const TicketPage = () => {
       }, 4000);
     } catch (error) {
       console.error("Error submitting ticket:", error);
+      toast.error("Failed to submit ticket. Please try again.");
       setError("Failed to submit ticket. Please try again.");
       setLoading(false);
     }
@@ -60,8 +77,14 @@ const TicketPage = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
-              <input type="email" name="email" value={formData.email} onChange={handleChange}
-                className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white" required />
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                readOnly
+                className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg text-gray-400 cursor-not-allowed"
+                required
+              />
             </div>
           </div>
 
@@ -124,6 +147,3 @@ const TicketPage = () => {
 };
 
 export default TicketPage;
-
-
-

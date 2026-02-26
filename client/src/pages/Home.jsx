@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInterceptor from "../utils/axiosInterceptor.js";
+import { toast } from "react-toastify";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -15,6 +16,13 @@ const HomePage = () => {
   const [tickets, setTickets] = useState([]);
   const [currentTime, setCurrentTime] = useState(new Date());
   const sliderRef = useRef(null);
+
+  // whenever the list updates, reset the slider index so it renders correctly
+  useEffect(() => {
+    if (sliderRef.current && tickets.length) {
+      sliderRef.current.slickGoTo(0);
+    }
+  }, [tickets]);
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -32,7 +40,10 @@ const HomePage = () => {
           resolvedTickets: t.filter((x) => x.status === "resolved").length,
         });
       })
-      .catch(console.error);
+      .catch((err) => {
+        console.error("Home: error fetching tickets", err);
+        toast.error("Unable to load ticket data. Please refresh or re‑login.");
+      });
 
     // Rain effect
     const canvas = canvasRef.current;
@@ -67,14 +78,16 @@ const HomePage = () => {
 
   const sliderSettings = {
     dots: false,
-    infinite: true,
+    infinite: tickets.length > 1,
     speed: 600,
     slidesToShow: 1,
     slidesToScroll: 1,
-    autoplay: true,
+    autoplay: tickets.length > 1,
     autoplaySpeed: 4000,
     arrows: false,
     pauseOnHover: true,
+    swipeToSlide: true,
+    adaptiveHeight: true,
   };
 
   const formatTime = (date) =>

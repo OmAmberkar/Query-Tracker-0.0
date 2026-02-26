@@ -40,12 +40,15 @@ export const validateLogin = (req, res, next) => {
 };
 
 // Ticket validation
+// Ticket validation (Matches your Ticket Model & Controller)
 export const validateTicket = (req, res, next) => {
   const schema = Joi.object({
-    title: Joi.string().min(5).max(100).required(),
-    description: Joi.string().min(10).max(1000).required(),
-    priority: Joi.string().valid('low', 'medium', 'high').default('medium'),
-    category: Joi.string().required()
+    name: Joi.string().min(2).max(50).required(),
+    grpno: Joi.string().required(), // Matches grpno from your form
+    email: Joi.string().email().required(),
+    subject: Joi.string().min(5).max(100).required(), // Changed from 'title' to 'subject'
+    description: Joi.string().min(10).max(2000).required(),
+    status: Joi.string().valid('open', 'resolved').default('open')
   });
 
   const { error } = schema.validate(req.body);

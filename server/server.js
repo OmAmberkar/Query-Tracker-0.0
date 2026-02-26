@@ -1,5 +1,5 @@
 import express from "express";
-import dotenv from "dotenv"; 
+import dotenv from "dotenv";
 import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
@@ -24,10 +24,10 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // CORS configuration
-app.use(cors({ 
+app.use(cors({
   credentials: true,
-  origin: process.env.NODE_ENV === 'production' 
-    ? process.env.FRONTEND_URL 
+  origin: process.env.NODE_ENV === 'production'
+    ? process.env.FRONTEND_URL
     : 'http://localhost:5173'
 }));
 
@@ -38,8 +38,8 @@ app.use(cookieParser());
 
 // Health check endpoint
 app.get("/health", (req, res) => {
-  res.status(200).json({ 
-    status: "OK", 
+  res.status(200).json({
+    status: "OK",
     timestamp: new Date().toISOString(),
     uptime: process.uptime()
   });
@@ -53,8 +53,8 @@ app.use('/user',ticketRoutes);
 // Global error handler
 app.use((err, req, res, next) => {
   console.error('Error:', err);
-  res.status(500).json({ 
-    message: "Something went wrong", 
+  res.status(500).json({
+    message: "Something went wrong",
     error: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
   });
 });

@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "install:all":"cd client && npm install && cd server && npm install",
     "build": "cd client && npm install && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "frontend": "cd client && npm run dev",
-    "backend": "cd server && npm start",
+    "backend": "cd server && npm run dev",
     "code": "concurrently -n \"frontend,backend\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run frontend\" \"npm run backend\""
   },
   "keywords": [],
@@ -17,4 +18,3 @@
     "concurrently": "^9.1.2"
   }
 }
-  

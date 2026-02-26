@@ -101,6 +101,10 @@ function Login() {
       if (res.data.success) {
         toast.success("Login Successfully");
         navigate("/user/home");
+        
+        // Save the email to localStorage so other pages can see it
+        localStorage.setItem("userEmail", formData.email);
+
       } else {
         toast.warn(res.data.message || "Login failed");
       }

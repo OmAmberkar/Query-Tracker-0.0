@@ -1,20 +1,22 @@
 import Ticket from '../models/ticket.model.js';
-// Get all tickets 
+// Get all tickets
 
 export const getAllTickets = async (req, res) => {
   try {
     const { status, sort } = req.query; // Extract query parameters
-    const user =req.user;
+    const user = req.user;
 
-    if(!user){
-        return res.status(401).json({message:"Unauthorized: User not authenticated"})
+    // ensure authentication middleware already ran
+    if (!user) {
+        // shouldn't happen when authenticateUser is applied, but guard anyway
+        return res.status(401).json({ message: "Unauthorized: User not authenticated" });
     }
 
     let filter = {}; // Default: no filter
     if (status) filter.status = status; // Filter by status (open or resolved)
 
     if(user.role != "admin"){
-        filter.email = user.email
+        filter.email = user.email.toLowerCase();
     }
 
     let sortOption = { createdAt: -1 }; // Default: Newest first
@@ -32,15 +34,17 @@ export const getAllTickets = async (req, res) => {
 // Create a new ticket
 export const createTicket = async (req, res) => {
     try {
-        const { name, grpno, email, subject, description } = req.body;
+        const { name, grpno, subject, description } = req.body;
+        const email = req.user?.email;
 
+        // validate all required fields, email comes from auth cookie
         if (!name || !grpno || !email || !subject || !description) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
         const newTicket = new Ticket({
             name,
-            email,
+            email: email.toLowerCase(),
             grpno,
             subject,
             description,
@@ -48,7 +52,6 @@ export const createTicket = async (req, res) => {
 
         await newTicket.save();
         res.status(201).json({ message: "Ticket created successfully", ticket: newTicket });
-
     } catch (error) {
         res.status(500).json({ message: "Error creating ticket", error });
     }
@@ -97,7 +100,7 @@ export const completeTicket = async (req, res) => {
     try {
         const { id } = req.params;
         const { status } = req.body;
-        
+
         // Check if the status is 'resolved' or 'open' and update accordingly
         let newStatus = status === 'open' ? 'open' : 'resolved';
 

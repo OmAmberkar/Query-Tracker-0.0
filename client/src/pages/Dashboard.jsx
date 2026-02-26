@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
-import axios from "axios";
+import axiosInterceptor from "../utils/axiosInterceptor.js";
+import { toast } from "react-toastify";
 import "@fontsource/comic-neue";
 
 const Dashboard = () => {
@@ -13,16 +14,17 @@ const Dashboard = () => {
  const canvasRef = useRef(null);
   const [selectedTicket, setSelectedTicket] = useState(null); // For modal
 
-  
+
   useEffect(() => {
-    axios
-      .get("http://localhost:4000/user/getTickets")
+    axiosInterceptor
+      .get("/user/getTickets")
       .then((response) => {
         setTickets(response.data);
         setLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching tickets:", error);
+        toast.error("Failed to load tickets. Please try again.");
         setLoading(false);
       });
 
@@ -59,10 +61,13 @@ const Dashboard = () => {
 
   const handleDelete = (ticketId) => {
     if (!window.confirm("Are you sure you want to delete this ticket?")) return;
-    axios
-      .delete(`http://localhost:4000/user/deleteTicket/${ticketId}`)
+    axiosInterceptor
+      .delete(`/user/deleteTicket/${ticketId}`)
       .then(() => setTickets(tickets.filter((ticket) => ticket._id !== ticketId)))
-      .catch((error) => console.error("Error deleting ticket:", error));
+      .catch((error) => {
+        console.error("Error deleting ticket:", error);
+        toast.error("Unable to delete ticket");
+      });
   };
 
   const handleEdit = (ticket) => {
@@ -73,22 +78,25 @@ const Dashboard = () => {
   const handleComplete = (ticketId) => {
     const updatedDescription =
       editedDescription || tickets.find((t) => t._id === ticketId)?.description;
-    axios
-      .put(`http://localhost:4000/user/updateTicket/${ticketId}`, { description: updatedDescription })
+    axiosInterceptor
+      .put(`/user/updateTicket/${ticketId}`, { description: updatedDescription })
       .then(() => {
         setTickets((prev) =>
           prev.map((t) => (t._id === ticketId ? { ...t, description: updatedDescription } : t))
         );
         setEditMode(null);
       })
-      .catch((error) => console.error("Error updating ticket:", error));
+      .catch((error) => {
+        console.error("Error updating ticket:", error);
+        toast.error("Failed to update description");
+      });
   };
 
   const handleTaskComplete = (ticketId) => {
     setCompletingTickets((prev) => new Set([...prev, ticketId]));
     setTimeout(() => {
-      axios
-        .patch(`http://localhost:4000/user/taskComplete/${ticketId}`, { status: "resolved" })
+      axiosInterceptor
+        .patch(`/user/taskComplete/${ticketId}`, { status: "resolved" })
         .then(() => {
           setTickets((prev) =>
             prev.map((t) => (t._id === ticketId ? { ...t, status: "resolved" } : t))
@@ -99,19 +107,25 @@ const Dashboard = () => {
             return newSet;
           });
         })
-        .catch((error) => console.error("Error updating ticket status:", error));
+        .catch((error) => {
+          console.error("Error updating ticket status:", error);
+          toast.error("Failed to change ticket status");
+        });
     }, 600);
   };
 
   const handleTaskIncomplete = (ticketId) => {
-    axios
-      .patch(`http://localhost:4000/user/taskComplete/${ticketId}`, { status: "open" })
+    axiosInterceptor
+      .patch(`/user/taskComplete/${ticketId}`, { status: "open" })
       .then(() => {
         setTickets((prev) =>
           prev.map((t) => (t._id === ticketId ? { ...t, status: "open" } : t))
         );
       })
-      .catch((error) => console.error("Error updating ticket status:", error));
+      .catch((error) => {
+        console.error("Error updating ticket status:", error);
+        toast.error("Failed to change ticket status");
+      });
   };
 
   const filteredTickets = tickets.filter((ticket) =>
@@ -131,7 +145,7 @@ const Dashboard = () => {
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
       ></canvas>
- 
+
 
       <div className="relative p-6 md:p-10 max-w-7xl mx-auto">
         <h1 className="text-5xl font-extrabold text-center mb-10 bg-gradient-to-r from-cyan-400 to-yellow-300 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(0,255,255,0.5)]">
@@ -245,7 +259,7 @@ const Dashboard = () => {
 {selectedTicket && (
   <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
     <div className="bg-gray-900 rounded-lg max-w-lg w-full relative max-h-[90vh] flex flex-col">
-      
+
       {/* Close button stays fixed inside modal */}
       <button
         onClick={() => setSelectedTicket(null)}
