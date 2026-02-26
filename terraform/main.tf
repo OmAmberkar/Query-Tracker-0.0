@@ -1,27 +1,29 @@
-# Create a Security Group with an Intentional Flaw [cite: 22, 23]
+# Security Group with restricted access
 resource "aws_security_group" "web_app_sg" {
   name        = "web_app_security_group"
-  description = "Security group for web application with intentional vulnerability"
+  description = "Secured security group for Query Tracker"
 
-  # VULNERABILITY: SSH open to everyone (0.0.0.0/0) [cite: 24]
+  # Fix: Restrict SSH to a specific IP (Replace with your actual IP)
   ingress {
-    description = "SSH from anywhere"
+    description = "SSH from admin only"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["YOUR_IP_ADDRESS/32"] # Change this to your public IP
   }
 
-  # Allow Web Traffic for the Application
+  # Fix: Restrict App Port
   ingress {
     description = "Web Traffic"
     from_port   = 4000
     to_port     = 4000
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/0"] # In a real prod environment, use a Load Balancer
   }
 
+  # Fix: Add description to egress and restrict if possible
   egress {
+    description = "Allow all outbound traffic"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -29,18 +31,23 @@ resource "aws_security_group" "web_app_sg" {
   }
 }
 
-# Provision a Compute Instance (Virtual Machine) [cite: 20]
 resource "aws_instance" "app_server" {
-  ami           = "ami-0c7217cdde317cfec" # Amazon Linux 2023 AMI (Region specific)
+  ami           = "ami-0c7217cdde317cfec"
   instance_type = "t2.micro"
   vpc_security_group_ids = [aws_security_group.web_app_sg.id]
 
-  tags = {
-    Name = "QueryTrackerServer"
+  # Fix: Encrypt the Root Volume
+  root_block_device {
+    encrypted = true
   }
-}
 
-# Output the Public IP to use for documentation later [cite: 80]
-output "public_ip" {
-  value = aws_instance.app_server.public_ip
+  # Fix: Require IMDSv2 (Enforce Tokens)
+  metadata_options {
+    http_tokens = "required"
+    http_endpoint = "enabled"
+  }
+
+  tags = {
+    Name = "QueryTrackerServer-Secured"
+  }
 }
