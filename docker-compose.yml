@@ -1,0 +1,23 @@
+services:
+  backend:
+    build: ./server
+    ports:
+      - "4000:4000"
+    environment:
+      - MONGODB_URI=${MONGODB_URI}
+      - NODE_ENV=development
+    networks:
+      - hackathon-network
+
+  frontend:
+    build: ./client
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    networks:
+      - hackathon-network
+
+networks:
+  hackathon-network:
+    driver: bridge

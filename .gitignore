@@ -103,3 +103,22 @@ lib-cov/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+
+# Variables
+*.tfvars
+*.tfvars.json
+
+# Secrets
+*.pem
+.env
+
+# OS junk
+.DS_Store
+Thumbs.db
+*.exe
