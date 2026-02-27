@@ -13,6 +13,13 @@ This project demonstrates a full CI/CD pipeline for a web application. It automa
 
 ---
 
+## Docker Setup
+### Run the Docker Compose
+```terminal
+    docker-compose up --build
+```
+
+---
 ## Infrastructure Security Scan
 In this stage, the Jenkins pipeline performs an automated audit of the Terraform files before any resources are created on AWS.
 
@@ -50,9 +57,36 @@ The Jenkinsfile is configured with the following stages:
 - Infrastructure Plan: Executes terraform plan using AWS credentials to preview changes.
 
 ## Screenshots & Proof of Work
-[Insert Screenshot of your Jenkins "SUCCESS" Pipeline view here]
 
-[Insert Screenshot of the Trivy Table showing Successes here]
+### 1. End-to-End DevSecOps Workflow (Stage View)
+The Jenkins Stage View confirms the successful execution of the entire automated lifecycle. Each green block represents a security gate where the code was pulled, audited for misconfigurations, and prepared for AWS deployment.
+![Jenkins Stage View](./screenshots/jenkins-stage-view.png)
+*Figure 1: Automated Pipeline Stage View showing 100% success rate.*
+
+### 2. Infrastructure Security Audit (Post-Remediation)
+After identifying 8 initial failures (including 3 Critical), I utilized **Generative AI** to harden the `main.tf` configuration. The report below confirms that **all High and Critical risks** regarding SSH Exposure, IMDSv1, and Encryption have been resolved.
+![Trivy Success Report](./screenshots/trivytable.png)
+*Figure 2: Trivy scan results showing 0 High/Critical failures in remediated resources.*
+> **Security Note:** The remaining critical alert for Egress Port 443 is an "Acknowledged Risk," necessary for the instance to communicate with AWS APIs and system update servers.
+
+### 3. Final Execution & Build Validation
+The console output confirms the pipeline reached its terminal state. The "Finished: SUCCESS" status validates that the Terraform plan is syntactically correct and the security audit passed all required thresholds.
+![Pipeline Success](./screenshots/pipeline-end.png)
+*Figure 3: Console log confirming end-of-pipeline success.*
+
+### 4. The Live Application Deployed on AWS (EC2)
+The final stage validates the deployment of the Query Tracker application on an AWS EC2 instance. The environment uses a secure, multi-tier architecture where the React frontend and TypeScript backend are orchestrated via Docker Compose, ensuring the platform is both resilient and scalable.
+![AWS Deployment](./screenshots/aws-deployed.png)
+*Figure 4: AWS Deployment using EC2 Instance.*
+
+## 🤖 AI-Driven Remediation Summary (Requirement 4)
+
+| Security Category | Initial Risk Identified | AI Remediation Applied | Status |
+| :--- | :--- | :--- | :--- |
+| **Network Security** | SSH/4000 open to `0.0.0.0/0` | Restricted to Private CIDR `10.0.0.0/16` | ✅ Resolved |
+| **Cloud Identity** | IMDSv1 (Tokens Optional) | Enforced **IMDSv2** (Tokens Required) | ✅ Resolved |
+| **Data Protection** | Root Volume Unencrypted | Enabled `root_block_device` Encryption | ✅ Resolved |
+| **Governance** | Missing Rule Descriptions | Added descriptive metadata to all SG rules | ✅ Resolved |
 
 [Insert Screenshot of the App running on your AWS Public IP here]
 
@@ -63,4 +97,3 @@ The Jenkinsfile is configured with the following stages:
 - Jenkins Setup: Run Jenkins in Docker and install trivy and terraform binaries.
 - AWS Config: Add *AWS_ACCESS_KEY_ID* and *AWS_SECRET_ACCESS_KEY* to Jenkins Credentials.
 - Build: Click Build Now in Jenkins.
-
