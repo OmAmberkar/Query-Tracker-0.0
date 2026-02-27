@@ -95,7 +95,7 @@ The final stage validates the deployment of the Query Tracker application on an 
 ---
 
 ## How to Run
-- Clone the repo: ```terminal git clone https://github.com/OmAmberkar/Query-Tracker-0.0.git ```
+- Clone the repo: ``` git clone https://github.com/OmAmberkar/Query-Tracker-0.0.git ```
 - Jenkins Setup: Run Jenkins in Docker and install trivy and terraform binaries.
 - AWS Config: Add *AWS_ACCESS_KEY_ID* and *AWS_SECRET_ACCESS_KEY* to Jenkins Credentials.
 - Build: Click Build Now in Jenkins.
