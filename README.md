@@ -13,6 +13,8 @@ This project demonstrates a full CI/CD pipeline for a web application. It automa
 
 ---
 
+### See the Live Application here
+Live URL : http://54.173.242.222:5173/
 ## Docker Setup
 ### Run the Docker Compose
 ```terminal
@@ -35,9 +37,9 @@ During the first run, the pipeline identified 6 Failures (3 Critical).
 As per the assignment scenario, I consulted Gemini (AI) to analyze the Trivy report and suggest code fixes.
 
 ### AI Prompt Used:
-    ```terminal
+```terminal
         "Analyze this Trivy security report identifying 6 failures (3 Critical, 2 High). Explain the risks of SSH port 22 being open to 0.0.0.0/0, unencrypted volumes, and IMDSv1. Rewrite the Terraform code to remediate these while keeping the app functional."
-    ```
+```
 ### AI Analysis & Improvements:
 - *Network Hardening:* Restricted CIDR blocks for SSH and Application ports to prevent brute-force attacks.
 - *Data Security:* Enabled EBS Encryption to protect data at rest.
