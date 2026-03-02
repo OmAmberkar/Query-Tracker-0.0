@@ -3,17 +3,17 @@ import User from "./user.model.js";
 
 const TicketSchema = new mongoose.Schema(
   {
-    name:{
-      type:String,
+    name: {
+      type: String,
       // required: true,
     },
-    
-    grpno:{
-      type:String,
+
+    grpno: {
+      type: String,
       required: true,
     },
 
-    email:{
+    email: {
       type: String,
       required: true,
     },
@@ -23,22 +23,27 @@ const TicketSchema = new mongoose.Schema(
       // required: true,
     },
 
-    description: { 
-      type: String, 
+    description: {
+      type: String,
       // required: true 
     },
-    
-    user: { 
-      type: mongoose.Schema.Types.ObjectId, 
-      ref: User, 
+
+    solution: {
+      type: String,
+      default: ""
+    },
+
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: User,
       // required: true,
-    }, 
+    },
 
     // assignedTo: { 
     //   type: mongoose.Schema.Types.ObjectId, 
     //   ref: "User" 
     // },
-    
+
     status: {
       type: String,
       enum: ["open", "resolved"],
@@ -46,7 +51,7 @@ const TicketSchema = new mongoose.Schema(
     },
 
 
-  },{ timestamps: true }
+  }, { timestamps: true }
 );
 
 const Ticket = mongoose.model("Ticket", TicketSchema);

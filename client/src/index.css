@@ -1,2 +1,37 @@
 @import "tailwindcss";
 
+@theme {
+  --color-lemon: #e3ff00;
+  --color-lemon-dark: #ccff00;
+  --color-black-pure: #000000;
+  --color-black-soft: #0a0a0a;
+}
+
+@layer base {
+  body {
+    @apply bg-black text-white font-sans antialiased;
+    overflow-x: hidden;
+  }
+}
+
+::selection {
+  background-color: var(--color-lemon);
+  color: black;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1a1a1a;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-lemon);
+}

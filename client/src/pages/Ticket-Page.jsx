@@ -1,10 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInterceptor from "../utils/axiosInterceptor.js";
-import { toast } from "react-toastify";
+import { showToast } from "../components/notification.js";
+import { motion, AnimatePresence } from "framer-motion";
+import { FiSend, FiArrowLeft, FiShield, FiCpu } from "react-icons/fi";
 
 const TicketPage = () => {
   const navigate = useNavigate();
+  const canvasRef = useRef(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -13,6 +16,40 @@ const TicketPage = () => {
     subject: "",
     description: "",
   });
+
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  // Matrix rain effect
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+
+    const letters = "DEPLOY-QUERY-99";
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
+
+    const draw = () => {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#e3ff00"; // Lemon Yellow
+      ctx.font = `${fontSize}px monospace`;
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters.charAt(Math.floor(Math.random() * letters.length));
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975)
+          drops[i] = 0;
+        drops[i]++;
+      }
+    };
+    const interval = setInterval(draw, 33);
+    return () => clearInterval(interval);
+  }, []);
 
   // fill email from localStorage (set on login) or from cookie as fallback
   const getCookie = (name) => {
@@ -27,10 +64,6 @@ const TicketPage = () => {
     if (stored) setFormData((p) => ({ ...p, email: stored }));
   }, []);
 
-  const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState(null);
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -38,110 +71,177 @@ const TicketPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
 
     try {
-      // server will use authenticated email, drop any client value
       const { email, ...payload } = formData;
       await axiosInterceptor.post("/user/createTicket", payload);
-      toast.success("Ticket created");
+      showToast("Transmission Successful", "success");
+
       setTimeout(() => {
         setLoading(false);
         setSubmitted(true);
-      }, 1000);
+      }, 1500);
 
       setTimeout(() => {
         navigate("/user/home");
       }, 4000);
     } catch (error) {
-      console.error("Error submitting ticket:", error);
-      toast.error("Failed to submit ticket. Please try again.");
-      setError("Failed to submit ticket. Please try again.");
+      showToast("Transmission Failed: Hardware Error", "error");
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white p-10 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-purple-600/20 blur-xl"></div>
+    <div className="min-h-screen bg-black text-white flex items-center justify-center p-6 relative overflow-hidden font-sans selection:bg-lemon selection:text-black">
+      <canvas ref={canvasRef} className="fixed inset-0 z-0 opacity-10 pointer-events-none" />
 
-      <div className="bg-black/50 border border-gray-700 rounded-2xl p-8 shadow-lg backdrop-blur-md w-full max-w-xl z-10 relative">
-        <h2 className="text-3xl font-bold mb-6 text-center">Raise a Ticket</h2>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="w-full max-w-2xl bg-white/[0.02] border border-white/5 rounded-[40px] p-12 backdrop-blur-3xl shadow-2xl relative z-10 overflow-hidden group"
+      >
+        <div className="absolute top-0 left-0 w-full h-1.5 bg-lemon transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700" />
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Name</label>
-              <input type="text" name="name" value={formData.name} onChange={handleChange}
-                className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white" required />
+        <div className="mb-12 text-center">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-lemon rounded-3xl mb-8 shadow-[0_0_30px_rgba(227,255,0,0.2)]">
+            <FiCpu className="text-black text-3xl" />
+          </div>
+          <h1 className="text-5xl font-black italic tracking-tighter uppercase mb-2">
+            Initialize <span className="text-lemon">Ticket</span>
+          </h1>
+          <p className="text-gray-500 font-bold uppercase tracking-[0.3em] text-[10px]">
+            Secure Transmission Protocol • Requesting Support Vector
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-2 uppercase tracking-widest">
+              <label className="text-[10px] font-black text-gray-500 pl-2">Subject Handle</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="OPERATOR NAME"
+                className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-lemon transition-all font-bold placeholder:text-gray-700"
+                required
+              />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+            <div className="space-y-2 uppercase tracking-widest">
+              <label className="text-[10px] font-black text-gray-500 pl-2">Secure Channel</label>
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 readOnly
-                className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg text-gray-400 cursor-not-allowed"
+                className="w-full bg-black/20 border border-white/5 rounded-2xl px-6 py-4 text-sm text-gray-600 font-bold cursor-not-allowed uppercase"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-2 uppercase tracking-widest">
+              <label className="text-[10px] font-black text-gray-500 pl-2">Sector ID</label>
+              <input
+                type="text"
+                name="grpno"
+                value={formData.grpno}
+                onChange={handleChange}
+                placeholder="GROUP CODE"
+                className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-lemon transition-all font-bold placeholder:text-gray-700"
+                required
+              />
+            </div>
+            <div className="space-y-2 uppercase tracking-widest">
+              <label className="text-[10px] font-black text-gray-500 pl-2">Transmission Subject</label>
+              <input
+                type="text"
+                name="subject"
+                value={formData.subject}
+                onChange={handleChange}
+                placeholder="QUERY TYPE"
+                className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-lemon transition-all font-bold placeholder:text-gray-700"
                 required
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Group No.</label>
-              <input type="text" name="grpno" value={formData.grpno} onChange={handleChange}
-                className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white" required />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Subject</label>
-              <input type="text" name="subject" value={formData.subject} onChange={handleChange}
-                className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white" required />
-            </div>
+          <div className="space-y-2 uppercase tracking-widest">
+            <label className="text-[10px] font-black text-gray-500 pl-2">Data Packet Payload</label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              rows="4"
+              placeholder="DESCRIBE TECHNICAL CHALLENGE..."
+              className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-lemon transition-all font-bold placeholder:text-gray-700 resize-none"
+              required
+            />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
-            <textarea name="description" value={formData.description} onChange={handleChange}
-              className="w-full px-4 py-2 bg-gray-800/50 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white min-h-32" required></textarea>
+          <div className="pt-4 flex flex-col md:flex-row gap-4 relative z-[60]">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="submit"
+              disabled={loading}
+              className="flex-1 bg-lemon hover:bg-white text-black font-black py-5 rounded-2xl uppercase tracking-[0.2em] transition-all flex items-center justify-center space-x-3 shadow-[0_10px_30px_rgba(227,255,0,0.1)] disabled:opacity-50"
+            >
+              <FiSend />
+              <span>{loading ? "AUTHENTICATING..." : "DEPLOY PACKET"}</span>
+            </motion.button>
+            <Link
+              to="/user/home"
+              className="px-10 border border-white/10 hover:bg-white/5 text-gray-500 hover:text-white font-black py-5 rounded-2xl uppercase tracking-widest transition-all flex items-center justify-center"
+            >
+              <FiArrowLeft className="mr-3" />
+              ABORT
+            </Link>
           </div>
-
-          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-
-          <button type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-500 transition duration-200 font-medium cursor-pointer">
-            Submit Ticket
-          </button>
         </form>
 
-        {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/70 ">
-            <div className="bg-transparent p-6 rounded-lg shadow-lg flex flex-col items-center animate-bounce">
-              <div className="w-16 h-16 border-4 border-red-600 border-t-green-800 rounded-full animate-spin"></div>
-              <p className="mt-4 text-yellow-500 font-bold animate-pulse">Submitting Ticket...</p>
-            </div>
-          </div>
-        )}
-
-        {submitted && !loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/70">
-            <div className="bg-transparent p-6 rounded-lg shadow-lg flex flex-col items-center animate-ping">
-              <svg className="w-16 h-16 text-green-500" fill="none" stroke="currentColor" strokeWidth="2"
-                viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" className="animate-bounce"></path>
-              </svg>
-              <p className="mt-4 text-green-700 font-bold animate-bounce">Ticket Submitted Successfully!</p>
-            </div>
-          </div>
-        )}
-
-        <p className="mt-6 text-sm text-center">
-          <Link to="/user/home" className="text-blue-400 hover:text-blue-300 hover:underline transition">
-            Back to Home
-          </Link>
-        </p>
-      </div>
+        <AnimatePresence>
+          {(loading || submitted) && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 z-[100] bg-black flex flex-col items-center justify-center p-12 text-center"
+            >
+              {loading ? (
+                <div className="space-y-8">
+                  <div className="relative mx-auto w-24">
+                    <div className="w-24 h-24 border-2 border-lemon/20 rounded-full animate-ping absolute inset-0" />
+                    <div className="w-24 h-24 border-t-2 border-lemon rounded-full animate-spin flex items-center justify-center text-lemon">
+                      <FiShield size={32} />
+                    </div>
+                  </div>
+                  <div>
+                    <h2 className="text-3xl font-black italic uppercase tracking-tighter mb-2">Syncing Data</h2>
+                    <p className="text-gray-500 font-bold uppercase tracking-[0.3em] text-[10px] animate-pulse">Establishing secure link with node</p>
+                  </div>
+                </div>
+              ) : (
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="space-y-8"
+                >
+                  <div className="w-24 h-24 bg-lemon rounded-full flex items-center justify-center mx-auto shadow-[0_0_50px_rgba(227,255,0,0.4)]">
+                    <FiSend className="text-black text-4xl" />
+                  </div>
+                  <div>
+                    <h2 className="text-3xl font-black italic uppercase tracking-tighter mb-2 text-lemon">Transmission Complete</h2>
+                    <p className="text-gray-500 font-bold uppercase tracking-[0.3em] text-[10px]">Data packet successfully injected into the network</p>
+                  </div>
+                  <div className="text-[10px] font-black text-gray-700 uppercase tracking-widest pt-8 transition-opacity duration-300 opacity-50">Redirecting to operations...</div>
+                </motion.div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
     </div>
   );
 };

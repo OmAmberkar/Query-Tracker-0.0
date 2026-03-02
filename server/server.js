@@ -7,6 +7,7 @@ import connectDB from "./db/connect.db.js";
 import userRoute from "./routes/registration.routes.js";
 import userLogin from "./routes/login.routes.js";
 import ticketRoutes from './routes/ticket.routes.js';
+import adminRoutes from './routes/admin.routes.js';
 import cookieParser from "cookie-parser";
 
 dotenv.config();
@@ -28,7 +29,7 @@ app.use(cors({
   credentials: true,
   origin: process.env.NODE_ENV === 'production'
     ? process.env.FRONTEND_URL
-    : 'http://localhost:5173'
+    : ['http://localhost:5173', 'http://localhost:5174']
 }));
 
 //middleware
@@ -46,9 +47,10 @@ app.get("/health", (req, res) => {
 });
 
 //controllers routers
-app.use('/user',userRoute);
-app.use('/user',userLogin);
-app.use('/user',ticketRoutes);
+app.use('/user', userRoute);
+app.use('/user', userLogin);
+app.use('/user', ticketRoutes);
+app.use('/admin', adminRoutes);
 
 // Global error handler
 app.use((err, req, res, next) => {
@@ -66,15 +68,15 @@ app.use('*', (req, res) => {
 
 //connect to database
 connectDB()
-.then(
-  app.listen(process.env.PORT || 8080, () => {
-    console.log(`Server running on port: ${process.env.PORT || 8080}`);
-    console.log(`Health check: http://localhost:${process.env.PORT || 8080}/health`);
-})
-)
-.catch(
-  (error) => {
-    console.error("MongoDB connection failed:", error);
-    process.exit(1);
-  }
-);
+  .then(
+    app.listen(process.env.PORT || 8080, () => {
+      console.log(`Server running on port: ${process.env.PORT || 8080}`);
+      console.log(`Health check: http://localhost:${process.env.PORT || 8080}/health`);
+    })
+  )
+  .catch(
+    (error) => {
+      console.error("MongoDB connection failed:", error);
+      process.exit(1);
+    }
+  );

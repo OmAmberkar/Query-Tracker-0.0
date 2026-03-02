@@ -4,10 +4,12 @@ import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInterceptor from "../utils/axiosInterceptor.js";
 import { toast } from "react-toastify";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [timeLeft, setTimeLeft] = useState({});
   const [winnerIndex, setWinnerIndex] = useState(0);
   const navigate = useNavigate();
@@ -34,7 +36,7 @@ function Login() {
     const draw = () => {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#00FF41";
+      ctx.fillStyle = "#e3ff00"; // Lemon Yellow
       ctx.font = fontSize + "px monospace";
 
       for (let i = 0; i < drops.length; i++) {
@@ -88,7 +90,6 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => setLoading(false), 2000);
     try {
       const res = await axiosInterceptor.post(
         "/user/login",
@@ -99,25 +100,27 @@ function Login() {
         { withCredentials: true }
       );
       if (res.data.success) {
-        toast.success("Login Successfully");
-        navigate("/user/home");
-        
-        // Save the email to localStorage so other pages can see it
+        toast.success("Login Successful");
+
+        // Save user info
         localStorage.setItem("userEmail", formData.email);
+        localStorage.setItem("userRole", res.data.role);
+
+        if (res.data.role === "admin") {
+          navigate("/user/home"); // Or a specific admin page if we choose
+        } else {
+          navigate("/user/home");
+        }
 
       } else {
         toast.warn(res.data.message || "Login failed");
       }
     } catch (error) {
-      const message =
-      error.response?.data?.message || "Something went wrong";
-    toast.error(message);
-
-    // Only check status if response exists
-    if (error.response && error.response.status === 401) {
-      navigate("/user/login");
-    }
-
+      const message = error.response?.data?.message || "Something went wrong";
+      toast.error(message);
+      if (error.response && error.response.status === 401) {
+        navigate("/user/login");
+      }
     } finally {
       setLoading(false);
     }
@@ -125,22 +128,22 @@ function Login() {
 
   /** ================== UI ================== */
   return (
-    <div className="min-h-screen bg-black flex flex-col lg:flex-row overflow-hidden">
+    <div className="min-h-screen bg-black flex flex-col lg:flex-row overflow-hidden selection:bg-lemon selection:text-black">
       {/* Left: Login Form */}
-      <div className="flex-1 flex items-center justify-center p-8">
+      <div className="flex-1 flex items-center justify-center p-8 relative z-10">
         <div className="w-full max-w-md">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-8"
+            className="text-center mb-10"
           >
-            <div className="w-16 h-16 mx-auto mb-4 bg-blue-600 rounded-xl flex items-center justify-center">
-              <span className="text-xl font-bold text-white">QT</span>
+            <div className="w-20 h-20 mx-auto mb-6 bg-lemon rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(227,255,0,0.2)]">
+              <span className="text-2xl font-black text-black">QT</span>
             </div>
-            <h1 className="text-3xl font-bold text-white mb-2">Welcome Back</h1>
-            <p className="text-gray-400">Sign in to your hackathon account</p>
+            <h1 className="text-4xl font-black text-white tracking-tighter mb-2 italic">ACCESS COMMAND</h1>
+            <p className="text-gray-500 font-bold uppercase tracking-widest text-xs leading-relaxed">Enter credentials to initialize session</p>
           </motion.div>
 
           {/* Form */}
@@ -148,59 +151,60 @@ function Login() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="bg-gray-800 border border-gray-700 rounded-xl p-8 shadow-lg"
+            className="bg-white/[0.02] border border-white/5 rounded-3xl p-10 backdrop-blur-xl shadow-2xl relative overflow-hidden group"
           >
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Email */}
+            <div className="absolute top-0 left-0 w-full h-1 bg-lemon transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
+
+            <form onSubmit={handleSubmit} className="space-y-8">
               <InputField
-                label="Email Address"
+                label="Identifier / Email"
                 id="email"
                 name="email"
                 type="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="Enter your email"
+                placeholder="system@querytracker.io"
               />
 
-              {/* Password */}
               <InputField
-                label="Password"
+                label="Security Key"
                 id="password"
                 name="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={formData.password}
                 onChange={handleChange}
-                placeholder="Enter your password"
+                placeholder="••••••••••••"
+                toggleable
+                onToggle={() => setShowPassword(!showPassword)}
+                show={showPassword}
               />
 
-              {/* Submit */}
               <motion.button
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg py-3 transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full bg-lemon hover:bg-white text-black font-black py-4 rounded-xl uppercase tracking-widest transition-all shadow-[0_10px_30px_rgba(227,255,0,0.1)] flex items-center justify-center disabled:opacity-50"
                 whileHover={{ scale: loading ? 1 : 1.02 }}
                 whileTap={{ scale: loading ? 1 : 0.98 }}
                 disabled={loading}
               >
-                {loading ? <LoadingSpinner text="Signing In..." /> : "Sign In"}
+                {loading ? <span className="flex items-center"><span className="w-4 h-4 border-2 border-transparent border-t-white border-r-white rounded-full animate-spin mr-2"></span>Decoding...</span> : "Execute Login"}
               </motion.button>
             </form>
 
-            {/* Links */}
-            <div className="mt-6 text-center">
-              <p className="text-gray-400 mb-2">
-                Don't have an account?{" "}
+            <div className="mt-8 text-center space-y-4">
+              <p className="text-gray-500 text-xs font-bold uppercase tracking-widest">
+                New user?{" "}
                 <Link
                   to="/user/register"
-                  className="text-blue-400 hover:text-blue-300 font-medium"
+                  className="text-lemon hover:underline decoration-2 underline-offset-4"
                 >
-                  Sign up here
+                  Create Protocol
                 </Link>
               </p>
               <Link
                 to="/"
-                className="text-gray-500 hover:text-gray-400 text-sm"
+                className="inline-block text-gray-700 hover:text-white text-[10px] font-black uppercase tracking-[0.3em] transition-colors"
               >
-                ← Back to Home
+                ← Return to Base
               </Link>
             </div>
           </motion.div>
@@ -209,85 +213,77 @@ function Login() {
 
       {/* Right: Hackathon Info */}
       <div className="flex-1 relative flex flex-col items-center justify-center text-white p-8">
-        <div className="absolute w-full inset-0 bg-transparent"></div>
         <canvas
           ref={canvasRef}
-          className="absolute inset-0 z-0 w-full"
+          className="absolute inset-0 z-0 w-full opacity-40"
         ></canvas>
-        {/* Countdown Title */}
-        <motion.h2
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-4xl font-bold mb-6 z-10"
-        >
-          Annual Hackathon Countdown
-        </motion.h2>
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black pointer-events-none"></div>
 
-        {/* Countdown Timer */}
-        <div className="flex space-x-4 text-center mb-12 z-10 backdrop-blur-2xl">
-          {["days", "hours", "minutes", "seconds"].map((unit) => (
-            <div key={unit} className="bg-white/10 rounded-lg px-4 py-2">
-              <div className="text-3xl font-bold">{timeLeft[unit] ?? "--"}</div>
-              <div className="text-sm uppercase">{unit}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* Rotating Winners */}
         <motion.div
-          key={winnerIndex}
-          initial={{ opacity: 0, x: 40 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -40 }}
-          transition={{ duration: 0.6 }}
-          className="text-center z-10"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="relative z-10 text-center"
         >
-          <h3 className="text-2xl font-semibold">
-            {winners[winnerIndex].team}
-          </h3>
-          <p className="text-white/80">{winners[winnerIndex].desc}</p>
+          <h2 className="text-sm font-black text-lemon tracking-[0.5em] mb-12 uppercase italic">Mission Countdown</h2>
+
+          <div className="flex space-x-6 mb-16">
+            {["days", "hours", "minutes", "seconds"].map((unit) => (
+              <div key={unit} className="w-24 text-center">
+                <div className="text-5xl font-black tracking-tighter mb-1">{timeLeft[unit] ?? "00"}</div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-gray-500">{unit}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="p-8 border border-white/5 bg-black/50 backdrop-blur-md rounded-2xl max-w-xs mx-auto">
+            <h3 className="text-[10px] font-black text-lemon tracking-[0.3em] mb-4 uppercase">Latest Achievements</h3>
+            <motion.div
+              key={winnerIndex}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-2"
+            >
+              <div className="text-xl font-black italic">{winners[winnerIndex].team}</div>
+              <p className="text-xs text-gray-400 font-medium leading-relaxed">{winners[winnerIndex].desc}</p>
+            </motion.div>
+          </div>
         </motion.div>
       </div>
     </div>
   );
 }
 
-/** ================== Subcomponents ================== */
-const InputField = ({
-  label,
-  id,
-  name,
-  type,
-  value,
-  onChange,
-  placeholder,
-}) => (
-  <div>
-    <label
-      htmlFor={id}
-      className="block text-gray-300 text-sm font-medium mb-2"
-    >
+const InputField = ({ label, id, name, type, value, onChange, placeholder, toggleable, onToggle, show }) => (
+  <div className="space-y-3 font-bold uppercase tracking-widest relative">
+    <label htmlFor={id} className="block text-gray-500 text-[10px]">
       {label}
     </label>
-    <input
-      type={type}
-      id={id}
-      name={name}
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      required
-      className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-gray-100 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition"
-    />
+    <div className="relative">
+      <input
+        type={type}
+        id={id}
+        name={name}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        required
+        className="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 text-white text-sm focus:outline-none focus:border-lemon focus:ring-1 focus:ring-lemon/50 transition-all placeholder:text-gray-800"
+      />
+      {toggleable && (
+        <button
+          type="button"
+          onClick={onToggle}
+          className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-lemon transition-colors"
+        >
+          {show ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
+        </button>
+      )}
+    </div>
   </div>
 );
 
-const LoadingSpinner = ({ text }) => (
-  <span className="flex items-center justify-center">
-    <span className="w-4 h-4 border-2 border-transparent border-t-white border-r-white rounded-full animate-spin mr-2"></span>
-    {text}
-  </span>
-);
+// Remove the separate LoadingSpinner component as it's now inline or we should use the shared one if it existed.
+// Since I created LoadingSpinner.jsx, but it's a page-level spinner, I'll just keep it inline here for symmetry with other pages.
+
 
 export default Login;

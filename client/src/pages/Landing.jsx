@@ -18,44 +18,34 @@ const staggerContainer = {
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white overflow-hidden">
-      
+    <div className="min-h-screen bg-black text-white overflow-hidden selection:bg-lemon selection:text-black">
+
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-black/20 backdrop-blur-md border-b border-white/10">
+      <nav className="fixed top-0 w-full z-50 bg-black/40 backdrop-blur-md border-b border-white/5">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               className="flex items-center space-x-2"
             >
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
-                <span className="text-white font-bold text-xl">QT</span>
+              <div className="w-10 h-10 bg-lemon rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(227,255,0,0.3)]">
+                <span className="text-black font-black text-xl tracking-tighter">QT</span>
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                QueryTracker
+              <span className="text-xl font-black tracking-tight text-white">
+                Query<span className="text-lemon">Tracker</span>
               </span>
             </motion.div>
-            
-            <motion.div 
+
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="hidden md:flex items-center space-x-8"
+              className="hidden md:flex items-center space-x-10"
             >
-              <a href="#features" className="text-gray-300 hover:text-white transition-colors">Features</a>
-              <a href="#how-it-works" className="text-gray-300 hover:text-white transition-colors">How it Works</a>
-              <a href="#testimonials" className="text-gray-300 hover:text-white transition-colors">Testimonials</a>
-            </motion.div>
-            
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="flex items-center space-x-4"
-            >
-              <a href="/user/login" className="text-gray-300 hover:text-white transition-colors px-4 py-2">
-                Sign In
-              </a>
-              <a href="/user/register" className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg">
+              <a href="#features" className="text-sm font-medium text-gray-400 hover:text-lemon transition-colors uppercase tracking-widest">Features</a>
+              <a href="#how-it-works" className="text-sm font-medium text-gray-400 hover:text-lemon transition-colors uppercase tracking-widest">Process</a>
+              <a href="/user/login" className="text-sm font-medium text-gray-400 hover:text-lemon transition-colors uppercase tracking-widest">Sign In</a>
+              <a href="/user/register" className="bg-lemon text-black px-6 py-2.5 rounded-full font-bold text-sm uppercase tracking-wider hover:bg-white transition-all transform hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(227,255,0,0.2)]">
                 Get Started
               </a>
             </motion.div>
@@ -64,94 +54,113 @@ function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <motion.div 
+      <section className="relative pt-40 pb-20 px-6">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-lemon/5 blur-[120px] rounded-full pointer-events-none"></div>
+
+        <div className="max-w-7xl mx-auto relative">
+          <div className="grid lg:grid-cols-2 gap-20 items-center">
+            <motion.div
               variants={staggerContainer}
               initial="initial"
               animate="animate"
-              className="space-y-8"
+              className="space-y-10"
             >
               <motion.div variants={fadeUp()} className="space-y-6">
-                <div className="inline-flex items-center px-4 py-2 bg-blue-500/20 border border-blue-500/30 rounded-full text-blue-300 text-sm font-medium">
-                  🚀 Hackathon Support Platform
+                <div className="inline-flex items-center px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-lemon text-xs font-bold uppercase tracking-[0.2em]">
+                  <span className="w-2 h-2 bg-lemon rounded-full mr-2 animate-pulse"></span>
+                  Next-Gen Hackathon OS
                 </div>
-                
-                <h1 className="text-5xl lg:text-7xl font-bold leading-tight">
-                  <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
-                    Track Queries
-                  </span>
-                  <br />
-                  <span className="text-white">Get Support</span>
+
+                <h1 className="text-6xl lg:text-8xl font-black leading-[0.9] tracking-tighter">
+                  SOLVE <br />
+                  <span className="text-lemon">FASTER.</span><br />
+                  <span className="text-white">BUILD BIGGER.</span>
                 </h1>
-                
-                <p className="text-xl text-gray-300 leading-relaxed max-w-lg">
-                  The ultimate platform for hackathon participants. Post questions, get instant mentor support, 
-                  and track your progress in real-time.
+
+                <p className="text-xl text-gray-400 leading-relaxed max-w-lg font-medium">
+                  The ultimate command center for hackathon athletes. Real-time mentor routing with zero friction.
                 </p>
               </motion.div>
 
-              <motion.div variants={fadeUp()} className="flex flex-col sm:flex-row gap-4">
-                <a 
-                  href="/user/register" 
-                  className="group bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 transform hover:scale-105 shadow-xl hover:shadow-2xl flex items-center justify-center"
+              <motion.div variants={fadeUp()} className="flex flex-col sm:flex-row gap-6">
+                <a
+                  href="/user/register"
+                  className="group bg-lemon text-black px-10 py-5 rounded-full font-black text-lg uppercase tracking-wider transition-all hover:bg-white hover:scale-105 shadow-[0_20px_40px_rgba(227,255,0,0.15)] flex items-center justify-center"
                 >
-                  Start Free Trial
-                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  Join the Mission
+                  <svg className="w-6 h-6 ml-3 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                   </svg>
                 </a>
-                
-                <a 
-                  href="/user/login" 
-                  className="border-2 border-white/20 hover:border-white/40 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 hover:bg-white/10 flex items-center justify-center"
+
+                <a
+                  href="/user/login"
+                  className="border-2 border-white/10 hover:border-lemon text-white px-10 py-5 rounded-full font-black text-lg uppercase tracking-wider transition-all hover:text-lemon flex items-center justify-center"
                 >
-                  Sign In
+                  Dashboard
                 </a>
               </motion.div>
 
-              <motion.div variants={fadeUp()} className="flex items-center space-x-8 text-sm text-gray-400">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                  <span>24/7 Support</span>
+              <motion.div variants={fadeUp()} className="flex items-center space-x-12">
+                <div className="flex -space-x-4">
+                  {[1, 2, 3, 4].map(i => (
+                    <div key={i} className="w-12 h-12 rounded-full border-4 border-black bg-gray-900 flex items-center justify-center overflow-hidden">
+                      <div className={`w-full h-full bg-gradient-to-br ${i % 2 === 0 ? 'from-lemon to-yellow-500' : 'from-gray-700 to-gray-800'}`}></div>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-                  <span>Instant Responses</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
-                  <span>Mentor Network</span>
+                <div>
+                  <div className="text-2xl font-black text-white leading-none">5,000+</div>
+                  <div className="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">Developers Active</div>
                 </div>
               </motion.div>
             </motion.div>
 
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, delay: 0.3 }}
-              className="relative"
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, rotateY: 20 }}
+              animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
+              className="relative perspective-1000"
             >
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-3xl blur-3xl"></div>
-                <div className="relative bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
-                  <div className="space-y-6">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                      <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-                      <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-lemon/20 rounded-[40px] blur-2xl group-hover:bg-lemon/30 transition-all"></div>
+                <div className="relative bg-black border border-white/10 rounded-[40px] p-10 shadow-2xl overflow-hidden hover:border-lemon/50 transition-colors">
+                  <div className="absolute top-0 right-0 p-8">
+                    <div className="w-20 h-20 bg-lemon/10 rounded-full blur-2xl animate-pulse"></div>
+                  </div>
+
+                  <div className="space-y-10 relative">
+                    <div className="flex items-center justify-between">
+                      <div className="flex space-x-3">
+                        <div className="w-4 h-4 bg-lemon rounded-full shadow-[0_0_10px_rgba(227,255,0,0.8)]"></div>
+                        <div className="w-4 h-4 bg-white/20 rounded-full"></div>
+                        <div className="w-4 h-4 bg-white/20 rounded-full"></div>
+                      </div>
+                      <div className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">System Status: Optimal</div>
                     </div>
-                    
-                    <div className="space-y-4">
-                      <div className="h-4 bg-gradient-to-r from-blue-500/30 to-cyan-500/30 rounded"></div>
-                      <div className="h-4 bg-gradient-to-r from-slate-600/50 to-slate-700/50 rounded w-3/4"></div>
-                      <div className="h-4 bg-gradient-to-r from-slate-600/50 to-slate-700/50 rounded w-1/2"></div>
+
+                    <div className="space-y-6">
+                      <div className="h-3 bg-white/5 rounded-full w-full overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: "70%" }}
+                          transition={{ duration: 2, delay: 1 }}
+                          className="h-full bg-lemon"
+                        />
+                      </div>
+                      <div className="h-3 bg-white/5 rounded-full w-4/5"></div>
+                      <div className="h-3 bg-white/5 rounded-full w-3/5"></div>
                     </div>
-                    
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="h-20 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-lg border border-blue-500/30"></div>
-                      <div className="h-20 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-lg border border-purple-500/30"></div>
+
+                    <div className="grid grid-cols-2 gap-6">
+                      <div className="aspect-square bg-white/[0.03] border border-white/5 rounded-3xl p-6 flex flex-col justify-between hover:bg-lemon/5 hover:border-lemon/20 transition-all">
+                        <div className="w-8 h-8 rounded-lg bg-lemon/20 flex items-center justify-center text-lemon">⚡</div>
+                        <div className="text-xl font-black">24ms</div>
+                      </div>
+                      <div className="aspect-square bg-white/[0.03] border border-white/5 rounded-3xl p-6 flex flex-col justify-between hover:bg-lemon/5 hover:border-lemon/20 transition-all">
+                        <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white">⦿</div>
+                        <div className="text-xl font-black">99.9%</div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -162,283 +171,80 @@ function Landing() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 px-6">
+      <section id="features" className="py-32 px-6 relative border-t border-white/5">
         <div className="max-w-6xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                Powerful Features
-              </span>
-            </h2>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              Everything you need to succeed in your hackathon journey
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: "🚀",
-                title: "Real-time Support",
-                description: "Get instant answers from mentors and organizers during your hackathon",
-                gradient: "from-blue-500/20 to-cyan-500/20",
-                border: "border-blue-500/30"
-              },
-              {
-                icon: "👥",
-                title: "Expert Mentors",
-                description: "Connect with experienced developers and industry professionals",
-                gradient: "from-purple-500/20 to-pink-500/20",
-                border: "border-purple-500/30"
-              },
-              {
-                icon: "📊",
-                title: "Progress Tracking",
-                description: "Monitor your queries and track resolution status in real-time",
-                gradient: "from-green-500/20 to-emerald-500/20",
-                border: "border-green-500/30"
-              }
-            ].map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className={`group bg-gradient-to-br ${feature.gradient} backdrop-blur-xl border ${feature.border} rounded-2xl p-8 hover:scale-105 transition-all duration-300 cursor-pointer`}
-              >
-                <div className="text-4xl mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-bold mb-3 text-white">{feature.title}</h3>
-                <p className="text-gray-300 leading-relaxed">{feature.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works Section */}
-      <section id="how-it-works" className="py-20 px-6 bg-black/20">
-        <div className="max-w-6xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                How It Works
-              </span>
-            </h2>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              Simple steps to get started with QueryTracker
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-4 gap-8">
-            {[
-              { step: "1", title: "Sign Up", description: "Create your account in seconds" },
-              { step: "2", title: "Post Questions", description: "Ask your technical questions" },
-              { step: "3", title: "Get Responses", description: "Receive expert answers quickly" },
-              { step: "4", title: "Track Progress", description: "Monitor all your queries" }
-            ].map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="text-center relative"
-              >
-                <div className="relative mb-6">
-                  <div className="w-16 h-16 mx-auto bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
-                    {item.step}
-                  </div>
-                  {index < 3 && (
-                    <div className="hidden md:block absolute top-8 left-full w-full h-0.5 bg-gradient-to-r from-blue-500 to-cyan-500 transform translate-x-4"></div>
-                  )}
-                </div>
-                <h3 className="text-xl font-bold mb-2 text-white">{item.title}</h3>
-                <p className="text-gray-400">{item.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section id="testimonials" className="py-20 px-6">
-        <div className="max-w-6xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                What Users Say
-              </span>
-            </h2>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              Join thousands of satisfied hackathon participants
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                name: "Ananya Sharma",
-                role: "Full Stack Developer",
-                quote: "QueryTracker made our hackathon experience seamless. The instant mentor support was incredible!",
-                avatar: "AS"
-              },
-              {
-                name: "Rohit Kumar",
-                role: "ML Engineer",
-                quote: "I got answers to complex technical questions in minutes. This platform is a game-changer!",
-                avatar: "RK"
-              },
-              {
-                name: "Priya Patel",
-                role: "Frontend Developer",
-                quote: "The progress tracking feature helped me stay organized throughout the entire hackathon.",
-                avatar: "PP"
-              }
-            ].map((testimonial, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-8 hover:scale-105 transition-all duration-300"
-              >
-                <div className="flex items-center mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold mr-4">
-                    {testimonial.avatar}
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-white">{testimonial.name}</h4>
-                    <p className="text-sm text-gray-400">{testimonial.role}</p>
-                  </div>
-                </div>
-                <p className="text-gray-300 italic leading-relaxed">"{testimonial.quote}"</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 px-6">
-        <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="bg-gradient-to-r from-blue-600 to-cyan-600 rounded-3xl p-12 shadow-2xl"
+            className="text-center mb-24"
           >
-            <h2 className="text-4xl font-bold mb-4 text-white">
-              Ready to Transform Your Hackathon Experience?
+            <h2 className="text-5xl font-black mb-6 tracking-tighter">
+              CORE INFRASTRUCTURE
             </h2>
-            <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-              Join thousands of developers who are already using QueryTracker to get the support they need.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
-                href="/user/register"
-                className="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-100 transition-all duration-200 transform hover:scale-105 shadow-lg"
-              >
-                Start Free Trial
-              </a>
-              <a
-                href="/user/login"
-                className="border-2 border-white/30 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/10 transition-all duration-200"
-              >
-                Sign In
-              </a>
-            </div>
+            <div className="w-20 h-1.5 bg-lemon mx-auto rounded-full"></div>
           </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-12">
+            {[
+              {
+                title: "HYPER-SUPPORT",
+                desc: "Instant mentor routing with automated triage for complex blockers.",
+                tag: "Real-time"
+              },
+              {
+                title: "QUANTUM TRACK",
+                desc: "Every ticket indexed and monitored with precision resolution metrics.",
+                tag: "Analytics"
+              },
+              {
+                title: "GLOBAL NETWORK",
+                desc: "Access the highest concentration of specialized engineering talent.",
+                tag: "Mentors"
+              }
+            ].map((f, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="group relative p-8 bg-white/[0.02] border border-white/5 rounded-3xl hover:bg-lemon/5 hover:border-lemon/20 transition-all"
+              >
+                <div className="text-xs font-black text-lemon tracking-[0.3em] mb-4">{f.tag}</div>
+                <h3 className="text-2xl font-black mb-4 group-hover:text-lemon transition-colors">{f.title}</h3>
+                <p className="text-gray-400 font-medium leading-relaxed">{f.desc}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-black/40 border-t border-white/10 py-12">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
+      <footer className="bg-black border-t border-white/5 py-20 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-12">
             <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">QT</span>
+              <div className="flex items-center space-x-2 mb-6">
+                <div className="w-8 h-8 bg-lemon rounded flex items-center justify-center">
+                  <span className="text-black font-black text-xs">QT</span>
                 </div>
-                <span className="text-lg font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                  QueryTracker
-                </span>
+                <span className="text-xl font-black text-white tracking-tighter">QueryTracker</span>
               </div>
-              <p className="text-gray-400 text-sm">
-                The ultimate platform for hackathon support and mentorship.
+              <p className="text-gray-500 font-medium max-w-sm">
+                Architecting the future of hackathon intelligence.
               </p>
             </div>
-            
-            <div>
-              <h4 className="font-semibold text-white mb-4">Product</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Features</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">API</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold text-white mb-4">Company</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold text-white mb-4">Support</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Status</a></li>
-              </ul>
+
+            <div className="flex flex-wrap gap-12 text-sm font-bold uppercase tracking-widest text-gray-500">
+              <a href="#" className="hover:text-lemon transition-colors">Privacy</a>
+              <a href="#" className="hover:text-lemon transition-colors">Terms</a>
+              <a href="#" className="hover:text-lemon transition-colors">Twitter</a>
             </div>
           </div>
-          
-          <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 text-sm">
-              © {new Date().getFullYear()} QueryTracker. All rights reserved.
-            </p>
-            <div className="flex space-x-6 mt-4 md:mt-0">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
-                </svg>
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/>
-                </svg>
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.047-1.852-3.047-1.853 0-2.136 1.445-2.136 2.939v5.677H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                </svg>
-              </a>
-            </div>
+
+          <div className="mt-20 pt-10 border-t border-white/5 text-center text-[10px] font-black uppercase tracking-[0.5em] text-gray-700">
+            © {new Date().getFullYear()} QUERYTRACKER LABS // ALL RIGHTS RESERVED
           </div>
         </div>
       </footer>

@@ -1,8 +1,35 @@
-# React + Vite
+# Query Tracker Frontend 🛸
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A premium cyber-themed ticketing and query management system built with high-performance modern web technologies.
 
-Currently, two official plugins are available:
+## 🚀 Technology Stack
+- **Framework:** [Vite](https://vitejs.dev/) + [React](https://reactjs.org/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **Animations:** [Framer Motion](https://www.framer.com/motion/)
+- **API Client:** [Axios](https://axios-http.com/) with secure interceptors
+- **Notifications:** [React-Toastify](https://fslightbox.com/react) with custom premium branding
+- **Icons:** [React Icons (Feather)](https://react-icons.github.io/react-icons/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🛰️ Navigation & Routes
+
+| Route | Protocol | Security | Description |
+| :--- | :--- | :--- | :--- |
+| `/` | Landing | Public | Introduction to the system mission and features. |
+| `/user/login` | Login | Public | Secure authentication portal. |
+| `/user/register` | Register | Public | Operator registration and network entry. |
+| `/user/home` | Home | Auth | Real-time operational console with stats and live feeds. |
+| `/user/createTicket` | Ticket Gen | Auth | Secure transmission protocol for initializing new queries. |
+| `/user/getTickets` | Dashboard | Auth | Global mission logs for viewing, editing, and solving queries. |
+| `/admin/panel` | Admin Panel | Admin | Level 0 Command Center for user and network management. |
+
+## ✨ Core Features
+- **Global Transparency:** All operators can view existing queries to prevent redundant reports.
+- **Collaborative Solving:** Any operator can contribute solutions to any query, empowering the entire network.
+- **Role-Based Workflows:** Contextual buttons and controls that adjust based on user ownership and admin privileges.
+- **Matrix-Rain UI:** High-end dark theme aesthetics with dynamic background effects and lemon accents.
+- **Premium Notifications:** Custom-styled high-contrast toast notifications for system feedback.
+
+## 🛠️ Installation & Setup
+1. `npm install`
+2. Configure base URL in `src/utils/axiosInterceptor.js`
+3. `npm run dev`

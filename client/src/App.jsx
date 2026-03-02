@@ -9,7 +9,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Landing from "./pages/Landing";
 import TicketPage from "./pages/Ticket-Page";
-// import Notification from "./components/notification.js";
+import AdminPanel from "./pages/AdminPanel";
 
 function App() {
   return (
@@ -22,14 +22,19 @@ function App() {
           <Route path="/user/home" element={<Home />} />
           <Route path="/user/createTicket" element={<TicketPage />} />
           <Route path="/user/getTickets" element={<Dashboard />} />
+          <Route path="/admin/panel" element={<AdminPanel />} />
         </Routes>
         <ToastContainer
           position="top-center"
-          autoClose={5000} // 5 seconds
+          autoClose={3500}
           hideProgressBar={false}
-          newestOnTop
-          closeButton={false}
-          theme="dark" // matches your dark UI
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
         />
       </BrowserRouter>
     </>

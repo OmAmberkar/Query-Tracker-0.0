@@ -1,5 +1,5 @@
 import User from "../models/user.model.js";
-import { hashPassword, verifyPassword } from "../utils/encryption.utils.js";
+import { verifyPassword } from "../utils/encryption.utils.js";
 
 const userLogin = async (req, res) => {
   const { email, password, role } = req.body;
@@ -28,7 +28,7 @@ const userLogin = async (req, res) => {
       maxAge: 28 * 60 * 60 * 1000, // 28 hours in milliseconds
       sameSite: "Strict",
     });
-    
+
     res.status(200).json({
       success: true,
       message: "User logged in successfully",

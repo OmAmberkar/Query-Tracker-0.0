@@ -62,8 +62,8 @@ function Register() {
   const { participants, recent } = useLiveParticipants();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
-  
+
+
   const navigate = useNavigate();
   const canvasRef = useRef(null);
 
@@ -82,7 +82,7 @@ function Register() {
     function draw() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#00FF41";
+      ctx.fillStyle = "#e3ff00"; // Lemon Yellow
       ctx.font = fontSize + "px monospace";
 
       for (let i = 0; i < drops.length; i++) {
@@ -137,12 +137,12 @@ function Register() {
         username: formData.username,
         contact: formData.contact,
         password: formData.password,
-        role :"user",
+        role: "user",
       });
 
       if (res.status === 201 || res.data?.status === "success") {
         navigate("/user/home");
-        toast.success("Registration successful! ");
+        toast.success("Registration successful!");
       }
     } catch (err) {
       if (err.response?.status === 409 || err.response?.status === 400) {
@@ -157,111 +157,111 @@ function Register() {
   };
 
   return (
-    <div className="h-screen w-full flex flex-col md:flex-row">
+    <div className="h-screen w-full flex flex-col md:flex-row selection:bg-lemon selection:text-black overflow-hidden">
       {/* Left: Form */}
-      <div className="flex-1 flex items-center justify-center bg-black p-6">
+      <div className="flex-1 flex items-center justify-center bg-black p-6 relative z-10">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
-          className="w-full max-w-md bg-gray-900 rounded-2xl border border-blue-400 p-8 shadow-[0px_0px_20px_0px_blue]"
+          className="w-full max-w-md bg-white/[0.02] border border-white/5 rounded-[40px] p-10 shadow-2xl backdrop-blur-xl relative overflow-hidden group"
         >
-          <h1 className="text-3xl font-bold text-white mb-6">
-            Join the Hackathon
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-lemon transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
+
+          <h1 className="text-4xl font-black text-white mb-8 italic tracking-tighter">
+            INITIALIZE <span className="text-lemon">PROTOCOL</span>
           </h1>
-          <form onSubmit={handleSubmit} className="space-y-4 ">
-            {[ 
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {[
               { name: "name", placeholder: "Full Name" },
-              { name: "username", placeholder: "Username" },
-              { name: "email", placeholder: "Email" },
-              { name: "contact", placeholder: "Contact Number" },
+              { name: "username", placeholder: "Codename" },
+              { name: "email", placeholder: "Network Email" },
+              { name: "contact", placeholder: "Contact Vector" },
             ].map((field) => (
-              <div key={field.name}>
+              <div key={field.name} className="space-y-1.5">
                 <input
                   type="text"
                   name={field.name}
                   value={formData[field.name]}
                   onChange={handleChange}
                   placeholder={field.placeholder}
-                  className={`w-full bg-black border ${
-                    errors[field.name]
+                  className={`w-full bg-black/40 border ${errors[field.name]
                       ? "border-red-500"
-                      : "border-gray-700 focus:border-blue-400"
-                  } rounded-lg px-4 py-3 text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-200`}
+                      : "border-white/10 focus:border-lemon"
+                    } rounded-xl px-5 py-3.5 text-white text-sm focus:outline-none focus:ring-1 focus:ring-lemon/50 transition-all font-bold placeholder:text-gray-800 uppercase tracking-widest`}
                 />
                 {errors[field.name] && (
-                  <p className="text-red-400 text-xs mt-1">{errors[field.name]}</p>
+                  <p className="text-red-500 text-[10px] font-black uppercase tracking-widest pl-2">{errors[field.name]}</p>
                 )}
               </div>
             ))}
 
             {/* Password */}
-            <div className="relative">
+            <div className="relative space-y-1.5">
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                placeholder="Password"
-                className={`w-full bg-black border ${
-                  errors.password
+                placeholder="Access Key"
+                className={`w-full bg-black/40 border ${errors.password
                     ? "border-red-500"
-                    : "border-gray-700 focus:border-blue-500"
-                } rounded-lg px-4 py-3 text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-200`}
+                    : "border-white/10 focus:border-lemon"
+                  } rounded-xl px-5 py-3.5 text-white text-sm focus:outline-none focus:ring-1 focus:ring-lemon/50 transition-all font-bold placeholder:text-gray-800 uppercase tracking-widest`}
               />
               <span
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-3 flex items-center text-gray-400 cursor-pointer"
+                className="absolute right-4 top-4 text-gray-700 cursor-pointer hover:text-lemon transition-colors"
               >
-                {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+                {showPassword ? <AiOutlineEyeInvisible size={18} /> : <AiOutlineEye size={18} />}
               </span>
               {errors.password && (
-                <p className="text-red-400 text-xs mt-1">{errors.password}</p>
+                <p className="text-red-500 text-[10px] font-black uppercase tracking-widest pl-2">{errors.password}</p>
               )}
             </div>
 
             {/* Confirm Password */}
-            <div className="relative">
+            <div className="relative space-y-1.5">
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                placeholder="Confirm Password"
-                className={`w-full bg-black border ${
-                  errors.confirmPassword
+                placeholder="Verify Key"
+                className={`w-full bg-black/40 border ${errors.confirmPassword
                     ? "border-red-500"
-                    : "border-gray-700 focus:border-blue-500"
-                } rounded-lg px-4 py-3 text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-200`}
+                    : "border-white/10 focus:border-lemon"
+                  } rounded-xl px-5 py-3.5 text-white text-sm focus:outline-none focus:ring-1 focus:ring-lemon/50 transition-all font-bold placeholder:text-gray-800 uppercase tracking-widest`}
               />
               <span
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute inset-y-0 right-3 flex items-center text-gray-400 cursor-pointer"
+                className="absolute right-4 top-4 text-gray-700 cursor-pointer hover:text-lemon transition-colors"
               >
-                {showConfirmPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+                {showConfirmPassword ? <AiOutlineEyeInvisible size={18} /> : <AiOutlineEye size={18} />}
               </span>
               {errors.confirmPassword && (
-                <p className="text-red-400 text-xs mt-1">{errors.confirmPassword}</p>
+                <p className="text-red-500 text-[10px] font-black uppercase tracking-widest pl-2">{errors.confirmPassword}</p>
               )}
             </div>
 
             <motion.button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg py-3 transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center disabled:opacity-70"
+              className="w-full bg-lemon hover:bg-white text-black font-black rounded-xl py-4 uppercase tracking-[0.2em] transition-all shadow-[0_10px_30px_rgba(227,255,0,0.1)] flex items-center justify-center disabled:opacity-50 mt-4"
               whileHover={{ scale: loading ? 1 : 1.02 }}
               whileTap={{ scale: loading ? 1 : 0.98 }}
               disabled={loading}
             >
-              {loading ? "Creating Account..." : "Create Account"}
+              {loading ? "INITIALIZING..." : "JOIN NETWORK"}
             </motion.button>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-gray-400 text-sm">
-              Already have an account?{" "}
+          <div className="mt-8 text-center">
+            <p className="text-gray-600 text-[10px] font-black uppercase tracking-widest">
+              Already registered?{" "}
               <Link
                 to="/user/login"
-                className="text-blue-400 hover:text-blue-300 font-medium"
+                className="text-lemon hover:underline decoration-2 underline-offset-4"
               >
                 Sign in
               </Link>
@@ -271,23 +271,29 @@ function Register() {
       </div>
 
       {/* Right: Hackathon Crazy Side */}
-      <div className="flex-1 relative bg-black overflow-hidden">
-        <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full"></canvas>
-        <div className="relative z-10 flex flex-col items-center justify-center h-full p-6 text-white">
-          <h2 className="text-4xl font-bold mb-4 ">
-            Hackathon Live Feed
-          </h2>
-          <p className="mb-6 text-lg">
-            Participants Registered:{" "}
-            <span className="text-white font-bold animate-pulse">{participants}</span>
-          </p>
-          <div className="bg-transparent backdrop-blur-sm rounded-lg p-4 w-64 overflow-hidden">
-            <h3 className="text-sm text-center font-semibold mb-2 text-green-300">
-              Recent Joiners
-            </h3>
-            <div className="space-y-1 text-sm">
+      <div className="flex-1 relative bg-black">
+        <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full opacity-40"></canvas>
+        <div className="relative z-10 flex flex-col items-center justify-center h-full p-10 text-white text-center">
+          <h2 className="text-sm font-black text-lemon tracking-[0.5em] mb-12 uppercase italic">Live Network Pulse</h2>
+
+          <div className="mb-12">
+            <div className="text-7xl font-black tracking-tighter mb-2 italic">{participants}</div>
+            <div className="text-xs font-black uppercase tracking-[0.3em] text-gray-500">Units Active in sector</div>
+          </div>
+
+          <div className="p-8 border border-white/5 bg-black/50 backdrop-blur-md rounded-3xl w-full max-w-xs transition-all hover:border-lemon/20">
+            <h3 className="text-[10px] font-black text-lemon tracking-[0.3em] mb-6 uppercase">New Arrivals</h3>
+            <div className="space-y-3 font-bold uppercase tracking-widest text-[10px] text-gray-400">
               {recent.map((user, i) => (
-                <p key={i} className="truncate animate-pulse">{user}</p>
+                <motion.p
+                  key={i}
+                  initial={{ opacity: 0, x: 10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="truncate flex items-center justify-between"
+                >
+                  <span className="text-white">{user}</span>
+                  <span className="w-1.5 h-1.5 bg-lemon rounded-full shadow-[0_0_5px_#e3ff00]"></span>
+                </motion.p>
               ))}
             </div>
           </div>
