@@ -30,8 +30,8 @@ jobs:
           context: ./server
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/query-tracker-server:${{ steps.vars.outputs.VERSION }}
-            ${{ secrets.DOCKER_USERNAME }}/query-tracker-server:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/query-tracker-server:${{ steps.vars.outputs.VERSION }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/query-tracker-server:latest
 
       # Frontend
       - name: Build and Push Frontend
@@ -40,5 +40,5 @@ jobs:
           context: ./client
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/query-tracker-client:${{ steps.vars.outputs.VERSION }}
-            ${{ secrets.DOCKER_USERNAME }}/query-tracker-client:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/query-tracker-client:${{ steps.vars.outputs.VERSION }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/query-tracker-client:latest
