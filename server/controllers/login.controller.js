@@ -22,7 +22,7 @@ const userLogin = async (req, res) => {
       maxAge: 28 * 60 * 60 * 1000, // 28 hours in milliseconds
       sameSite: "Strict",
     });
-    res.cookie("role", role, {
+    res.cookie("role", user.role, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: 28 * 60 * 60 * 1000, // 28 hours in milliseconds
