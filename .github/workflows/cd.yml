@@ -31,8 +31,8 @@ jobs:
           context: ./server
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/ecommerce-application-backend:${{ steps.vars.outputs.VERSION }}
-            ${{ secrets.DOCKER_USERNAME }}/ecommerce-application-backend:latest
+            ${{ secrets.DOCKER_USERNAME }}/query-tracker-server:${{ steps.vars.outputs.VERSION }}
+            ${{ secrets.DOCKER_USERNAME }}/query-tracker-server:latest
 
       # Frontend
       - name: Build and Push Frontend
@@ -41,5 +41,5 @@ jobs:
           context: ./client
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/ecommerce-application-frontend:${{ steps.vars.outputs.VERSION }}
-            ${{ secrets.DOCKER_USERNAME }}/ecommerce-application-frontend:latest
+            ${{ secrets.DOCKER_USERNAME }}/query-tracker-client:${{ steps.vars.outputs.VERSION }}
+            ${{ secrets.DOCKER_USERNAME }}/query-tracker-client:latest
