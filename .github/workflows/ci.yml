@@ -11,6 +11,11 @@ jobs:
   server-ci:
     runs-on: ubuntu-latest
 
+    env :
+      MONGODB_URI : ${{ secrets.MONGODB_URI }}
+      DB_NAME : ${{ secrets.DB_NAME }}
+      PORT : ${{ secrets.PORT }}
+
     strategy:
       matrix:
         node-version: [20.x, 22.x, 24.x]
