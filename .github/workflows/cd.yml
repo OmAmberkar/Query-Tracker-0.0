@@ -29,7 +29,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./server
-          dockerfile: ./server/Dockerfile
           push: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/ecommerce-application-backend:${{ steps.vars.outputs.VERSION }}
@@ -40,7 +39,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./client
-          dockerfile: ./client/Dockerfile
           push: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/ecommerce-application-frontend:${{ steps.vars.outputs.VERSION }}
