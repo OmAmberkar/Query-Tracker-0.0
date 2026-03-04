@@ -193,7 +193,7 @@ function AdminPanel() {
                                             <button
                                                 onClick={() => handleDeleteUser(user._id)}
                                                 title="Purge User"
-                                                className="p-3 rounded-xl bg-white/5 hover:bg-red-500 transition-all text-gray-500 hover:text-white"
+                                                className="p-3 z-1 rounded-xl bg-white/5 hover:bg-red-500 transition-all text-gray-500 hover:text-white"
                                             >
                                                 <FiTrash2 size={16} />
                                             </button>
