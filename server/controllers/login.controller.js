@@ -16,17 +16,19 @@ const userLogin = async (req, res) => {
         .json({ success: false, message: "Invalid credentials" });
     }
 
+    const isProduction = process.env.NODE_ENV === "production";
+
     res.cookie("email", email, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: isProduction,
       maxAge: 28 * 60 * 60 * 1000, // 28 hours in milliseconds
-      sameSite: "Strict",
+      sameSite: isProduction ? "None" : "Lax",
     });
     res.cookie("role", user.role, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: isProduction,
       maxAge: 28 * 60 * 60 * 1000, // 28 hours in milliseconds
-      sameSite: "Strict",
+      sameSite: isProduction ? "None" : "Lax",
     });
 
     res.status(200).json({

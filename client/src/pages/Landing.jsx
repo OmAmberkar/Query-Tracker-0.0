@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 
 const fadeUp = (delay = 0) => ({
@@ -17,6 +17,19 @@ const staggerContainer = {
 };
 
 function Landing() {
+  const warmUpBackend = async () => {
+    try {
+      // Trigger a request to the Render backend to wake it up
+      await fetch("https://query-tracker-server.onrender.com/health");
+      console.log("Backend warm-up triggered");
+    } catch (error) {
+      console.log("Warm-up request sent");
+    }
+  };
+
+  useEffect(() => {
+    warmUpBackend();
+  }, []);
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden selection:bg-lemon selection:text-black">
 
@@ -85,6 +98,7 @@ function Landing() {
               <motion.div variants={fadeUp()} className="flex flex-col sm:flex-row gap-6">
                 <a
                   href="/user/register"
+                  onClick={warmUpBackend}
                   className="group bg-lemon text-black px-10 py-5 rounded-full font-black text-lg uppercase tracking-wider transition-all hover:bg-white hover:scale-105 shadow-[0_20px_40px_rgba(227,255,0,0.15)] flex items-center justify-center"
                 >
                   Join the Mission
@@ -95,6 +109,7 @@ function Landing() {
 
                 <a
                   href="/user/login"
+                  onClick={warmUpBackend}
                   className="border-2 border-white/10 hover:border-lemon text-white px-10 py-5 rounded-full font-black text-lg uppercase tracking-wider transition-all hover:text-lemon flex items-center justify-center"
                 >
                   Dashboard
