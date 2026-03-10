@@ -29,9 +29,9 @@ function AdminPanel() {
         const drops = Array(Math.floor(columns)).fill(1);
 
         const draw = () => {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillStyle = "rgba(248, 250, 252, 0.05)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#e3ff00"; // Lemon Yellow
+            ctx.fillStyle = "rgba(37, 99, 235, 0.1)"; // Soft Blue
             ctx.font = `${fontSize}px monospace`;
 
             for (let i = 0; i < drops.length; i++) {
@@ -107,12 +107,21 @@ function AdminPanel() {
         (t.name || "").toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    const getStatusColor = (status) => {
+        switch (status?.toLowerCase()) {
+            case 'open': return 'bg-primary/10 text-primary border-primary/20';
+            case 'in progress': return 'bg-warning/10 text-warning border-warning/20';
+            case 'resolved': return 'bg-success/10 text-success border-success/20';
+            case 'closed': return 'bg-text-muted/10 text-text-muted border-text-muted/20';
+            default: return 'bg-text-muted/10 text-text-muted border-text-muted/20';
+        }
+    };
+
     if (loading) return <LoadingSpinner />;
 
     return (
-        <div className="min-h-screen bg-black text-white relative font-sans selection:bg-lemon selection:text-black">
-            {/* Background canvas should be at the very bottom */}
-            <canvas ref={canvasRef} className="fixed inset-0 z-[-1] opacity-10 pointer-events-none" />
+        <div className="min-h-screen bg-bg-deep text-text-main relative font-sans selection:bg-primary selection:text-white">
+            <canvas ref={canvasRef} className="fixed inset-0 z-0 opacity-40 pointer-events-none" />
 
             <Navbar />
 
@@ -120,19 +129,19 @@ function AdminPanel() {
                 <header className="mb-12 flex flex-col lg:flex-row lg:items-end justify-between gap-8">
                     <div>
                         <div className="flex items-center space-x-4 mb-4">
-                            <div className="p-3 bg-lemon rounded-2xl shadow-[0_0_20px_rgba(227,255,0,0.3)]">
-                                <FiShield className="text-black text-2xl" />
+                            <div className="p-3 bg-primary rounded-2xl shadow-primary-glow">
+                                <FiShield className="text-white text-2xl" />
                             </div>
-                            <h1 className="text-5xl font-black italic tracking-tighter uppercase">
-                                Central <span className="text-lemon">Command</span>
+                            <h1 className="text-5xl font-black italic tracking-tighter uppercase font-tech text-text-main">
+                                Central <span className="text-primary">Command</span>
                             </h1>
                         </div>
-                        <p className="text-gray-500 font-bold uppercase tracking-[0.3em] text-[10px] pl-1">
+                        <p className="text-text-muted font-bold uppercase tracking-[0.3em] text-[10px] pl-1">
                             System Administrator Console • Priority Level 0
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-4 bg-white/[0.03] p-1.5 rounded-[24px] border border-white/5 backdrop-blur-3xl">
+                    <div className="flex items-center gap-4 bg-surface p-1.5 rounded-[24px] border border-border shadow-sm">
                         <TabButton
                             active={activeTab === "users"}
                             onClick={() => setActiveTab("users")}
@@ -149,13 +158,13 @@ function AdminPanel() {
                 </header>
 
                 <div className="mb-8 relative max-w-xl">
-                    <FiSearch className="absolute left-6 top-1/2 -translate-y-1/2 text-lemon text-xl" />
+                    <FiSearch className="absolute left-6 top-1/2 -translate-y-1/2 text-primary text-xl" />
                     <input
                         type="text"
                         placeholder="NETWORK SEARCH..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-white/[0.03] border border-white/10 rounded-full py-5 pl-16 pr-8 text-sm font-black uppercase tracking-widest focus:outline-none focus:border-lemon transition-all"
+                        className="w-full bg-surface border border-border rounded-full py-5 pl-16 pr-8 text-sm font-black uppercase tracking-widest focus:outline-none focus:border-primary transition-all shadow-sm focus:shadow-primary-glow placeholder:text-slate-300"
                     />
                 </div>
 
@@ -174,26 +183,26 @@ function AdminPanel() {
                                     initial={{ opacity: 0, scale: 0.95 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     transition={{ delay: idx * 0.05 }}
-                                    className="group bg-white/[0.02] border border-white/5 p-8 rounded-[40px] hover:border-lemon/30 transition-all relative overflow-hidden backdrop-blur-xl"
+                                    className="group bg-surface border border-border p-8 rounded-[40px] hover:border-primary/30 transition-all relative overflow-hidden shadow-sm hover:shadow-primary-glow"
                                 >
-                                    <div className="absolute top-0 right-0 w-32 h-32 bg-lemon opacity-[0.02] rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary opacity-[0.02] rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
 
                                     <div className="flex justify-between items-start mb-6">
-                                        <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center font-black text-lemon italic">
+                                        <div className="w-12 h-12 bg-bg-deep border border-border rounded-2xl flex items-center justify-center font-black text-primary font-tech italic">
                                             {user.name?.charAt(0) || "U"}
                                         </div>
                                         <div className="flex space-x-2">
                                             <button
                                                 onClick={() => toggleRole(user)}
                                                 title="Toggle Admin Privilege"
-                                                className={`p-3 rounded-xl transition-all ${user.role === 'admin' ? 'bg-lemon text-black shadow-[0_0_15px_rgba(227,255,0,0.3)]' : 'bg-white/5 hover:bg-white/10 text-gray-500 hover:text-white'}`}
+                                                className={`p-3 rounded-xl transition-all shadow-sm border ${user.role === 'admin' ? 'bg-primary text-white border-primary shadow-primary-glow' : 'bg-white text-text-muted hover:text-text-main border-border hover:bg-bg-deep'}`}
                                             >
                                                 <FiShield size={16} />
                                             </button>
                                             <button
                                                 onClick={() => handleDeleteUser(user._id)}
                                                 title="Purge User"
-                                                className="p-3 z-1 rounded-xl bg-white/5 hover:bg-red-500 transition-all text-gray-500 hover:text-white"
+                                                className="p-3 z-1 rounded-xl bg-error/10 text-error border border-error/20 hover:bg-error hover:text-white transition-all shadow-sm"
                                             >
                                                 <FiTrash2 size={16} />
                                             </button>
@@ -201,17 +210,17 @@ function AdminPanel() {
                                     </div>
 
                                     <div className="space-y-1 mb-8">
-                                        <h3 className="text-xl font-black uppercase tracking-tight text-white group-hover:text-lemon transition-colors">
+                                        <h3 className="text-xl font-black uppercase tracking-tight text-text-main group-hover:text-primary transition-colors font-tech">
                                             {user.name}
                                         </h3>
-                                        <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest truncate">{user.email}</p>
+                                        <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest truncate">{user.email}</p>
                                     </div>
 
-                                    <div className="flex items-center justify-between pt-6 border-t border-white/5">
-                                        <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${user.role === 'admin' ? 'text-lemon' : 'text-gray-600'}`}>
+                                    <div className="flex items-center justify-between pt-6 border-t border-border">
+                                        <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${user.role === 'admin' ? 'text-primary' : 'text-slate-400'}`}>
                                             ROLE: {user.role?.toUpperCase()}
                                         </span>
-                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-800">
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-300">
                                             ID: {user._id?.slice(-8).toUpperCase()}
                                         </span>
                                     </div>
@@ -232,31 +241,31 @@ function AdminPanel() {
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: idx * 0.05 }}
-                                    className="group flex flex-col md:flex-row md:items-center justify-between p-8 bg-white/[0.02] border border-white/5 rounded-[40px] hover:bg-white/[0.04] transition-all"
+                                    className="group flex flex-col md:flex-row md:items-center justify-between p-8 bg-surface border border-border rounded-[40px] hover:border-primary/30 transition-all shadow-sm"
                                 >
                                     <div className="flex items-center space-x-8 mb-6 md:mb-0">
-                                        <div className={`w-3 h-3 rounded-full shadow-[0_0_10px_currentColor] ${ticket.status === 'resolved' ? 'text-lemon bg-lemon' : 'text-gray-700 bg-gray-700'}`} />
+                                        <div className={`w-3 h-3 rounded-full shadow-[0_0_10px_currentColor] ${ticket.status === 'resolved' ? 'text-success bg-success' : 'text-primary bg-primary'}`} />
                                         <div>
-                                            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-white group-hover:text-lemon transition-colors">
+                                            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-text-main group-hover:text-primary transition-colors font-tech">
                                                 {ticket.title || ticket.subject || "Untitled Query"}
                                             </h3>
                                             <div className="flex gap-4 mt-2">
-                                                <span className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">
+                                                <span className="text-[10px] font-bold text-text-muted/60 uppercase tracking-widest">
                                                     BY: {ticket.name || ticket.email}
                                                 </span>
-                                                <span className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">
+                                                <span className="text-[10px] font-bold text-text-muted/60 uppercase tracking-widest">
                                                     REF: {ticket._id?.slice(-8).toUpperCase()}
                                                 </span>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-6">
-                                        <span className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest ${ticket.status === 'resolved' ? 'bg-lemon/10 text-lemon border border-lemon/20' : 'bg-white/5 text-gray-600 border border-white/10'}`}>
+                                        <span className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border ${getStatusColor(ticket.status)}`}>
                                             {ticket.status?.toUpperCase()}
                                         </span>
                                         <button
                                             onClick={() => window.location.href = "/user/getTickets"}
-                                            className="text-[10px] font-black text-gray-500 hover:text-white uppercase tracking-widest transition-colors"
+                                            className="text-[10px] font-black text-text-muted hover:text-primary uppercase tracking-widest transition-colors"
                                         >
                                             Inspect Protocol →
                                         </button>
@@ -268,10 +277,10 @@ function AdminPanel() {
                 </AnimatePresence>
 
                 {(activeTab === "users" ? filteredUsers : filteredTickets).length === 0 && (
-                    <div className="text-center py-32 bg-white/[0.02] border border-dashed border-white/10 rounded-[60px]">
-                        <FiActivity className="mx-auto text-4xl text-gray-800 mb-6" />
-                        <div className="text-2xl font-black text-gray-700 uppercase tracking-tight italic">Zero entities detected in this sector</div>
-                        <p className="text-gray-600 font-bold uppercase tracking-[0.3em] text-[10px] mt-2">The search query returned no matching data packets</p>
+                    <div className="text-center py-32 bg-surface border border-dashed border-border rounded-[60px] shadow-sm">
+                        <FiActivity className="mx-auto text-4xl text-slate-200 mb-6" />
+                        <div className="text-2xl font-black text-text-muted uppercase tracking-tight italic font-tech">Zero entities detected in this sector</div>
+                        <p className="text-text-muted font-bold uppercase tracking-[0.3em] text-[10px] mt-2">The search query returned no matching data packets</p>
                     </div>
                 )}
             </main>
@@ -282,7 +291,7 @@ function AdminPanel() {
 const TabButton = ({ active, onClick, icon, label }) => (
     <button
         onClick={onClick}
-        className={`flex items-center space-x-3 px-8 py-4 rounded-[20px] text-[10px] font-black uppercase tracking-widest transition-all ${active ? 'bg-lemon text-black shadow-2xl shadow-lemon/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
+        className={`flex items-center space-x-3 px-8 py-4 rounded-[20px] text-[10px] font-black uppercase tracking-widest transition-all ${active ? 'bg-primary text-white shadow-primary-glow' : 'text-text-muted hover:text-primary hover:bg-bg-deep'}`}
     >
         {React.cloneElement(icon, { size: 14 })}
         <span>{label}</span>

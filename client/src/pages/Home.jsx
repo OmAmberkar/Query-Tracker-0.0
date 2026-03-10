@@ -7,6 +7,8 @@ import { FiActivity, FiClock, FiCheckCircle, FiPlus, FiGrid } from "react-icons/
 import Navbar from "../components/Navbar";
 import LoadingSpinner from "../components/LoadingSpinner";
 import React from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 
 function Home() {
   const [tickets, setTickets] = useState([]);
@@ -29,9 +31,9 @@ function Home() {
     const drops = Array(Math.floor(columns)).fill(1);
 
     const draw = () => {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillStyle = "rgba(248, 250, 252, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#e3ff00"; // Lemon Yellow
+      ctx.fillStyle = "rgba(37, 99, 235, 0.1)"; // Soft Blue
       ctx.font = `${fontSize}px monospace`;
 
       for (let i = 0; i < drops.length; i++) {
@@ -73,125 +75,172 @@ function Home() {
     fetchHomeData();
   }, []);
 
+  const container = useRef();
+
+  useGSAP(() => {
+    const tl = gsap.timeline();
+
+    tl.from(".home-title", {
+      y: 40,
+      opacity: 0,
+      duration: 1.2,
+      ease: "power4.out"
+    })
+      .from(".stat-card", {
+        y: 40,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.2,
+        ease: "power3.out"
+      }, "-=0.6")
+      .from(".action-card", {
+        x: -40,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: "power2.out"
+      }, "-=0.4")
+      .from(".feed-title", {
+        opacity: 0,
+        duration: 0.5
+      }, "-=0.4")
+      .from(".ticket-item", {
+        x: 40,
+        opacity: 0,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: "power2.out"
+      }, "-=0.2");
+
+  }, { scope: container });
+
   if (loading) return <LoadingSpinner />;
 
+  const getStatusColor = (status) => {
+    switch (status?.toLowerCase()) {
+      case 'open': return 'bg-primary/10 text-primary border-primary/20';
+      case 'in progress': return 'bg-warning/10 text-warning border-warning/20';
+      case 'resolved': return 'bg-success/10 text-success border-success/20';
+      case 'closed': return 'bg-text-muted/10 text-text-muted border-text-muted/20';
+      default: return 'bg-text-muted/10 text-text-muted border-text-muted/20';
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden font-sans selection:bg-lemon selection:text-black">
+    <div ref={container} className="h-screen bg-bg-deep text-text-main relative overflow-hidden font-sans selection:bg-primary selection:text-white flex flex-col">
       <canvas
         ref={canvasRef}
-        className="fixed inset-0 z-0 opacity-20 pointer-events-none"
+        className="fixed inset-0 z-0 opacity-40 pointer-events-none"
       />
 
-      <div className="relative z-10">
+      <div className="relative z-10 flex flex-col h-full">
         <Navbar />
 
-        <main className="max-w-7xl mx-auto px-6 py-12 pt-28">
-          {/* Hero Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-16 text-center lg:text-left"
-          >
-            <h1 className="text-6xl font-black italic tracking-tighter mb-4 uppercase mt-10">
-              Operational <span className="text-lemon ">Console</span>
+        <main className="flex-1 max-w-7xl mx-auto px-6 pt-24 pb-6 overflow-hidden flex flex-col w-full">
+          {/* Hero Section - Compact */}
+          <div className="home-title mb-8 text-center lg:text-left shrink-0">
+            <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter mb-2 uppercase font-tech">
+              Operational <span className="text-primary">Console</span>
             </h1>
-            <p className="text-gray-500 font-bold uppercase tracking-[0.3em] text-sm">
+            <p className="text-text-muted font-bold uppercase tracking-[0.3em] text-[10px]">
               Real-time monitoring and ticket lifecycle management
             </p>
-          </motion.div>
-
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-            <StatCard
-              icon={<FiActivity className="text-lemon" />}
-              label="Active Queries"
-              value={stats.total}
-              color="lemon"
-            />
-            <StatCard
-              icon={<FiClock className="text-lemon" />}
-              label="Pending Triage"
-              value={stats.pending}
-              color="lemon"
-            />
-            <StatCard
-              icon={<FiCheckCircle className="text-lemon" />}
-              label="Resolved Objectives"
-              value={stats.solved}
-              color="lemon"
-            />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            {/* Quick Actions */}
-            <div className="lg:col-span-1 space-y-6">
-              <h2 className="text-xs font-black uppercase tracking-[0.5em] text-gray-500 mb-8 italic">
-                Terminal Commands
-              </h2>
-              <ActionCard
-                title="Initialize Ticket"
-                desc="Deploy a new query to the network"
-                onClick={() => navigate("/user/createTicket")}
-                icon={<FiPlus />}
-              />
-              <ActionCard
-                title="Access Archives"
-                desc="Review historical ticket data"
-                onClick={() => navigate("/user/getTickets")}
-                icon={<FiGrid />}
-              />
+          <div className="flex-1 flex flex-col lg:flex-row gap-8 overflow-hidden">
+            {/* Left Column: Stats and Actions */}
+            <div className="lg:w-1/3 flex flex-col gap-6 overflow-y-auto pr-2 custom-scrollbar">
+              {/* Stats Grid - Vertical and Compact */}
+              <div className="grid grid-cols-1 gap-4 shrink-0">
+                <StatCard
+                  className="stat-card"
+                  icon={<FiActivity className="text-primary" />}
+                  label="Active Queries"
+                  value={stats.total}
+                  color="primary"
+                />
+                <StatCard
+                  className="stat-card"
+                  icon={<FiClock className="text-primary" />}
+                  label="Pending Triage"
+                  value={stats.pending}
+                  color="primary"
+                />
+                <StatCard
+                  className="stat-card"
+                  icon={<FiCheckCircle className="text-primary" />}
+                  label="Resolved Objectives"
+                  value={stats.solved}
+                  color="primary"
+                />
+              </div>
+
+              {/* Quick Actions */}
+              <div className="space-y-4 shrink-0">
+                <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-text-muted mb-4 italic font-tech">
+                  Terminal Commands
+                </h2>
+                <ActionCard
+                  className="action-card"
+                  title="Initialize Ticket"
+                  desc="Deploy new query"
+                  onClick={() => navigate("/user/createTicket")}
+                  icon={<FiPlus />}
+                />
+                <ActionCard
+                  className="action-card"
+                  title="Access Archives"
+                  desc="Historical data"
+                  onClick={() => navigate("/user/getTickets")}
+                  icon={<FiGrid />}
+                />
+              </div>
             </div>
 
-            {/* Recent Activity */}
-            <div className="lg:col-span-2">
-              <div className="flex items-center justify-between mb-8">
-                <h2 className="text-xs font-black uppercase tracking-[0.5em] text-gray-500 italic">
+            {/* Right Column: Recent Activity Feed */}
+            <div className="lg:w-2/3 flex flex-col overflow-hidden">
+              <div className="flex items-center justify-between mb-6 feed-title shrink-0">
+                <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-text-muted italic font-tech">
                   Live Feed Activity
                 </h2>
                 <button
                   onClick={() => navigate("/user/getTickets")}
-                  className="text-[10px] font-black uppercase tracking-widest text-lemon hover:text-white transition-colors"
+                  className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-secondary transition-colors"
                 >
                   View All Log Files →
                 </button>
               </div>
 
-              <div className="space-y-4">
+              <div className="flex-1 overflow-y-auto pr-4 custom-scrollbar space-y-3">
                 {tickets.length > 0 ? (
-                  tickets.map((ticket, index) => (
-                    <motion.div
+                  tickets.map((ticket) => (
+                    <div
                       key={ticket._id}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="group flex items-center justify-between p-6 bg-white/[0.02] border border-white/5 rounded-2xl hover:bg-white/[0.04] transition-all cursor-pointer"
+                      className="ticket-item group flex items-center justify-between p-4 bg-surface border border-border rounded-xl hover:border-primary/30 transition-all cursor-pointer shadow-sm hover:shadow-primary-glow"
                       onClick={() => navigate("/user/getTickets")}
                     >
-                      <div className="flex items-center space-x-6">
-                        <div className="w-2 h-2 rounded-full bg-lemon animate-pulse shadow-[0_0_8px_#e3ff00]" />
+                      <div className="flex items-center space-x-4">
+                        <div className={`w-2 h-2 rounded-full ${ticket.status === "resolved" ? "bg-success shadow-[0_0_8px_#22C55E]" : "bg-primary shadow-[0_0_8px_#2563EB]"} animate-pulse`} />
                         <div>
-                          <h3 className="text-sm font-black uppercase tracking-widest text-white group-hover:text-lemon transition-colors line-clamp-1">
+                          <h3 className="text-xs font-black uppercase tracking-widest text-text-main group-hover:text-primary transition-colors line-clamp-1 font-tech">
                             {ticket.subject || ticket.title || "Untitled Query"}
                           </h3>
-                          <p className="text-[10px] font-bold text-gray-600 uppercase tracking-tighter mt-1">
+                          <p className="text-[9px] font-bold text-text-muted uppercase tracking-tighter mt-1">
                             {ticket.email || ticket.name} • Ref:{" "}
                             {ticket._id?.slice(-8).toUpperCase()}
                           </p>
                         </div>
                       </div>
                       <span
-                        className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${ticket.status === "resolved"
-                          ? "bg-lemon/10 text-lemon border border-lemon/20"
-                          : "bg-white/5 text-gray-400 border border-white/10"
-                          }`}
+                        className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${getStatusColor(ticket.status)}`}
                       >
                         {ticket.status}
                       </span>
-                    </motion.div>
+                    </div>
                   ))
                 ) : (
-                  <div className="text-center py-20 bg-white/[0.02] border border-dashed border-white/10 rounded-3xl">
-                    <p className="text-xs font-black uppercase tracking-[0.3em] text-gray-700">
+                  <div className="text-center py-10 bg-surface border border-dashed border-border rounded-2xl">
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-text-muted">
                       No active transmissions detected
                     </p>
                   </div>
@@ -205,48 +254,47 @@ function Home() {
   );
 }
 
-const StatCard = ({ icon, label, value, color }) => (
-  <motion.div
-    whileHover={{ y: -5 }}
-    className="bg-white/[0.02] border border-white/5 p-8 rounded-[32px] relative overflow-hidden group backdrop-blur-xl"
+const StatCard = ({ icon, label, value, color, className }) => (
+  <div
+    className={`bg-surface border border-border p-4 rounded-2xl relative overflow-hidden group shadow-sm hover:shadow-md transition-all ${className}`}
   >
-    <div className="absolute top-0 right-0 w-32 h-32 bg-lemon opacity-[0.02] rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
-    <div className="relative z-10">
-      <div className="p-4 bg-black/50 border border-white/5 rounded-2xl inline-block mb-6 shadow-xl">
-        {React.cloneElement(icon, { size: 28 })}
-      </div>
-      <div className="text-5xl font-black italic tracking-tighter mb-2">
-        {value}
-      </div>
-      <div className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500 leading-none">
-        {label}
-      </div>
-    </div>
-  </motion.div>
-);
-
-const ActionCard = ({ title, desc, onClick, icon }) => (
-  <motion.button
-    whileHover={{ scale: 1.02 }}
-    whileTap={{ scale: 0.98 }}
-    onClick={onClick}
-    className="w-full text-left p-8 bg-white/[0.02] border border-white/5 rounded-3xl group hover:border-lemon/50 transition-all shadow-2xl relative overflow-hidden"
-  >
-    <div className="absolute top-0 left-0 w-1 h-full bg-lemon transform scale-y-0 group-hover:scale-y-100 transition-transform duration-500" />
-    <div className="flex items-center space-x-6">
-      <div className="p-4 bg-lemon text-black rounded-2xl shadow-[0_0_20px_rgba(227,255,0,0.2)]">
-        {React.cloneElement(icon, { size: 24 })}
+    <div className="absolute top-0 right-0 w-24 h-24 bg-primary opacity-[0.02] rounded-full -mr-12 -mt-12 group-hover:scale-150 transition-transform duration-700" />
+    <div className="relative z-10 flex items-center space-x-4">
+      <div className="p-3 bg-bg-deep border border-border rounded-xl inline-block shadow-sm shrink-0">
+        {React.cloneElement(icon, { size: 20 })}
       </div>
       <div>
-        <h3 className="text-sm font-black uppercase tracking-widest text-white group-hover:text-lemon transition-colors">
+        <div className="text-2xl font-black italic tracking-tighter font-tech text-text-main">
+          {value}
+        </div>
+        <div className="text-[8px] font-black uppercase tracking-[0.3em] text-text-muted leading-none">
+          {label}
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const ActionCard = ({ title, desc, onClick, icon, className }) => (
+  <button
+    onClick={onClick}
+    className={`w-full text-left p-4 bg-surface border border-border rounded-2xl group hover:border-primary/50 transition-all shadow-sm hover:shadow-primary-glow relative overflow-hidden ${className}`}
+  >
+    <div className="absolute top-0 left-0 w-1 h-full bg-primary transform scale-y-0 group-hover:scale-y-100 transition-transform duration-500" />
+    <div className="flex items-center space-x-4">
+      <div className="p-3 bg-primary text-white rounded-xl shadow-lg shrink-0">
+        {React.cloneElement(icon, { size: 18 })}
+      </div>
+      <div>
+        <h3 className="text-[10px] font-black uppercase tracking-widest text-text-main group-hover:text-primary transition-colors font-tech">
           {title}
         </h3>
-        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter mt-1">
+        <p className="text-[9px] font-bold text-text-muted uppercase tracking-tighter">
           {desc}
         </p>
       </div>
     </div>
-  </motion.button>
+  </button>
 );
 
 export default Home;

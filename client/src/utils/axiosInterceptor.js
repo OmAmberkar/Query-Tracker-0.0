@@ -1,16 +1,23 @@
 import axios from "axios";
 
+const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
 const axiosInterceptor = axios.create({
-    baseURL:import.meta.env.VITE_API_BASE_URL || `http://localhost:4000`,
-    withCredentials:true,
+  baseURL: isLocal ? (import.meta.env.VITE_API_BASE_URL || "http://localhost:4000") : "https://query-tracker-server.onrender.com",
+  withCredentials: true,
 });
 
-//Request Interceptor
 axiosInterceptor.interceptors.request.use(
   (config) => {
-    // You could attach tokens here if you used JWT
-    // const token = localStorage.getItem("token");
-    // if (token) config.headers.Authorization = `Bearer ${token}`;
+    try {
+      const email = localStorage.getItem("userEmail");
+      const role = localStorage.getItem("userRole");
+
+      if (email) config.headers["x-user-email"] = email;
+      if (role) config.headers["x-user-role"] = role;
+    } catch (e) {
+      console.warn("Storage access restricted", e);
+    }
+
     return config;
   },
   (error) => Promise.reject(error)
@@ -18,14 +25,14 @@ axiosInterceptor.interceptors.request.use(
 
 //Responce Interceptor
 axiosInterceptor.interceptors.response.use(
-    (response) => response,
-    (error) =>{
-        // Handle session expiry
+  (response) => response,
+  (error) => {
+    // Handle session expiry
     if (error.response?.status === 401) {
       window.location.href = "/user/login";
     }
     return Promise.reject(error);
-    }
+  }
 )
 
 export default axiosInterceptor;

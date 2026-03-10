@@ -1,22 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&family=Science+Gothic:wght@100..900&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-lemon: #e3ff00;
-  --color-lemon-dark: #ccff00;
-  --color-black-pure: #000000;
-  --color-black-soft: #0a0a0a;
+  --color-primary: #2563EB;
+  --color-secondary: #60A5FA;
+  --color-surface: #FFFFFF;
+  --color-bg-deep: #F8FAFC;
+  --color-text-main: #1E293B;
+  --color-text-muted: #64748B;
+  --color-border: #E5E7EB;
+  --color-success: #22C55E;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+
+  /* Fonts */
+  --font-family-tech: 'Orbitron', sans-serif;
+  --font-family-body: 'Science Gothic', sans-serif;
+
+  /* Legacy aliases for transition */
+  --color-lemon: var(--color-primary);
+  --color-lemon-dark: var(--color-secondary);
+
+  /* Shadows */
+  --shadow-primary-glow: 0 0 10px rgba(37, 99, 235, 0.25);
 }
 
 @layer base {
   body {
-    @apply bg-black text-white font-sans antialiased;
+    @apply bg-bg-deep text-text-main antialiased;
+    font-family: var(--font-family-body);
     overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  .font-tech {
+    font-family: var(--font-family-tech);
   }
 }
 
 ::selection {
-  background-color: var(--color-lemon);
-  color: black;
+  background-color: var(--color-primary);
+  color: #fff;
 }
 
 ::-webkit-scrollbar {
@@ -24,7 +50,7 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #000;
+  background: var(--color-bg-deep);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -33,5 +59,5 @@
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-lemon);
+  background: var(--color-primary);
 }

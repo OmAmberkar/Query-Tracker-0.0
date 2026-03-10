@@ -1,6 +1,12 @@
 /* eslint-disable */
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+import { FiCpu } from "react-icons/fi";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 30 },
@@ -17,9 +23,12 @@ const staggerContainer = {
 };
 
 function Landing() {
+  const container = useRef();
+  const cursorRef = useRef();
+  const cursorGlowRef = useRef();
+
   const warmUpBackend = async () => {
     try {
-      // Trigger a request to the Render backend to wake it up
       await fetch("https://query-tracker-server.onrender.com/health");
       console.log("Backend warm-up triggered");
     } catch (error) {
@@ -30,241 +39,228 @@ function Landing() {
   useEffect(() => {
     warmUpBackend();
   }, []);
+
+  useGSAP(() => {
+    // Mouse follower
+    const xTo = gsap.quickTo(cursorRef.current, "x", { duration: 0.4, ease: "power3" });
+    const yTo = gsap.quickTo(cursorRef.current, "y", { duration: 0.4, ease: "power3" });
+    const gxTo = gsap.quickTo(cursorGlowRef.current, "x", { duration: 0.8, ease: "power2" });
+    const gyTo = gsap.quickTo(cursorGlowRef.current, "y", { duration: 0.8, ease: "power2" });
+
+    window.addEventListener("mousemove", (e) => {
+      xTo(e.clientX);
+      yTo(e.clientY);
+      gxTo(e.clientX);
+      gyTo(e.clientY);
+    });
+
+    // Hero Text Parallax & Entrance
+    gsap.from(".hero-title span", {
+      y: 100,
+      opacity: 0,
+      stagger: 0.05,
+      duration: 1.5,
+      ease: "power4.out",
+    });
+
+    gsap.to(".hero-title", {
+      yPercent: -20,
+      scrollTrigger: {
+        trigger: ".hero-section",
+        start: "top top",
+        end: "bottom top",
+        scrub: true
+      }
+    });
+
+    // Background Orbs Animation
+    gsap.to(".bg-orb", {
+      x: "random(-100, 100)",
+      y: "random(-100, 100)",
+      duration: "random(10, 20)",
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut",
+      stagger: {
+        amount: 2,
+        from: "random"
+      }
+    });
+
+    // Scroll Animations
+    const sections = gsap.utils.toArray(".reveal-section");
+    sections.forEach((section) => {
+      gsap.from(section, {
+        opacity: 0,
+        y: 50,
+        duration: 1,
+        scrollTrigger: {
+          trigger: section,
+          start: "top 80%",
+          end: "top 20%",
+          toggleActions: "play none none reverse"
+        }
+      });
+    });
+
+    // Hero & Grid Entrance
+    const tl = gsap.timeline();
+
+    tl.from(".nav-anim", { y: -20, opacity: 0, duration: 1, ease: "power4.out" })
+      .from(".hero-title", { x: -40, opacity: 0, duration: 1.2, ease: "power4.out" }, "-=0.6")
+      .from(".hero-desc", { y: 20, opacity: 0, duration: 1, ease: "power3.out" }, "-=0.8")
+      .from(".hero-btns", { y: 20, opacity: 0, duration: 0.8, stagger: 0.2, ease: "power3.out" }, "-=0.6")
+      .from(".about-card", { scale: 0.9, opacity: 0, duration: 1, ease: "power2.out" }, "-=0.8")
+      .from(".mini-card", { scale: 0.8, opacity: 0, duration: 0.6, stagger: 0.1, ease: "back.out(1.7)" }, "-=0.6")
+      .from(".footer-anim", { opacity: 0, duration: 1 }, "-=0.4");
+
+    // Background Orbs Breathing
+    gsap.to(".bg-orb", {
+      scale: 1.1,
+      opacity: 0.2,
+      duration: "random(4, 8)",
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut",
+      stagger: 0.5
+    });
+
+  }, { scope: container });
+
   return (
-    <div className="min-h-screen bg-black text-white overflow-hidden selection:bg-lemon selection:text-black">
+    <div ref={container} className="h-screen bg-bg-deep text-text-main overflow-hidden selection:bg-primary selection:text-white font-sans cursor-none flex flex-col relative">
+      {/* Custom Cursor */}
+      <div ref={cursorRef} className="fixed w-4 h-4 bg-primary rounded-full pointer-events-none z-[9999] mix-blend-difference hidden md:block" style={{ transform: 'translate(-50%, -50%)' }} />
+      <div ref={cursorGlowRef} className="fixed w-64 h-64 bg-primary/10 rounded-full pointer-events-none z-[9998] blur-[80px] hidden md:block" style={{ transform: 'translate(-50%, -50%)' }} />
 
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-black/40 backdrop-blur-md border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="flex items-center space-x-2"
-            >
-              <div className="w-10 h-10 bg-lemon rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(227,255,0,0.3)]">
-                <span className="text-black font-black text-xl tracking-tighter">QT</span>
+      {/* Floating Background Orbs */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="bg-orb absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 blur-[120px] rounded-full" />
+        <div className="bg-orb absolute bottom-1/4 right-1/4 w-80 h-80 bg-secondary/5 blur-[100px] rounded-full" />
+      </div>
+
+      <Navbar />
+
+      <main className="flex-1 relative z-10 p-6 pt-24 max-w-[1600px] mx-auto w-full flex flex-col gap-6 overflow-hidden">
+        {/* Top Section: Hero + Summary */}
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 overflow-hidden">
+
+          {/* Hero: Left Side (7 columns) */}
+          <div className="lg:col-span-7 flex flex-col justify-center space-y-8 h-full">
+            <div className="space-y-4">
+              <div className="inline-flex items-center px-4 py-1.5 bg-white border border-border rounded-full text-primary text-[9px] font-black uppercase tracking-[0.3em] shadow-sm w-fit">
+                <span className="w-2 h-2 bg-primary rounded-full mr-2 animate-pulse"></span>
+                Protocol v1.0.4 Online
               </div>
-              <span className="text-xl font-black tracking-tight text-white">
-                Query<span className="text-lemon">Tracker</span>
-              </span>
-            </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="hidden md:flex items-center space-x-10"
-            >
-              <a href="#features" className="text-sm font-medium text-gray-400 hover:text-lemon transition-colors uppercase tracking-widest">Features</a>
-              <a href="#how-it-works" className="text-sm font-medium text-gray-400 hover:text-lemon transition-colors uppercase tracking-widest">Process</a>
-              <a href="/user/login" className="text-sm font-medium text-gray-400 hover:text-lemon transition-colors uppercase tracking-widest">Sign In</a>
-              <a href="/user/register" className="bg-lemon text-black px-6 py-2.5 rounded-full font-bold text-sm uppercase tracking-wider hover:bg-white transition-all transform hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(227,255,0,0.2)]">
-                Get Started
-              </a>
-            </motion.div>
-          </div>
-        </div>
-      </nav>
+              <h1 className="hero-title text-6xl xl:text-8xl font-black leading-none tracking-tighter italic font-tech text-text-main uppercase">
+                SOLVE <span className="text-primary">DOUBTS</span> <br />
+                <span className="text-text-muted">LIGHTNING</span> FASTER.
+              </h1>
 
-      {/* Hero Section */}
-      <section className="relative pt-40 pb-20 px-6">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-lemon/5 blur-[120px] rounded-full pointer-events-none"></div>
-
-        <div className="max-w-7xl mx-auto relative">
-          <div className="grid lg:grid-cols-2 gap-20 items-center">
-            <motion.div
-              variants={staggerContainer}
-              initial="initial"
-              animate="animate"
-              className="space-y-10"
-            >
-              <motion.div variants={fadeUp()} className="space-y-6">
-                <div className="inline-flex items-center px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-lemon text-xs font-bold uppercase tracking-[0.2em]">
-                  <span className="w-2 h-2 bg-lemon rounded-full mr-2 animate-pulse"></span>
-                  Next-Gen Hackathon OS
-                </div>
-
-                <h1 className="text-6xl lg:text-8xl font-black leading-[0.9] tracking-tighter">
-                  SOLVE <br />
-                  <span className="text-lemon">FASTER.</span><br />
-                  <span className="text-white">BUILD BIGGER.</span>
-                </h1>
-
-                <p className="text-xl text-gray-400 leading-relaxed max-w-lg font-medium">
-                  The ultimate command center for hackathon athletes. Real-time mentor routing with zero friction.
-                </p>
-              </motion.div>
-
-              <motion.div variants={fadeUp()} className="flex flex-col sm:flex-row gap-6">
-                <a
-                  href="/user/register"
-                  onClick={warmUpBackend}
-                  className="group bg-lemon text-black px-10 py-5 rounded-full font-black text-lg uppercase tracking-wider transition-all hover:bg-white hover:scale-105 shadow-[0_20px_40px_rgba(227,255,0,0.15)] flex items-center justify-center"
-                >
-                  Join the Mission
-                  <svg className="w-6 h-6 ml-3 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </a>
-
-                <a
-                  href="/user/login"
-                  onClick={warmUpBackend}
-                  className="border-2 border-white/10 hover:border-lemon text-white px-10 py-5 rounded-full font-black text-lg uppercase tracking-wider transition-all hover:text-lemon flex items-center justify-center"
-                >
-                  Dashboard
-                </a>
-              </motion.div>
-
-              <motion.div variants={fadeUp()} className="flex items-center space-x-12">
-                <div className="flex -space-x-4">
-                  {[1, 2, 3, 4].map(i => (
-                    <div key={i} className="w-12 h-12 rounded-full border-4 border-black bg-gray-900 flex items-center justify-center overflow-hidden">
-                      <div className={`w-full h-full bg-gradient-to-br ${i % 2 === 0 ? 'from-lemon to-yellow-500' : 'from-gray-700 to-gray-800'}`}></div>
-                    </div>
-                  ))}
-                </div>
-                <div>
-                  <div className="text-2xl font-black text-white leading-none">5,000+</div>
-                  <div className="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">Developers Active</div>
-                </div>
-              </motion.div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, rotateY: 20 }}
-              animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-              transition={{ duration: 1.2, ease: "easeOut" }}
-              className="relative perspective-1000"
-            >
-              <div className="relative group">
-                <div className="absolute -inset-1 bg-lemon/20 rounded-[40px] blur-2xl group-hover:bg-lemon/30 transition-all"></div>
-                <div className="relative bg-black border border-white/10 rounded-[40px] p-10 shadow-2xl overflow-hidden hover:border-lemon/50 transition-colors">
-                  <div className="absolute top-0 right-0 p-8">
-                    <div className="w-20 h-20 bg-lemon/10 rounded-full blur-2xl animate-pulse"></div>
-                  </div>
-
-                  <div className="space-y-10 relative">
-                    <div className="flex items-center justify-between">
-                      <div className="flex space-x-3">
-                        <div className="w-4 h-4 bg-lemon rounded-full shadow-[0_0_10px_rgba(227,255,0,0.8)]"></div>
-                        <div className="w-4 h-4 bg-white/20 rounded-full"></div>
-                        <div className="w-4 h-4 bg-white/20 rounded-full"></div>
-                      </div>
-                      <div className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">System Status: Optimal</div>
-                    </div>
-
-                    <div className="space-y-6">
-                      <div className="h-3 bg-white/5 rounded-full w-full overflow-hidden">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={{ width: "70%" }}
-                          transition={{ duration: 2, delay: 1 }}
-                          className="h-full bg-lemon"
-                        />
-                      </div>
-                      <div className="h-3 bg-white/5 rounded-full w-4/5"></div>
-                      <div className="h-3 bg-white/5 rounded-full w-3/5"></div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-6">
-                      <div className="aspect-square bg-white/[0.03] border border-white/5 rounded-3xl p-6 flex flex-col justify-between hover:bg-lemon/5 hover:border-lemon/20 transition-all">
-                        <div className="w-8 h-8 rounded-lg bg-lemon/20 flex items-center justify-center text-lemon">⚡</div>
-                        <div className="text-xl font-black">24ms</div>
-                      </div>
-                      <div className="aspect-square bg-white/[0.03] border border-white/5 rounded-3xl p-6 flex flex-col justify-between hover:bg-lemon/5 hover:border-lemon/20 transition-all">
-                        <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white">⦿</div>
-                        <div className="text-xl font-black">99.9%</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section id="features" className="py-32 px-6 relative border-t border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-24"
-          >
-            <h2 className="text-5xl font-black mb-6 tracking-tighter">
-              CORE INFRASTRUCTURE
-            </h2>
-            <div className="w-20 h-1.5 bg-lemon mx-auto rounded-full"></div>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-12">
-            {[
-              {
-                title: "HYPER-SUPPORT",
-                desc: "Instant mentor routing with automated triage for complex blockers.",
-                tag: "Real-time"
-              },
-              {
-                title: "QUANTUM TRACK",
-                desc: "Every ticket indexed and monitored with precision resolution metrics.",
-                tag: "Analytics"
-              },
-              {
-                title: "GLOBAL NETWORK",
-                desc: "Access the highest concentration of specialized engineering talent.",
-                tag: "Mentors"
-              }
-            ].map((f, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="group relative p-8 bg-white/[0.02] border border-white/5 rounded-3xl hover:bg-lemon/5 hover:border-lemon/20 transition-all"
-              >
-                <div className="text-xs font-black text-lemon tracking-[0.3em] mb-4">{f.tag}</div>
-                <h3 className="text-2xl font-black mb-4 group-hover:text-lemon transition-colors">{f.title}</h3>
-                <p className="text-gray-400 font-medium leading-relaxed">{f.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-black border-t border-white/5 py-20 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-12">
-            <div>
-              <div className="flex items-center space-x-2 mb-6">
-                <div className="w-8 h-8 bg-lemon rounded flex items-center justify-center">
-                  <span className="text-black font-black text-xs">QT</span>
-                </div>
-                <span className="text-xl font-black text-white tracking-tighter">QueryTracker</span>
-              </div>
-              <p className="text-gray-500 font-medium max-w-sm">
-                Architecting the future of hackathon intelligence.
+              <p className="hero-desc text-sm xl:text-base text-text-muted leading-relaxed max-w-xl font-medium uppercase tracking-tight">
+                The ultimate centralized nervous system for developers. Deploy queries, clear blockers, and sync with peer-led solutions in real-time.
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-12 text-sm font-bold uppercase tracking-widest text-gray-500">
-              <a href="#" className="hover:text-lemon transition-colors">Privacy</a>
-              <a href="#" className="hover:text-lemon transition-colors">Terms</a>
-              <a href="#" className="hover:text-lemon transition-colors">Twitter</a>
+            <div className="hero-btns flex flex-col sm:flex-row gap-4">
+              <a
+                href="/user/register"
+                onClick={warmUpBackend}
+                className="group bg-primary text-white px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all hover:bg-secondary shadow-primary-glow flex items-center justify-center"
+              >
+                Initialize Account →
+              </a>
+              <a
+                href="/user/login"
+                className="border border-border bg-white text-text-main px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all hover:bg-bg-deep flex items-center justify-center shadow-sm"
+              >
+                Access Terminal
+              </a>
             </div>
           </div>
 
-          <div className="mt-20 pt-10 border-t border-white/5 text-center text-[10px] font-black uppercase tracking-[0.5em] text-gray-700">
-            © {new Date().getFullYear()} QUERYTRACKER LABS // ALL RIGHTS RESERVED
+          {/* Right Side: Features/About (5 columns) */}
+          <div className="lg:col-span-5 flex flex-col gap-4 overflow-hidden">
+            {/* About Card */}
+            <div className="about-card bg-white border border-border p-6 rounded-[32px] shadow-sm relative overflow-hidden group flex-1 flex flex-col justify-center">
+              <div className="absolute top-0 right-0 p-4 opacity-10">
+                <FiCpu size={60} />
+              </div>
+              <h2 className="text-[10px] font-black text-primary tracking-[0.5em] uppercase mb-4 italic">Core Objective</h2>
+              <h3 className="text-xl font-black tracking-tighter mb-4 text-text-main font-tech uppercase">Bridge the Gap</h3>
+              <p className="text-[11px] text-text-muted font-bold leading-relaxed uppercase tracking-tight">
+                Raise queries instantly as an employee or participant. Leverage peer suggestions or direct admin intervention to clear hardware and software blockers.
+              </p>
+            </div>
+
+            {/* Features Mini-Grid */}
+            <div className="grid grid-cols-2 gap-4 flex-1 overflow-hidden">
+              <MiniCard
+                title="Peer Solutions"
+                desc="Crowdsourced expertise"
+                label="Sync"
+              />
+              <MiniCard
+                title="Admin Support"
+                desc="Expert resolution"
+                label="Auth"
+              />
+              <MiniCard
+                title="Live Tracking"
+                desc="Real-time status"
+                label="Ping"
+              />
+              <MiniCard
+                title="Secure Logs"
+                desc="Archived history"
+                label="Safe"
+              />
+            </div>
           </div>
         </div>
-      </footer>
+
+        {/* Bottom Bar: Quick Info / Footer */}
+        <footer className="footer-anim shrink-0 flex items-center justify-between border-t border-border pt-4 text-[8px] font-black uppercase tracking-[0.4em] text-text-muted">
+          <div className="flex items-center gap-6">
+            <span>© {new Date().getFullYear()} QT LABS</span>
+            <span className="hidden sm:inline">// ENCRYPTED NODE 44-X</span>
+          </div>
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 bg-success rounded-full"></span>
+              NETWORK READY
+            </div>
+            <a href="#" className="hover:text-primary transition-colors">v1.0.0-Stable</a>
+          </div>
+        </footer>
+      </main>
     </div>
   );
 }
+
+const Navbar = () => (
+  <nav className="nav-anim fixed top-0 w-full z-50 bg-white/70 backdrop-blur-md border-b border-border">
+    <div className="max-w-[1600px] mx-auto px-6 py-4 flex items-center justify-between">
+      <div className="flex items-center space-x-2">
+        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-primary-glow font-tech text-white font-black text-xs">QT</div>
+        <span className="text-sm font-black tracking-[0.2em] font-tech uppercase">Query<span className="text-primary">Tracker</span></span>
+      </div>
+      <div className="flex items-center space-x-6">
+        <a href="/user/login" className="text-[9px] font-black uppercase tracking-widest text-text-muted hover:text-primary">Sign In</a>
+        <a href="/user/register" className="bg-primary text-white px-4 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-secondary shadow-sm">Join</a>
+      </div>
+    </div>
+  </nav>
+);
+
+const MiniCard = ({ title, desc, label }) => (
+  <div className="mini-card bg-surface border border-border p-5 rounded-2xl group hover:border-primary/50 transition-all shadow-sm flex flex-col justify-center h-full relative overflow-hidden">
+    <div className="absolute top-0 left-0 w-1 h-full bg-primary transform scale-y-0 group-hover:scale-y-100 transition-transform duration-300" />
+    <span className="text-[7px] font-black text-primary uppercase tracking-[0.4em] mb-2">{label}</span>
+    <h4 className="text-[11px] font-black text-text-main font-tech uppercase mb-1">{title}</h4>
+    <p className="text-[9px] text-text-muted font-bold uppercase tracking-tighter leading-none">{desc}</p>
+  </div>
+);
 
 export default Landing;

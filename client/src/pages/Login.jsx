@@ -34,9 +34,9 @@ function Login() {
     const drops = Array(Math.floor(columns)).fill(1);
 
     const draw = () => {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillStyle = "rgba(248, 250, 252, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#e3ff00"; // Lemon Yellow
+      ctx.fillStyle = "rgba(37, 99, 235, 0.15)"; // Soft Blue
       ctx.font = fontSize + "px monospace";
 
       for (let i = 0; i < drops.length; i++) {
@@ -54,23 +54,22 @@ function Login() {
 
   /** ================== Countdown Logic ================== */
   useEffect(() => {
-    const hackathonDate = new Date("2025-12-15T09:00:00");
+    const hackathonDate = new Date(2026, 2, 23, 9, 0, 0); // March 23, 2026
 
-    const timer = setInterval(() => {
+    const calculateTimeLeft = () => {
       const now = new Date();
-      const diff = hackathonDate - now;
-      if (diff <= 0) {
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-        clearInterval(timer);
-        return;
-      }
-      setTimeLeft({
+      const diff = hackathonDate.getTime() - now.getTime();
+      if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+      return {
         days: Math.floor(diff / (1000 * 60 * 60 * 24)),
         hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
         minutes: Math.floor((diff / (1000 * 60)) % 60),
         seconds: Math.floor((diff / 1000) % 60),
-      });
-    }, 1000);
+      };
+    };
+
+    setTimeLeft(calculateTimeLeft());
+    const timer = setInterval(() => setTimeLeft(calculateTimeLeft()), 1000);
 
     return () => clearInterval(timer);
   }, []);
@@ -128,22 +127,22 @@ function Login() {
 
   /** ================== UI ================== */
   return (
-    <div className="min-h-screen bg-black flex flex-col lg:flex-row overflow-hidden selection:bg-lemon selection:text-black">
+    <div className="h-screen bg-bg-deep flex flex-col lg:flex-row overflow-hidden selection:bg-primary selection:text-white font-sans">
       {/* Left: Login Form */}
-      <div className="flex-1 flex items-center justify-center p-8 relative z-10">
-        <div className="w-full max-w-md">
+      <div className="flex-1 flex items-center justify-center p-4 relative z-10 overflow-hidden">
+        <div className="w-full max-w-md scale-90 sm:scale-100 origin-center">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-10"
+            className="text-center mb-6"
           >
-            <div className="w-20 h-20 mx-auto mb-6 bg-lemon rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(227,255,0,0.2)]">
-              <span className="text-2xl font-black text-black">QT</span>
+            <div className="w-16 h-16 mx-auto mb-4 bg-primary rounded-2xl flex items-center justify-center shadow-primary-glow">
+              <span className="text-xl font-black text-white font-tech">QT</span>
             </div>
-            <h1 className="text-4xl font-black text-white tracking-tighter mb-2 italic">ACCESS COMMAND</h1>
-            <p className="text-gray-500 font-bold uppercase tracking-widest text-xs leading-relaxed">Enter credentials to initialize session</p>
+            <h1 className="text-3xl font-black text-text-main tracking-tighter mb-1 italic font-tech">ACCESS COMMAND</h1>
+            <p className="text-text-muted font-bold uppercase tracking-widest text-[10px] leading-relaxed">Enter credentials to initialize session</p>
           </motion.div>
 
           {/* Form */}
@@ -151,11 +150,11 @@ function Login() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="bg-white/[0.02] border border-white/5 rounded-3xl p-10 backdrop-blur-xl shadow-2xl relative overflow-hidden group"
+            className="bg-surface border border-border rounded-[40px] p-8 shadow-xl relative overflow-hidden group"
           >
-            <div className="absolute top-0 left-0 w-full h-1 bg-lemon transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
+            <div className="absolute top-0 left-0 w-full h-1 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 font-bold uppercase tracking-widest text-xs"></div>
 
-            <form onSubmit={handleSubmit} className="space-y-8">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <InputField
                 label="Identifier / Email"
                 id="email"
@@ -181,7 +180,7 @@ function Login() {
 
               <motion.button
                 type="submit"
-                className="w-full bg-lemon hover:bg-white text-black font-black py-4 rounded-xl uppercase tracking-widest transition-all shadow-[0_10px_30px_rgba(227,255,0,0.1)] flex items-center justify-center disabled:opacity-50"
+                className="w-full bg-primary hover:bg-secondary text-white font-black py-4 rounded-2xl uppercase tracking-widest transition-all shadow-primary-glow flex items-center justify-center disabled:opacity-50"
                 whileHover={{ scale: loading ? 1 : 1.02 }}
                 whileTap={{ scale: loading ? 1 : 0.98 }}
                 disabled={loading}
@@ -190,19 +189,19 @@ function Login() {
               </motion.button>
             </form>
 
-            <div className="mt-8 text-center space-y-4">
-              <p className="text-gray-500 text-xs font-bold uppercase tracking-widest">
+            <div className="mt-6 text-center space-y-3">
+              <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest">
                 New user?{" "}
                 <Link
                   to="/user/register"
-                  className="text-lemon hover:underline decoration-2 underline-offset-4"
+                  className="text-primary font-black hover:underline decoration-2 underline-offset-4"
                 >
                   Create Protocol
                 </Link>
               </p>
               <Link
                 to="/"
-                className="inline-block text-gray-700 hover:text-white text-[10px] font-black uppercase tracking-[0.3em] transition-colors"
+                className="inline-block text-text-muted hover:text-primary text-[8px] font-black uppercase tracking-[0.3em] transition-colors"
               >
                 ← Return to Base
               </Link>
@@ -212,39 +211,39 @@ function Login() {
       </div>
 
       {/* Right: Hackathon Info */}
-      <div className="flex-1 relative flex flex-col items-center justify-center text-white p-8">
+      <div className="hidden lg:flex flex-1 relative flex-col items-center justify-center text-text-main p-8 bg-bg-deep/50 overflow-hidden">
         <canvas
           ref={canvasRef}
-          className="absolute inset-0 z-0 w-full opacity-40"
+          className="absolute inset-0 z-0 w-full h-full opacity-60 pointer-events-none"
         ></canvas>
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black pointer-events-none"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-bg-deep via-transparent to-bg-deep pointer-events-none"></div>
 
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="relative z-10 text-center"
+          className="relative z-10 text-center scale-90 xxl:scale-100"
         >
-          <h2 className="text-sm font-black text-lemon tracking-[0.5em] mb-12 uppercase italic">Mission Countdown</h2>
+          <h2 className="text-[10px] font-black text-primary tracking-[0.5em] mb-8 uppercase italic font-tech">Mission Countdown</h2>
 
-          <div className="flex space-x-6 mb-16">
+          <div className="flex space-x-6 mb-12 justify-center">
             {["days", "hours", "minutes", "seconds"].map((unit) => (
-              <div key={unit} className="w-24 text-center">
-                <div className="text-5xl font-black tracking-tighter mb-1">{timeLeft[unit] ?? "00"}</div>
-                <div className="text-[10px] font-black uppercase tracking-widest text-gray-500">{unit}</div>
+              <div key={unit} className="w-20 text-center">
+                <div className="text-4xl font-black tracking-tighter mb-1 font-tech border-b-2 border-primary/20 pb-2">{timeLeft[unit] ?? "00"}</div>
+                <div className="text-[9px] font-black uppercase tracking-widest text-text-muted mt-2">{unit}</div>
               </div>
             ))}
           </div>
 
-          <div className="p-8 border border-white/5 bg-black/50 backdrop-blur-md rounded-2xl max-w-xs mx-auto">
-            <h3 className="text-[10px] font-black text-lemon tracking-[0.3em] mb-4 uppercase">Latest Achievements</h3>
+          <div className="p-6 border border-border bg-surface shadow-lg rounded-[32px] max-w-xs mx-auto">
+            <h3 className="text-[9px] font-black text-primary tracking-[0.3em] mb-4 uppercase font-tech">Latest Achievements</h3>
             <motion.div
               key={winnerIndex}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="space-y-2"
+              className="space-y-1"
             >
-              <div className="text-xl font-black italic">{winners[winnerIndex].team}</div>
-              <p className="text-xs text-gray-400 font-medium leading-relaxed">{winners[winnerIndex].desc}</p>
+              <div className="text-lg font-black italic text-text-main">{winners[winnerIndex].team}</div>
+              <p className="text-[10px] text-text-muted font-medium leading-relaxed">{winners[winnerIndex].desc}</p>
             </motion.div>
           </div>
         </motion.div>
@@ -255,7 +254,7 @@ function Login() {
 
 const InputField = ({ label, id, name, type, value, onChange, placeholder, toggleable, onToggle, show }) => (
   <div className="space-y-3 font-bold uppercase tracking-widest relative">
-    <label htmlFor={id} className="block text-gray-500 text-[10px]">
+    <label htmlFor={id} className="block text-text-muted text-[10px]">
       {label}
     </label>
     <div className="relative">
@@ -267,13 +266,13 @@ const InputField = ({ label, id, name, type, value, onChange, placeholder, toggl
         onChange={onChange}
         placeholder={placeholder}
         required
-        className="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 text-white text-sm focus:outline-none focus:border-lemon focus:ring-1 focus:ring-lemon/50 transition-all placeholder:text-gray-800"
+        className="w-full bg-white border border-border rounded-xl px-5 py-4 text-text-main text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all placeholder:text-slate-300"
       />
       {toggleable && (
         <button
           type="button"
           onClick={onToggle}
-          className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-lemon transition-colors"
+          className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-primary transition-colors"
         >
           {show ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
         </button>
