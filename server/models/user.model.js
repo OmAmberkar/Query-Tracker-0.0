@@ -28,6 +28,13 @@ const userSchema = new mongoose.Schema({
         match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email']
     },
 
+    teamName: {
+        type: String,
+        required: [true, 'Team name is required'],
+        trim: true,
+        maxlength: [50, 'Team name cannot exceed 50 characters']
+    },
+
     contact: {
         type: String,
         required: [true, 'Contact number is required'],
@@ -40,13 +47,13 @@ const userSchema = new mongoose.Schema({
         minlength: [6, 'Password must be at least 6 characters']
     },
 
-    role: { 
-        type: String, 
+    role: {
+        type: String,
         enum: {
             values: ["user", "admin"],
             message: "Role must be either 'user' or 'admin'"
         },
-        default: "user" 
+        default: "user"
     },
 
     isActive: {
@@ -59,7 +66,7 @@ const userSchema = new mongoose.Schema({
         default: null
     }
 
-}, { 
+}, {
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
@@ -68,7 +75,7 @@ const userSchema = new mongoose.Schema({
 // Note: unique: true automatically creates indexes for email and username fields
 
 // Virtual for user status
-userSchema.virtual('status').get(function() {
+userSchema.virtual('status').get(function () {
     return this.isActive ? 'active' : 'inactive';
 });
 
