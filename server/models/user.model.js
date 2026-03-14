@@ -28,12 +28,12 @@ const userSchema = new mongoose.Schema({
         match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email']
     },
 
-    teamName: {
-        type: String,
-        required: [true, 'Team name is required'],
-        trim: true,
-        maxlength: [50, 'Team name cannot exceed 50 characters']
-    },
+    // teamName: {
+    //     type: String,
+    //     required: [true, 'Team name is required'],
+    //     trim: true,
+    //     maxlength: [50, 'Team name cannot exceed 50 characters']
+    // },
 
     contact: {
         type: String,

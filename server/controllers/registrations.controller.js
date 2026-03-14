@@ -2,7 +2,7 @@ import User from "../models/user.model.js";
 import { hashPassword } from "../utils/encryption.utils.js";
 
 const createUser = async (req, res) => {
-  const { name, username, email, teamName, contact, password } = req.body;
+  const { name, username, email, contact, password } = req.body;
 
   try {
     // 1. Check if email already exists
@@ -17,11 +17,11 @@ const createUser = async (req, res) => {
       return res.status(409).json({ message: "Username already taken" });
     }
 
-    // 2.1 Check if teamNamw already exists
-    const existingteamName = await User.findOne({ teamName: teamName });
-    if (existingteamName) {
-      return res.status(400).json({ message: "Team Name alreay taken" })
-    }
+    // // 2.1 Check if teamNamw already exists
+    // const existingteamName = await User.findOne({ teamName: teamName });
+    // if (existingteamName) {
+    //   return res.status(400).json({ message: "Team Name alreay taken" })
+    // }
 
     // 3. Hash password
     const hashedPassword = await hashPassword(password);
