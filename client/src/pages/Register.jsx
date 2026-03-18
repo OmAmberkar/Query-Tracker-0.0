@@ -6,46 +6,48 @@ import axiosInterceptor from "../utils/axiosInterceptor";
 import { toast } from "react-toastify";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
-const sampleUsers = [
-  "CyberNinja", "ByteWizard", "CodeSurfer", "AlgoQueen", "HackGuru",
-  "PixelPirate", "DataSage", "QuantumByte", "NullPointer", "ScriptKid",
-  "BitCrusher", "StackRider", "LogicLord", "CryptoMage", "BugHunter"
-];
+// --- CUSTOM HOOK: Terminal Typing Effect ---
+function useTerminalBootSequence() {
+  const lines = [
+    "Initializing secure environment...",
+    "Establishing VPN tunnel...",
+    "Deploying CI/CD pipeline protocols...",
+    "Running Trivy container scan...",
+    "[OK] Zero vulnerabilities detected.",
+    "[OK] Buffer overflow protections active.",
+    "Bypassing mainframe firewall...",
+    "Access Granted.",
+    "Awaiting new user protocol..."
+  ];
 
-function useLiveParticipants() {
-  const [participants, setParticipants] = useState(523);
-  const [recent, setRecent] = useState(["Neo_99", "CodeSamurai", "ByteQueen"]);
+  const [displayedLines, setDisplayedLines] = useState([]);
+  const [currentLine, setCurrentLine] = useState("");
+  const [lineIndex, setLineIndex] = useState(0);
+  const [charIndex, setCharIndex] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      // Increment participants randomly by 1-5 to simulate bursts
-      setParticipants((prev) => prev + Math.floor(Math.random() * 5) + 1);
+    if (lineIndex >= lines.length) return;
 
-      // Add 1 or 2 new joiners randomly
-      const newJoinersCount = Math.floor(Math.random() * 2) + 1;
-      const newJoiners = [];
+    const line = lines[lineIndex];
+    if (charIndex < line.length) {
+      const timeout = setTimeout(() => {
+        setCurrentLine((prev) => prev + line[charIndex]);
+        setCharIndex((c) => c + 1);
+      }, Math.random() * 40 + 20); // Variable typing speed like a real human/machine
+      return () => clearTimeout(timeout);
+    } else {
+      const timeout = setTimeout(() => {
+        setDisplayedLines((prev) => [...prev, line]);
+        setCurrentLine("");
+        setCharIndex(0);
+        setLineIndex((l) => l + 1);
+      }, 600); // Pause before next line
+      return () => clearTimeout(timeout);
+    }
+  }, [charIndex, lineIndex]);
 
-      for (let i = 0; i < newJoinersCount; i++) {
-        // Pick random username from sampleUsers and append random number
-        const user =
-          sampleUsers[Math.floor(Math.random() * sampleUsers.length)] +
-          Math.floor(Math.random() * 9999);
-        newJoiners.push(user);
-      }
-
-      setRecent((prev) => {
-        // Add new joiners at the start and keep max 7 recent
-        const updated = [...newJoiners, ...prev].slice(0, 7);
-        return updated;
-      });
-    }, 3000 + Math.random() * 2000); // Interval varies 3-5 seconds
-
-    return () => clearInterval(interval);
-  }, []);
-
-  return { participants, recent };
+  return { displayedLines, currentLine, isComplete: lineIndex >= lines.length };
 }
-
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -61,45 +63,65 @@ function Register() {
 
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const { participants, recent } = useLiveParticipants();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  const navigate = useNavigate();
+  
   const canvasRef = useRef(null);
+  const navigate = useNavigate();
+  const terminal = useTerminalBootSequence();
 
-  // Matrix rain effect
+  // --- UPGRADED MATRIX RAIN EFFECT ---
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
-    if (!ctx) return;
 
-    canvas.height = window.innerHeight;
-    canvas.width = canvas.offsetWidth;
+    // Handle resize
+    const resizeCanvas = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
 
-    const letters = "0101QUERYTRACKER@#$";
+    // Characters: Katakana + Latin + Numerals + Symbols
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=%\"'#&_(),.;:?!\\|{}<>[]^~アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレゲゼデベペオォコソトノホモヨョロゴゾドボポヴッン";
     const fontSize = 14;
-    const columns = canvas.width / fontSize;
-    const drops = Array(Math.floor(columns)).fill(1);
+    const columns = Math.floor(canvas.width / fontSize) + 1;
+    const drops = Array(columns).fill(1);
 
     function draw() {
-      ctx.fillStyle = "rgba(248, 250, 252, 0.05)";
+      // Dark slate background with opacity for the fading trail effect
+      ctx.fillStyle = "rgba(15, 23, 42, 0.08)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "rgba(37, 99, 235, 0.15)";
-      ctx.font = fontSize + "px monospace";
+
+      ctx.font = `bold ${fontSize}px monospace`;
 
       for (let i = 0; i < drops.length; i++) {
         const text = letters.charAt(Math.floor(Math.random() * letters.length));
+        
+        // 5% chance the lead character is bright white, otherwise hacker green
+        if (Math.random() > 0.95) {
+          ctx.fillStyle = "#ffffff";
+        } else {
+          ctx.fillStyle = "#10b981"; // Tailwind Emerald-500 (Classic Hacker Green)
+        }
+
         ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        // Reset drop to top randomly to create staggered rain
         if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
           drops[i] = 0;
         }
         drops[i]++;
       }
     }
-    const interval = setInterval(draw, 35);
-    return () => clearInterval(interval);
+
+    const interval = setInterval(draw, 33); // ~30fps
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('resize', resizeCanvas);
+    };
   }, []);
 
   const handleChange = (e) => {
@@ -153,24 +175,27 @@ function Register() {
   };
 
   return (
-    <div className="h-screen w-full flex flex-col lg:flex-row selection:bg-primary selection:text-white overflow-hidden bg-bg-deep font-sans text-[11px]">
-      <div className="flex-1 flex items-center justify-center p-4 relative z-10 overflow-hidden">
+    <div className="min-h-screen w-full flex flex-col lg:flex-row selection:bg-emerald-500 selection:text-white overflow-hidden bg-slate-900 font-sans text-[11px]">
+      
+      {/* LEFT SIDE: Registration Form */}
+      <div className="flex-1 flex items-center justify-center p-4 relative z-10 overflow-hidden lg:h-screen lg:overflow-y-auto">
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="w-full max-w-md bg-surface border border-border rounded-[40px] p-8 shadow-2xl relative group"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+          className="w-full max-w-md bg-white border border-slate-200 rounded-[40px] p-8 shadow-2xl relative group my-8 lg:my-auto"
         >
-          <div className="absolute top-0 left-0 w-full h-1 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
+          <div className="absolute top-0 left-0 w-full h-1 bg-emerald-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 rounded-t-[40px]"></div>
 
-          <h1 className="text-3xl font-black text-text-main mb-6 italic tracking-tighter font-tech uppercase">
-            INITIALIZE <span className="text-primary">PROTOCOL</span>
+          <h1 className="text-3xl font-black text-slate-900 mb-6 italic tracking-widest font-tech uppercase">
+            INITIALIZING <span className="text-blue-600">REGISTRATION</span>
           </h1>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
               {[
                 { name: "name", placeholder: "Full Name" },
-                { name: "username", placeholder: "Codename" },
+                { name: "username", placeholder: "Username" },
               ].map((field) => (
                 <div key={field.name} className="space-y-1">
                   <input
@@ -179,9 +204,9 @@ function Register() {
                     value={formData[field.name]}
                     onChange={handleChange}
                     placeholder={field.placeholder}
-                    className={`w-full bg-white border ${errors[field.name] ? "border-error" : "border-border focus:border-primary"} rounded-xl px-4 py-3 text-text-main focus:outline-none transition-all font-bold placeholder:text-slate-300 uppercase tracking-widest`}
+                    className={`w-full placeholder:text-slate-500 bg-slate-50 border ${errors[field.name] ? "border-red-500" : "border-slate-200 focus:border-emerald-500"} rounded-xl px-4 py-3 text-slate-900 focus:outline-none transition-all font-bold uppercase tracking-widest`}
                   />
-                  {errors[field.name] && <p className="text-error text-[8px] font-bold mt-1 ml-2">{errors[field.name]}</p>}
+                  {errors[field.name] && <p className="text-red-500 text-[8px] font-bold mt-1 ml-2">{errors[field.name]}</p>}
                 </div>
               ))}
             </div>
@@ -194,9 +219,9 @@ function Register() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="Network Email"
-                  className={`w-full bg-white border ${errors.email ? "border-error" : "border-border focus:border-primary"} rounded-xl px-4 py-3 text-text-main focus:outline-none transition-all font-bold placeholder:text-slate-300 uppercase tracking-widest`}
+                  className={`w-full placeholder:text-slate-500 bg-slate-50 border ${errors.email ? "border-red-500" : "border-slate-200 focus:border-emerald-500"} rounded-xl px-4 py-3 text-slate-900 focus:outline-none transition-all font-bold uppercase tracking-widest`}
                 />
-                {errors.email && <p className="text-error text-[8px] font-bold mt-1 ml-2">{errors.email}</p>}
+                {errors.email && <p className="text-red-500 text-[8px] font-bold mt-1 ml-2">{errors.email}</p>}
               </div>
 
               <div className="space-y-1">
@@ -206,9 +231,9 @@ function Register() {
                   value={formData.teamName}
                   onChange={handleChange}
                   placeholder="Group / Team Name"
-                  className={`w-full bg-white border ${errors.teamName ? "border-error" : "border-border focus:border-primary"} rounded-xl px-4 py-3 text-text-main focus:outline-none transition-all font-bold placeholder:text-slate-300 uppercase tracking-widest`}
+                  className={`w-full placeholder:text-slate-500 bg-slate-50 border ${errors.teamName ? "border-red-500" : "border-slate-200 focus:border-emerald-500"} rounded-xl px-4 py-3 text-slate-900 focus:outline-none transition-all font-bold uppercase tracking-widest`}
                 />
-                {errors.teamName && <p className="text-error text-[8px] font-bold mt-1 ml-2">{errors.teamName}</p>}
+                {errors.teamName && <p className="text-red-500 text-[8px] font-bold mt-1 ml-2">{errors.teamName}</p>}
               </div>
 
               <div className="space-y-1">
@@ -217,10 +242,10 @@ function Register() {
                   name="contact"
                   value={formData.contact}
                   onChange={handleChange}
-                  placeholder="Contact Vector"
-                  className={`w-full bg-white border ${errors.contact ? "border-error" : "border-border focus:border-primary"} rounded-xl px-4 py-3 text-text-main focus:outline-none transition-all font-bold placeholder:text-slate-300 uppercase tracking-widest`}
+                  placeholder="Contact Number"
+                  className={`w-full placeholder:text-slate-500 bg-slate-50 border ${errors.contact ? "border-red-500" : "border-slate-200 focus:border-emerald-500"} rounded-xl px-4 py-3 text-slate-900 focus:outline-none transition-all font-bold uppercase tracking-widest`}
                 />
-                {errors.contact && <p className="text-error text-[8px] font-bold mt-1 ml-2">{errors.contact}</p>}
+                {errors.contact && <p className="text-red-500 text-[8px] font-bold mt-1 ml-2">{errors.contact}</p>}
               </div>
             </div>
 
@@ -231,13 +256,13 @@ function Register() {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="Key"
-                  className={`w-full bg-white border ${errors.password ? "border-error" : "border-border focus:border-primary"} rounded-xl px-4 py-3 text-text-main focus:outline-none transition-all font-bold placeholder:text-slate-300 uppercase tracking-widest`}
+                  placeholder="Password"
+                  className={`w-full placeholder:text-slate-500 bg-slate-50 border ${errors.password ? "border-red-500" : "border-slate-200 focus:border-emerald-500"} rounded-xl px-4 py-3 text-slate-900 focus:outline-none transition-all font-bold uppercase tracking-widest`}
                 />
-                <span onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-3.5 text-text-muted cursor-pointer hover:text-primary transition-colors">
+                <span onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-3.5 text-slate-400 cursor-pointer hover:text-emerald-500 transition-colors">
                   {showPassword ? <AiOutlineEyeInvisible size={14} /> : <AiOutlineEye size={14} />}
                 </span>
-                {errors.password && <p className="text-error text-[8px] font-bold mt-1 ml-2">{errors.password}</p>}
+                {errors.password && <p className="text-red-500 text-[8px] font-bold mt-1 ml-2">{errors.password}</p>}
               </div>
 
               <div className="relative space-y-1">
@@ -246,67 +271,105 @@ function Register() {
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  placeholder="Verify"
-                  className={`w-full bg-white border ${errors.confirmPassword ? "border-error" : "border-border focus:border-primary"} rounded-xl px-4 py-3 text-text-main focus:outline-none transition-all font-bold placeholder:text-slate-300 uppercase tracking-widest`}
+                  placeholder="Verify Password"
+                  className={`w-full placeholder:text-slate-500 bg-slate-50 border ${errors.confirmPassword ? "border-red-500" : "border-slate-200 focus:border-emerald-500"} rounded-xl px-4 py-3 text-slate-900 focus:outline-none transition-all font-bold uppercase tracking-widest`}
                 />
-                <span onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-3.5 text-text-muted cursor-pointer hover:text-primary transition-colors">
+                <span onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-3.5 text-slate-400 cursor-pointer hover:text-emerald-500 transition-colors">
                   {showConfirmPassword ? <AiOutlineEyeInvisible size={14} /> : <AiOutlineEye size={14} />}
                 </span>
-                {errors.confirmPassword && <p className="text-error text-[8px] font-bold mt-1 ml-2">{errors.confirmPassword}</p>}
+                {errors.confirmPassword && <p className="text-red-500 text-[8px] font-bold mt-1 ml-2">{errors.confirmPassword}</p>}
               </div>
             </div>
 
-            <div className="flex items-center space-x-3 p-3 bg-bg-deep rounded-xl border border-border/50">
+            <div className="flex items-center space-x-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
               <input 
                 type="checkbox" 
                 id="isAdminRequested"
                 name="isAdminRequested"
                 checked={formData.isAdminRequested}
                 onChange={handleChange}
-                className="w-4 h-4 rounded text-primary focus:ring-primary border-border bg-white" 
+                className="w-4 h-4 rounded text-emerald-500 focus:ring-emerald-500 border-slate-300 bg-white" 
               />
-              <label htmlFor="isAdminRequested" className="text-[9px] font-black uppercase tracking-[0.2em] text-text-muted cursor-pointer hover:text-primary transition-colors">
+              <label htmlFor="isAdminRequested" className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 cursor-pointer hover:text-emerald-600 transition-colors">
                 Request System Elevation (Admin Permissions)
               </label>
             </div>
 
             <motion.button
               type="submit"
-              className="w-full bg-primary text-white hover:bg-secondary font-black rounded-xl py-4 uppercase tracking-[0.2em] transition-all shadow-primary-glow flex items-center justify-center disabled:opacity-50 mt-2"
+              className="w-full bg-blue-500 text-white hover:bg-emerald-500 hover:text-white font-black rounded-xl py-4 uppercase tracking-[0.2em] transition-all flex items-center justify-center disabled:opacity-50 mt-2 relative overflow-hidden group shadow-lg"
               whileHover={{ scale: loading ? 1 : 1.01 }}
               whileTap={{ scale: loading ? 1 : 0.99 }}
               disabled={loading}
             >
-              {loading ? "INITIALIZING..." : "JOIN NETWORK"}
+              <div className="absolute inset-0 bg-blue-600 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+              <span className="relative z-10">{loading ? "INITIALIZING..." : "JOIN NETWORK"}</span>
             </motion.button>
           </form>
 
           <div className="mt-6 text-center">
-            <Link to="/user/login" className="text-primary font-black uppercase tracking-[0.2em] hover:underline decoration-2 underline-offset-4">
-              Return to Login Sequence
+            <Link to="/user/login" className="text-slate-600 font-black uppercase tracking-[0.2em] hover:text-blue-500 transition-colors underline decoration-2 underline-offset-4">
+              Return to Login Panel
             </Link>
           </div>
         </motion.div>
       </div>
 
-      <div className="hidden lg:flex flex-1 relative bg-bg-deep/50 overflow-hidden text-center">
-        <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full opacity-40 pointer-events-none"></canvas>
-        <div className="relative z-10 flex flex-col items-center justify-center h-full p-8 text-text-main scale-90">
-          <h2 className="text-[10px] font-black text-primary tracking-[0.5em] mb-8 uppercase italic font-tech">Live Network Pulse</h2>
-          <div className="mb-8 font-tech italic">
-            <div className="text-6xl font-black tracking-tighter mb-1 border-b-2 border-primary/20 pb-2">{participants}</div>
-            <div className="text-[10px] font-black uppercase tracking-[0.3em] text-text-muted mt-2">Units Active in sector</div>
-          </div>
-          <div className="p-6 border border-border bg-surface shadow-xl rounded-[32px] w-full max-w-xs">
-            <h3 className="text-[9px] font-black text-primary tracking-[0.3em] mb-4 uppercase font-tech">New Arrivals</h3>
-            <div className="space-y-2 font-bold uppercase tracking-widest text-[9px] text-text-muted">
-              {recent.map((user, i) => (
-                <motion.p key={i} initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }}>
-                  <span className="text-text-main">{user}</span>
-                </motion.p>
-              ))}
+      {/* RIGHT SIDE: Hacker Matrix Aesthetic */}
+      <div className="hidden lg:block flex-1 relative bg-slate-900 overflow-hidden">
+        
+        {/* Full Screen Matrix Canvas */}
+        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full z-0 pointer-events-none opacity-80"></canvas>
+        
+        {/* Radial Vignette to focus the center */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(15,23,42,0.8)_100%)] z-10 pointer-events-none"></div>
+
+        {/* Floating Terminal Display */}
+        <div className="absolute inset-0 z-20 flex items-center justify-center p-12 pointer-events-none">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, delay: 0.5 }}
+            className="w-full max-w-lg bg-slate-900/60 backdrop-blur-md border border-emerald-500/30 rounded-lg p-6 shadow-[0_0_30px_rgba(16,185,129,0.15)] relative overflow-hidden"
+          >
+            {/* Terminal Header */}
+            <div className="flex items-center gap-2 mb-4 border-b border-emerald-500/20 pb-3">
+              <div className="w-3 h-3 rounded-full bg-red-500/50"></div>
+              <div className="w-3 h-3 rounded-full bg-yellow-500/50"></div>
+              <div className="w-3 h-3 rounded-full bg-green-500/50"></div>
+              <span className="ml-2 text-emerald-500/70 text-[10px] font-tech tracking-widest">root@query-tracker:~</span>
             </div>
-          </div>
+
+            {/* Terminal Output */}
+            <div className="font-tech text-[12px] leading-loose text-emerald-400 tracking-wider h-[250px] overflow-hidden flex flex-col justify-end">
+              {terminal.displayedLines.map((line, index) => (
+                <div key={index} className={line.includes("[OK]") ? "text-emerald-300" : "text-emerald-500/80"}>
+                  <span className="text-emerald-500/50 mr-2">{'>'}</span>{line}
+                </div>
+              ))}
+              {!terminal.isComplete && (
+                <div className="text-emerald-400">
+                  <span className="text-emerald-500/50 mr-2">{'>'}</span>
+                  {terminal.currentLine}
+                  <motion.span 
+                    animate={{ opacity: [1, 0] }} 
+                    transition={{ repeat: Infinity, duration: 0.8 }}
+                    className="inline-block w-2 h-4 bg-emerald-400 ml-1 translate-y-1"
+                  />
+                </div>
+              )}
+              {terminal.isComplete && (
+                <motion.div 
+                  initial={{ opacity: 0 }} 
+                  animate={{ opacity: 1 }} 
+                  className="mt-4 text-emerald-300 font-bold"
+                >
+                  <span className="text-emerald-500/50 mr-2">{'>'}</span>
+                  <motion.span animate={{ opacity: [1, 0] }} transition={{ repeat: Infinity, duration: 0.8 }} className="inline-block w-2 h-4 bg-emerald-400 ml-1 translate-y-1" />
+                </motion.div>
+              )}
+            </div>
+          </motion.div>
         </div>
       </div>
     </div>

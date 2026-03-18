@@ -61,3 +61,15 @@
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-primary);
 }
+
+:root {
+  --primary-rgb: 99, 102, 241; /* Assuming your primary color is Indigo/Purple, adjust numbers as needed */
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}
+.flicker {
+  animation: flicker 2s infinite;
+}

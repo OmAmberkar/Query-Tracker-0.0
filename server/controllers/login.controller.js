@@ -12,7 +12,7 @@ const userLogin = async (req, res) => {
     const isMatch = await verifyPassword(password, user.password);
     if (!isMatch) {
       return res
-        .status(400)
+        .status(401)
         .json({ success: false, message: "Invalid credentials" });
     }
 

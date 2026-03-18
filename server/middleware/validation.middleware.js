@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import logger from '../utils/logger.utils.js';
 
 // User registration validation
 export const validateRegistration = (req, res, next) => {
@@ -17,6 +18,7 @@ export const validateRegistration = (req, res, next) => {
 
   const { error } = schema.validate(req.body);
   if (error) {
+    logger.warn(`[VALIDATION-ERROR] Registration failed: ${JSON.stringify(error.details.map(d => d.message))}`);
     return res.status(400).json({
       message: 'Validation error',
       details: error.details.map(detail => detail.message)
@@ -35,6 +37,7 @@ export const validateLogin = (req, res, next) => {
 
   const { error } = schema.validate(req.body);
   if (error) {
+    logger.warn(`[VALIDATION-ERROR] Login failed: ${JSON.stringify(error.details.map(d => d.message))}`);
     return res.status(400).json({
       message: 'Validation error',
       details: error.details.map(detail => detail.message)
@@ -56,6 +59,7 @@ export const validateTicket = (req, res, next) => {
 
   const { error } = schema.validate(req.body);
   if (error) {
+    logger.warn(`[VALIDATION-ERROR] Ticket validation failed: ${JSON.stringify(error.details.map(d => d.message))}`);
     return res.status(400).json({
       message: 'Validation error',
       details: error.details.map(detail => detail.message)

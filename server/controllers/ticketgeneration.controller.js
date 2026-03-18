@@ -39,7 +39,7 @@ export const createTicket = async (req, res) => {
     try {
         const { name, grpno, subject, description } = req.body;
         const email = req.user?.email;
-
+        
         if (!name || !grpno || !email || !subject || !description) {
             return res.status(400).json({ message: "All fields are required" });
         }

@@ -127,7 +127,7 @@ const TicketPage = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5 uppercase tracking-widest">
-              <label className="text-[9px] font-black text-text-muted pl-2 uppercase">Subject Handle</label>
+              <label className="text-[9px] font-black text-text-muted pl-2 uppercase">User Name</label>
               <input
                 type="text"
                 name="name"
@@ -139,7 +139,7 @@ const TicketPage = () => {
               />
             </div>
             <div className="space-y-1.5 uppercase tracking-widest">
-              <label className="text-[9px] font-black text-text-muted pl-2 uppercase">Secure Channel</label>
+              <label className="text-[9px] font-black text-text-muted pl-2 uppercase">Email</label>
               <input
                 type="email"
                 name="email"
@@ -151,7 +151,7 @@ const TicketPage = () => {
           </div>
 
           <div className="space-y-1.5 uppercase tracking-widest">
-            <label className="text-[9px] font-black text-text-muted pl-2 uppercase">Team / Unit Node</label>
+            <label className="text-[9px] font-black text-text-muted pl-2 uppercase">Team Name</label>
             <input
               type="text"
               name="teamName"
@@ -163,25 +163,25 @@ const TicketPage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5 uppercase tracking-widest">
-              <label className="text-[9px] font-black text-text-muted pl-2 uppercase">Sector ID</label>
+              <label className="text-[9px] font-black text-text-muted pl-2 uppercase">Room Number</label>
               <input
                 type="text"
                 name="grpno"
                 value={formData.grpno}
                 onChange={handleChange}
-                placeholder="GROUP CODE"
+                placeholder="Eg. 05"
                 className="w-full bg-white border border-border rounded-xl px-5 py-3 text-xs focus:outline-none focus:border-primary transition-all font-bold placeholder:text-slate-300 uppercase tracking-widest"
                 required
               />
             </div>
             <div className="space-y-1.5 uppercase tracking-widest">
-              <label className="text-[9px] font-black text-text-muted pl-2 uppercase">Transmission Subject</label>
+              <label className="text-[9px] font-black text-text-muted pl-2 uppercase">Subject (Atleast 3 words)</label>
               <input
                 type="text"
                 name="subject"
                 value={formData.subject}
                 onChange={handleChange}
-                placeholder="QUERY TYPE"
+                placeholder="eg. Charging port not working"
                 className="w-full bg-white border border-border rounded-xl px-5 py-3 text-xs focus:outline-none focus:border-primary transition-all font-bold placeholder:text-slate-300 uppercase tracking-widest"
                 required
               />
@@ -189,7 +189,7 @@ const TicketPage = () => {
           </div>
 
           <div className="space-y-1.5 uppercase tracking-widest">
-            <label className="text-[9px] font-black text-text-muted pl-2 uppercase">Data Packet Payload</label>
+            <label className="text-[9px] font-black text-text-muted pl-2 uppercase">Description (Atleast 10 words)</label>
             <textarea
               name="description"
               value={formData.description}
@@ -210,14 +210,14 @@ const TicketPage = () => {
               className="flex-1 bg-primary hover:bg-secondary text-white font-black py-4 rounded-xl uppercase tracking-[0.2em] transition-all flex items-center justify-center space-x-3 shadow-primary-glow disabled:opacity-50"
             >
               <FiSend size={14} />
-              <span className="text-[11px] font-black">{loading ? "AUTHENTICATING..." : "DEPLOY PACKET"}</span>
+              <span className="text-[11px] font-black">{loading ? "AUTHENTICATING..." : "DEPLOY QUERY"}</span>
             </motion.button>
             <Link
               to="/user/home"
               className="px-10 border border-border hover:bg-bg-deep text-text-muted hover:text-text-main font-black py-4 rounded-xl uppercase tracking-widest transition-all flex items-center justify-center shadow-sm text-[11px]"
             >
               <FiArrowLeft className="mr-3" />
-              ABORT
+               ABORT QUERY
             </Link>
           </div>
         </form>

@@ -69,17 +69,17 @@ function Profile() {
     <div className="min-h-screen bg-bg-deep text-text-main relative overflow-hidden font-sans selection:bg-primary selection:text-white">
       {/* Top Navigation */}
       <nav className="relative z-10 flex items-center justify-between p-6 max-w-6xl mx-auto">
-        <Link to="/user/home" className="flex items-center space-x-2 text-text-muted hover:text-primary transition-colors group uppercase font-black tracking-widest text-[10px]">
+        <Link to="/user/home" className="flex items-center space-x-2 text-text-muted hover:text-primary font-extrabold transition-colors group uppercase  tracking-widest text-[10px]">
           <FiArrowLeft className="group-hover:-translate-x-1 transition-transform" />
           <span>Return to Dashboard</span>
         </Link>
-        <button onClick={handleLogout} className="flex items-center space-x-2 text-error hover:text-red-400 transition-colors uppercase font-black tracking-widest text-[10px]">
+        <button onClick={handleLogout} className="flex items-center space-x-2 text-red-800 hover:text-red-400 transition-colors uppercase font-black tracking-widest text-[10px]">
           <FiLogOut />
           <span>Terminate Session</span>
         </button>
       </nav>
 
-      <main className="relative z-10 max-w-6xl mx-auto px-6 py-12">
+      <main className="relative z-10 max-w-6xl mx-auto px-6 ">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Main Profile Card */}
           <div className="lg:col-span-8">
@@ -92,11 +92,11 @@ function Profile() {
               <div className="h-32 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent relative border-b border-border/10">
                 <div className="absolute -bottom-16 left-12">
                   <div className="relative group">
-                    <motion.img 
+                    <motion.img
                       initial={{ scale: 0.8, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
-                      src={user?.profilePic} 
-                      alt="Profile" 
+                      src={user?.profilePic}
+                      alt="Profile"
                       className="w-32 h-32 rounded-3xl object-cover border-4 border-surface shadow-primary-glow bg-surface group-hover:grayscale-0 grayscale transition-all duration-500"
                     />
                     {user?.isApproved && (
@@ -130,13 +130,13 @@ function Profile() {
                   {/* Detailed Info */}
                   <div className="space-y-6">
                     <h3 className="text-[11px] font-black text-primary tracking-[0.4em] uppercase font-tech border-b border-border pb-4">Core Metadata</h3>
-                    
-                    <InfoItem icon={<FiMail />} label="Network Channel" value={user?.email} />
+
+                    <InfoItem icon={<FiMail />} label="Electronic Mail" value={user?.email} />
                     <InfoItem icon={<FiUsers />} label="Assigned Team" value={user?.teamName} />
-                    <InfoItem icon={<FiPhone />} label="Contact Vector" value={user?.contact} />
-                    
+                    <InfoItem icon={<FiPhone />} label="Contact Number" value={user?.contact} />
+
                     {!user?.isAdminRequested && user?.role !== 'admin' && (
-                      <button 
+                      <button
                         onClick={handleAdminRequest}
                         disabled={requesting}
                         className="mt-6 w-full py-4 border border-primary/40 hover:bg-primary/5 transition-all text-[10px] font-black uppercase tracking-widest rounded-2xl"
@@ -154,7 +154,7 @@ function Profile() {
                   {/* Status & Stats */}
                   <div className="space-y-6">
                     <h3 className="text-[11px] font-black text-primary tracking-[0.4em] uppercase font-tech border-b border-border pb-4">Activity Logs</h3>
-                    
+
                     <div className="p-6 bg-bg-deep rounded-3xl border border-border/50">
                       <div className="flex items-center justify-between mb-4">
                         <span className="text-[9px] font-black uppercase tracking-widest text-text-muted">Presence Status</span>
@@ -181,14 +181,14 @@ function Profile() {
 
           {/* Team / Social Sidebar */}
           <div className="lg:col-span-4">
-            <h3 className="text-[11px] font-black text-primary tracking-[0.4em] uppercase font-tech mb-6 px-4">Sector Peers</h3>
+            <h3 className="text-[11px] font-black text-primary tracking-[0.4em] uppercase font-tech mb-6 px-4">Teammates</h3>
             <div className="space-y-4">
               {teamMembers.map((member) => (
                 <div key={member._id} className={`p-4 rounded-3xl border transition-all ${member._id === user?._id ? 'bg-primary/5 border-primary/30' : 'bg-surface/50 border-border hover:border-white/20'}`}>
                   <div className="flex items-center gap-4">
-                    <img 
-                      src={member.profilePic || `https://api.dicebear.com/9.x/avataaars/svg?seed=${member.username}`} 
-                      alt={member.username} 
+                    <img
+                      src={member.profilePic || `https://api.dicebear.com/9.x/avataaars/svg?seed=${member.username}`}
+                      alt={member.username}
                       className="w-10 h-10 rounded-xl border border-white/10 grayscale hover:grayscale-0 transition-grayscale bg-bg-deep"
                     />
                     <div className="flex flex-col min-w-0">
