@@ -44,9 +44,20 @@ export const createTicket = async (req, res) => {
             return res.status(400).json({ message: "All fields are required" });
         }
 
+        // Fetch user from DB to get their teamName and check approval
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        if (!user.isApproved) {
+            return res.status(403).json({ message: "Your account is pending admin approval." });
+        }
+
         const newTicket = new Ticket({
             name,
             email: email.toLowerCase(),
+            teamName: user.teamName, // Autofilled from user's profile
             grpno,
             subject,
             description,
@@ -55,7 +66,7 @@ export const createTicket = async (req, res) => {
         await newTicket.save();
         res.status(201).json({ message: "Ticket created successfully", ticket: newTicket });
     } catch (error) {
-        res.status(500).json({ message: "Error creating ticket", error });
+        res.status(500).json({ message: "Error creating ticket", error: error.message });
     }
 };
 

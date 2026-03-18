@@ -10,6 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Landing from "./pages/Landing";
 import TicketPage from "./pages/Ticket-Page";
 import AdminPanel from "./pages/AdminPanel";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/user/login" element={<Login />} />
           <Route path="/user/register" element={<Register />} />
           <Route path="/user/home" element={<Home />} />
+          <Route path="/user/profile" element={<Profile />} />
           <Route path="/user/createTicket" element={<TicketPage />} />
           <Route path="/user/getTickets" element={<Dashboard />} />
           <Route path="/admin/panel" element={<AdminPanel />} />

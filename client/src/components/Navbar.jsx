@@ -40,6 +40,7 @@ const Navbar = () => {
         { name: "Home", path: "/user/home", icon: <FiHome /> },
         { name: "Dashboard", path: "/user/getTickets", icon: <FiGrid /> },
         { name: "New Ticket", path: "/user/createTicket", icon: <FiPlus /> },
+        { name: "Profile", path: "/user/profile", icon: <FiUser /> },
     ];
 
     if (user.role === "admin") {

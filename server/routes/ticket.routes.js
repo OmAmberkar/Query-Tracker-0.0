@@ -20,6 +20,7 @@ import {
   completeTicket,
 } from '../controllers/ticketgeneration.controller.js';
 import { authenticateUser } from '../middleware/auth.middleware.js';
+import { validateTicket } from '../middleware/validation.middleware.js';
 
 const router = express.Router();
 
@@ -27,7 +28,7 @@ const router = express.Router();
 router.get('/getTickets' , authenticateUser, getAllTickets);
 
 // Route to create a new ticket
-router.post('/createTicket', authenticateUser, createTicket);
+router.post('/createTicket', authenticateUser, validateTicket, createTicket);
 
 // Route to delete a ticket by ID
 router.delete('/deleteTicket/:id', authenticateUser, deleteTicket);

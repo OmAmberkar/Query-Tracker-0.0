@@ -2,31 +2,31 @@ import User from "../models/user.model.js";
 import { hashPassword } from "../utils/encryption.utils.js";
 
 const createUser = async (req, res) => {
-  const { name, username, email, contact, password } = req.body;
+  const { name, username, email, teamName, contact, password, isAdminRequested } = req.body;
 
   try {
     // 1. Check if email already exists
     const existingEmail = await User.findOne({ email });
     if (existingEmail) {
-      return res.status(400).json({ message: "Email already registered" });
+      return res.status(409).json({ message: "Network error: Email already registered in sector" });
     }
 
-    // 2. Check if username already exists (case-insensitive)
-    const existingUsername = await User.findOne({ username: username.toLowerCase() });
-    if (existingUsername) {
-      return res.status(409).json({ message: "Username already taken" });
+    // 2. Check if username already exists in the same team
+    const existingUser = await User.findOne({ 
+      username: username.toLowerCase(), 
+      teamName 
+    });
+    if (existingUser) {
+      return res.status(409).json({ message: "Network error: Codename already exists in this sector" });
     }
-
-    // // 2.1 Check if teamNamw already exists
-    // const existingteamName = await User.findOne({ teamName: teamName });
-    // if (existingteamName) {
-    //   return res.status(400).json({ message: "Team Name alreay taken" })
-    // }
 
     // 3. Hash password
     const hashedPassword = await hashPassword(password);
 
-    // 4. Create new user
+    // 4. Generate profile picture (Techy Robot Style)
+    const profilePic = `https://api.dicebear.com/9.x/bottts/svg?seed=${username.toLowerCase()}`;
+
+    // 5. Create new user
     const newUser = new User({
       name,
       username: username.toLowerCase(),
@@ -34,17 +34,67 @@ const createUser = async (req, res) => {
       teamName,
       contact,
       password: hashedPassword,
-      role: "user"
+      profilePic,
+      role: "user", 
+      isApproved: false,
+      isAdminRequested: !!isAdminRequested, 
     });
 
     await newUser.save();
 
-    // 5. Respond
-    res.status(201).json({ status: 'success', message: "User created successfully", user: newUser, success: true });
+    res.status(201).json({ 
+      status: 'success', 
+      message: "Registration successful! Node awaiting admin verification.", 
+      user: newUser, 
+      success: true 
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Something went wrong" });
+    console.error("Registration error:", error);
+    res.status(500).json({ message: "CRITICAL: Protocol initialization failed", error: error.message });
   }
 };
 
-export { createUser };
+const getUserProfile = async (req, res) => {
+    try {
+        const user = await User.findOne({ email: req.user.email }).select("-password");
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+        res.status(200).json({ success: true, user });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Error fetching profile", error: error.message });
+    }
+};
+
+const getTeamMembers = async (req, res) => {
+    try {
+        const user = await User.findOne({ email: req.user.email });
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+        const members = await User.find({ teamName: user.teamName }).select("-password");
+        res.status(200).json({ success: true, message: "Team members in sector", members });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Team sync failure", error: error.message });
+    }
+};
+
+const requestAdminRole = async (req, res) => {
+    try {
+        const user = await User.findOne({ email: req.user.email });
+        if (!user) return res.status(404).json({ success: false, message: "Node not found" });
+        
+        if (user.role === 'admin') {
+            return res.status(400).json({ success: false, message: "Node already has administrative status" });
+        }
+
+        user.isAdminRequested = true;
+        await user.save();
+
+        res.status(200).json({ success: true, message: "Elevation request logged in system records.", user });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Request protocol failed", error: error.message });
+    }
+};
+
+export { createUser, getUserProfile, getTeamMembers, requestAdminRole };

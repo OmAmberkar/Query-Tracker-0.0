@@ -264,11 +264,15 @@ function Dashboard() {
                     )}
                   </div>
 
-                  <div className="pt-6 border-t border-border/50 flex items-center justify-between mt-auto">
-                    <div className="flex flex-wrap gap-3">
+                    <div className="pt-6 border-t border-border/50 flex items-center justify-between mt-auto">
+                    <div className="flex flex-wrap gap-5">
                       <div className="flex flex-col">
                         <span className="text-[7px] font-black text-text-muted/50 uppercase tracking-widest mb-0.5">Reference ID</span>
                         <span className="text-[10px] font-black text-primary font-tech tracking-tighter italic">#{ticket._id?.slice(-8).toUpperCase()}</span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[7px] font-black text-text-muted/50 uppercase tracking-widest mb-0.5">Unit Allocation</span>
+                        <span className="text-[10px] font-black text-text-main font-tech tracking-tighter uppercase">{ticket.teamName || "General"}</span>
                       </div>
                       {isOwner(ticket) && (
                         <div className="bg-primary/5 border border-primary/10 px-3 py-1 rounded-lg self-center">

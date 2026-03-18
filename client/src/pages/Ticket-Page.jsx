@@ -13,6 +13,7 @@ const TicketPage = () => {
     name: "",
     grpno: "",
     email: "",
+    teamName: "",
     subject: "",
     description: "",
   });
@@ -51,17 +52,26 @@ const TicketPage = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // fill email from localStorage (set on login) or from cookie as fallback
-  const getCookie = (name) => {
-    const match = document.cookie
-      .split("; ")
-      .find((c) => c.startsWith(name + "="));
-    return match ? decodeURIComponent(match.split("=")[1]) : "";
-  };
-
   useEffect(() => {
-    const stored = localStorage.getItem("userEmail") || getCookie("email");
-    if (stored) setFormData((p) => ({ ...p, email: stored }));
+    const fetchUserProfile = async () => {
+      try {
+        const res = await axiosInterceptor.get("/user/profile");
+        if (res.data.success) {
+          setFormData(p => ({
+            ...p,
+            email: res.data.user.email,
+            teamName: res.data.user.teamName,
+            name: res.data.user.name
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+        // Fallback to localStorage if profile fetch fails
+        const storedEmail = localStorage.getItem("userEmail");
+        if (storedEmail) setFormData(p => ({ ...p, email: storedEmail }));
+      }
+    };
+    fetchUserProfile();
   }, []);
 
   const handleChange = (e) => {
@@ -138,6 +148,17 @@ const TicketPage = () => {
                 className="w-full bg-bg-deep border border-border rounded-xl px-5 py-3 text-xs text-text-muted font-bold cursor-not-allowed uppercase tracking-widest"
               />
             </div>
+          </div>
+
+          <div className="space-y-1.5 uppercase tracking-widest">
+            <label className="text-[9px] font-black text-text-muted pl-2 uppercase">Team / Unit Node</label>
+            <input
+              type="text"
+              name="teamName"
+              value={formData.teamName}
+              readOnly
+              className="w-full bg-bg-deep border border-border rounded-xl px-5 py-3 text-xs text-text-muted font-bold cursor-not-allowed uppercase tracking-widest"
+            />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

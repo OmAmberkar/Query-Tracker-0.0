@@ -52,9 +52,11 @@ function Register() {
     name: "",
     username: "",
     email: "",
+    teamName: "",
     contact: "",
     password: "",
     confirmPassword: "",
+    isAdminRequested: false,
   });
 
   const [loading, setLoading] = useState(false);
@@ -63,18 +65,20 @@ function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-
   const navigate = useNavigate();
   const canvasRef = useRef(null);
 
   // Matrix rain effect
   useEffect(() => {
     const canvas = canvasRef.current;
+    if (!canvas) return;
     const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
     canvas.height = window.innerHeight;
     canvas.width = canvas.offsetWidth;
 
-    const letters = "HACKTHON@123$%#*@$%&#";
+    const letters = "0101QUERYTRACKER@#$";
     const fontSize = 14;
     const columns = canvas.width / fontSize;
     const drops = Array(Math.floor(columns)).fill(1);
@@ -82,7 +86,7 @@ function Register() {
     function draw() {
       ctx.fillStyle = "rgba(248, 250, 252, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "rgba(37, 99, 235, 0.15)"; // Soft Blue
+      ctx.fillStyle = "rgba(37, 99, 235, 0.15)";
       ctx.font = fontSize + "px monospace";
 
       for (let i = 0; i < drops.length; i++) {
@@ -98,11 +102,12 @@ function Register() {
     return () => clearInterval(interval);
   }, []);
 
-
-
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type, checked } = e.target;
+    setFormData({ 
+      ...formData, 
+      [name]: type === "checkbox" ? checked : value 
+    });
     if (errors[name]) setErrors({ ...errors, [name]: "" });
   };
 
@@ -111,6 +116,7 @@ function Register() {
     if (!formData.name.trim()) newErrors.name = "Name is required";
     if (!formData.email.trim()) newErrors.email = "Email is required";
     if (!formData.username.trim()) newErrors.username = "Username is required";
+    if (!formData.teamName.trim()) newErrors.teamName = "Team Name is required";
     if (!formData.contact.trim()) {
       newErrors.contact = "Contact is required";
     } else if (!/^[0-9]{10}$/.test(formData.contact)) {
@@ -119,41 +125,27 @@ function Register() {
     if (!formData.password) newErrors.password = "Password is required";
     if (formData.password !== formData.confirmPassword)
       newErrors.confirmPassword = "Passwords do not match";
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validateForm()) return;
-
     setLoading(true);
 
     try {
-      const res = await axiosInterceptor.post("/user/register", {
-        name: formData.name,
-        email: formData.email,
-        username: formData.username,
-        contact: formData.contact,
-        password: formData.password,
-        role: "user",
-      });
-
+      const res = await axiosInterceptor.post("/user/register", formData);
       if (res.status === 201 || res.data?.status === "success") {
-        // Save user info for header-based auth fallback
-        localStorage.setItem("userEmail", formData.email);
-        localStorage.setItem("userRole", "user");
-
-        navigate("/user/home");
-        toast.success("Registration successful!");
+        toast.success(res.data.message);
+        navigate("/user/login");
       }
     } catch (err) {
-      if (err.response?.status === 409 || err.response?.status === 400) {
-        toast.error(err.response.data?.message || "Username or Email already taken.");
-        navigate("/user/login");
+      if (err.response?.status === 409) {
+        toast.error(err.response.data?.message || "Conflict: Network channel busy.");
       } else {
-        toast.error(err.response?.data?.message || "Something went wrong.");
+        toast.error(err.response?.data?.message || "Protocol Failure: Sync rejected.");
       }
     } finally {
       setLoading(false);
@@ -161,23 +153,21 @@ function Register() {
   };
 
   return (
-    <div className="h-screen w-full flex flex-col lg:flex-row selection:bg-primary selection:text-white overflow-hidden bg-bg-deep font-sans">
-      {/* Left: Form */}
+    <div className="h-screen w-full flex flex-col lg:flex-row selection:bg-primary selection:text-white overflow-hidden bg-bg-deep font-sans text-[11px]">
       <div className="flex-1 flex items-center justify-center p-4 relative z-10 overflow-hidden">
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-          className="w-full max-w-md bg-surface border border-border rounded-[40px] p-8 shadow-xl relative overflow-hidden group scale-90 xxl:scale-100"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="w-full max-w-md bg-surface border border-border rounded-[40px] p-8 shadow-2xl relative group"
         >
           <div className="absolute top-0 left-0 w-full h-1 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
 
-          <h1 className="text-3xl font-black text-text-main mb-6 italic tracking-tighter font-tech">
+          <h1 className="text-3xl font-black text-text-main mb-6 italic tracking-tighter font-tech uppercase">
             INITIALIZE <span className="text-primary">PROTOCOL</span>
           </h1>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               {[
                 { name: "name", placeholder: "Full Name" },
                 { name: "username", placeholder: "Codename" },
@@ -189,81 +179,102 @@ function Register() {
                     value={formData[field.name]}
                     onChange={handleChange}
                     placeholder={field.placeholder}
-                    className={`w-full bg-white border ${errors[field.name]
-                      ? "border-error"
-                      : "border-border focus:border-primary"
-                      } rounded-xl px-4 py-3 text-text-main text-[11px] focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all font-bold placeholder:text-slate-300 uppercase tracking-widest`}
+                    className={`w-full bg-white border ${errors[field.name] ? "border-error" : "border-border focus:border-primary"} rounded-xl px-4 py-3 text-text-main focus:outline-none transition-all font-bold placeholder:text-slate-300 uppercase tracking-widest`}
                   />
+                  {errors[field.name] && <p className="text-error text-[8px] font-bold mt-1 ml-2">{errors[field.name]}</p>}
                 </div>
               ))}
             </div>
 
-            {[
-              { name: "email", placeholder: "Network Email" },
-              { name: "contact", placeholder: "Contact Vector" },
-            ].map((field) => (
-              <div key={field.name} className="space-y-1">
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Network Email"
+                  className={`w-full bg-white border ${errors.email ? "border-error" : "border-border focus:border-primary"} rounded-xl px-4 py-3 text-text-main focus:outline-none transition-all font-bold placeholder:text-slate-300 uppercase tracking-widest`}
+                />
+                {errors.email && <p className="text-error text-[8px] font-bold mt-1 ml-2">{errors.email}</p>}
+              </div>
+
+              <div className="space-y-1">
                 <input
                   type="text"
-                  name={field.name}
-                  value={formData[field.name]}
+                  name="teamName"
+                  value={formData.teamName}
                   onChange={handleChange}
-                  placeholder={field.placeholder}
-                  className={`w-full bg-white border ${errors[field.name]
-                    ? "border-error"
-                    : "border-border focus:border-primary"
-                    } rounded-xl px-4 py-3 text-text-main text-[11px] focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all font-bold placeholder:text-slate-300 uppercase tracking-widest`}
+                  placeholder="Group / Team Name"
+                  className={`w-full bg-white border ${errors.teamName ? "border-error" : "border-border focus:border-primary"} rounded-xl px-4 py-3 text-text-main focus:outline-none transition-all font-bold placeholder:text-slate-300 uppercase tracking-widest`}
                 />
+                {errors.teamName && <p className="text-error text-[8px] font-bold mt-1 ml-2">{errors.teamName}</p>}
               </div>
-            ))}
 
-            {/* Password */}
-            <div className="relative space-y-1">
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Access Key"
-                className={`w-full bg-white border ${errors.password
-                  ? "border-error"
-                  : "border-border focus:border-primary"
-                  } rounded-xl px-4 py-3 text-text-main text-[11px] focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all font-bold placeholder:text-slate-300 uppercase tracking-widest`}
-              />
-              <span
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-3 text-text-muted cursor-pointer hover:text-primary transition-colors"
-              >
-                {showPassword ? <AiOutlineEyeInvisible size={16} /> : <AiOutlineEye size={16} />}
-              </span>
+              <div className="space-y-1">
+                <input
+                  type="text"
+                  name="contact"
+                  value={formData.contact}
+                  onChange={handleChange}
+                  placeholder="Contact Vector"
+                  className={`w-full bg-white border ${errors.contact ? "border-error" : "border-border focus:border-primary"} rounded-xl px-4 py-3 text-text-main focus:outline-none transition-all font-bold placeholder:text-slate-300 uppercase tracking-widest`}
+                />
+                {errors.contact && <p className="text-error text-[8px] font-bold mt-1 ml-2">{errors.contact}</p>}
+              </div>
             </div>
 
-            {/* Confirm Password */}
-            <div className="relative space-y-1">
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                name="confirmPassword"
-                value={formData.confirmPassword}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="relative space-y-1">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Key"
+                  className={`w-full bg-white border ${errors.password ? "border-error" : "border-border focus:border-primary"} rounded-xl px-4 py-3 text-text-main focus:outline-none transition-all font-bold placeholder:text-slate-300 uppercase tracking-widest`}
+                />
+                <span onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-3.5 text-text-muted cursor-pointer hover:text-primary transition-colors">
+                  {showPassword ? <AiOutlineEyeInvisible size={14} /> : <AiOutlineEye size={14} />}
+                </span>
+                {errors.password && <p className="text-error text-[8px] font-bold mt-1 ml-2">{errors.password}</p>}
+              </div>
+
+              <div className="relative space-y-1">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Verify"
+                  className={`w-full bg-white border ${errors.confirmPassword ? "border-error" : "border-border focus:border-primary"} rounded-xl px-4 py-3 text-text-main focus:outline-none transition-all font-bold placeholder:text-slate-300 uppercase tracking-widest`}
+                />
+                <span onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-3.5 text-text-muted cursor-pointer hover:text-primary transition-colors">
+                  {showConfirmPassword ? <AiOutlineEyeInvisible size={14} /> : <AiOutlineEye size={14} />}
+                </span>
+                {errors.confirmPassword && <p className="text-error text-[8px] font-bold mt-1 ml-2">{errors.confirmPassword}</p>}
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-3 p-3 bg-bg-deep rounded-xl border border-border/50">
+              <input 
+                type="checkbox" 
+                id="isAdminRequested"
+                name="isAdminRequested"
+                checked={formData.isAdminRequested}
                 onChange={handleChange}
-                placeholder="Verify Key"
-                className={`w-full bg-white border ${errors.confirmPassword
-                  ? "border-error"
-                  : "border-border focus:border-primary"
-                  } rounded-xl px-4 py-3 text-text-main text-[11px] focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all font-bold placeholder:text-slate-300 uppercase tracking-widest`}
+                className="w-4 h-4 rounded text-primary focus:ring-primary border-border bg-white" 
               />
-              <span
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-4 top-3 text-text-muted cursor-pointer hover:text-primary transition-colors"
-              >
-                {showConfirmPassword ? <AiOutlineEyeInvisible size={16} /> : <AiOutlineEye size={16} />}
-              </span>
+              <label htmlFor="isAdminRequested" className="text-[9px] font-black uppercase tracking-[0.2em] text-text-muted cursor-pointer hover:text-primary transition-colors">
+                Request System Elevation (Admin Permissions)
+              </label>
             </div>
 
             <motion.button
               type="submit"
-              className="w-full bg-primary hover:bg-secondary text-white font-black rounded-xl py-4 uppercase tracking-[0.2em] transition-all shadow-primary-glow flex items-center justify-center disabled:opacity-50 mt-2"
-              whileHover={{ scale: loading ? 1 : 1.02 }}
-              whileTap={{ scale: loading ? 1 : 0.98 }}
+              className="w-full bg-primary text-white hover:bg-secondary font-black rounded-xl py-4 uppercase tracking-[0.2em] transition-all shadow-primary-glow flex items-center justify-center disabled:opacity-50 mt-2"
+              whileHover={{ scale: loading ? 1 : 1.01 }}
+              whileTap={{ scale: loading ? 1 : 0.99 }}
               disabled={loading}
             >
               {loading ? "INITIALIZING..." : "JOIN NETWORK"}
@@ -271,42 +282,27 @@ function Register() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-text-muted text-[10px] font-black uppercase tracking-widest">
-              Already registered?{" "}
-              <Link
-                to="/user/login"
-                className="text-primary font-black hover:underline decoration-2 underline-offset-4"
-              >
-                Sign in
-              </Link>
-            </p>
+            <Link to="/user/login" className="text-primary font-black uppercase tracking-[0.2em] hover:underline decoration-2 underline-offset-4">
+              Return to Login Sequence
+            </Link>
           </div>
         </motion.div>
       </div>
 
-      {/* Right: Hackathon Crazy Side */}
-      <div className="hidden lg:flex flex-1 relative bg-bg-deep/50 overflow-hidden">
-        <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full opacity-60 pointer-events-none"></canvas>
-        <div className="relative z-10 flex flex-col items-center justify-center h-full p-8 text-text-main text-center scale-90 xxl:scale-100">
+      <div className="hidden lg:flex flex-1 relative bg-bg-deep/50 overflow-hidden text-center">
+        <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full opacity-40 pointer-events-none"></canvas>
+        <div className="relative z-10 flex flex-col items-center justify-center h-full p-8 text-text-main scale-90">
           <h2 className="text-[10px] font-black text-primary tracking-[0.5em] mb-8 uppercase italic font-tech">Live Network Pulse</h2>
-
-          <div className="mb-8">
-            <div className="text-6xl font-black tracking-tighter mb-1 italic font-tech border-b-2 border-primary/20 pb-2">{participants}</div>
+          <div className="mb-8 font-tech italic">
+            <div className="text-6xl font-black tracking-tighter mb-1 border-b-2 border-primary/20 pb-2">{participants}</div>
             <div className="text-[10px] font-black uppercase tracking-[0.3em] text-text-muted mt-2">Units Active in sector</div>
           </div>
-
-          <div className="p-6 border border-border bg-surface shadow-xl rounded-[32px] w-full max-w-xs transition-all hover:border-primary/20">
+          <div className="p-6 border border-border bg-surface shadow-xl rounded-[32px] w-full max-w-xs">
             <h3 className="text-[9px] font-black text-primary tracking-[0.3em] mb-4 uppercase font-tech">New Arrivals</h3>
             <div className="space-y-2 font-bold uppercase tracking-widest text-[9px] text-text-muted">
               {recent.map((user, i) => (
-                <motion.p
-                  key={i}
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="truncate flex items-center justify-between"
-                >
+                <motion.p key={i} initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }}>
                   <span className="text-text-main">{user}</span>
-                  <span className="w-1 h-1 bg-primary rounded-full shadow-primary-glow"></span>
                 </motion.p>
               ))}
             </div>

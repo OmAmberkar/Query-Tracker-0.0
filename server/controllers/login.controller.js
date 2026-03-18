@@ -16,6 +16,11 @@ const userLogin = async (req, res) => {
         .json({ success: false, message: "Invalid credentials" });
     }
 
+    // Check if user is approved (Admins are always approved)
+    if (user.role === "user" && !user.isApproved) {
+      return res.status(403).json({ success: false, message: "Your account is pending admin approval." });
+    }
+
     const isProduction = process.env.NODE_ENV === "production";
 
     res.cookie("email", email, {

@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import axiosInterceptor from "../utils/axiosInterceptor.js";
 import { showToast } from "../components/notification.js";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiUsers, FiTrash2, FiShield, FiActivity, FiSearch, FiGlobe, FiInbox } from "react-icons/fi";
+import { FiUsers, FiTrash2, FiShield, FiActivity, FiSearch, FiGlobe, FiInbox, FiCheckCircle, FiCircle } from "react-icons/fi";
 import Navbar from "../components/Navbar";
 import LoadingSpinner from "../components/LoadingSpinner";
 import React from "react";
@@ -97,9 +97,22 @@ function AdminPanel() {
         }
     };
 
+    const handleApproveUser = async (id, currentStatus) => {
+        try {
+            const res = await axiosInterceptor.put(`/admin/users/${id}/approve`, { isApproved: !currentStatus }, { withCredentials: true });
+            if (res.data.success) {
+                showToast(res.data.message, "success");
+                setUsers(users.map(u => u._id === id ? { ...u, isApproved: !currentStatus } : u));
+            }
+        } catch (error) {
+            showToast("Approval protocol failed", "error");
+        }
+    };
+
     const filteredUsers = users.filter(u =>
         u.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        u.email?.toLowerCase().includes(searchTerm.toLowerCase())
+        u.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        u.teamName?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const filteredTickets = tickets.filter(t =>
@@ -188,10 +201,17 @@ function AdminPanel() {
                                     <div className="absolute top-0 right-0 w-32 h-32 bg-primary opacity-[0.02] rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
 
                                     <div className="flex justify-between items-start mb-6">
-                                        <div className="w-12 h-12 bg-bg-deep border border-border rounded-2xl flex items-center justify-center font-black text-primary font-tech italic">
-                                            {user.name?.charAt(0) || "U"}
+                                        <div className="w-12 h-12 bg-bg-deep border border-border rounded-2xl flex items-center justify-center font-black text-primary font-tech italic overflow-hidden">
+                                            {user.profilePic ? <img src={user.profilePic} alt="" className="w-full h-full object-cover" /> : (user.name?.charAt(0) || "U")}
                                         </div>
                                         <div className="flex space-x-2">
+                                            <button
+                                                onClick={() => handleApproveUser(user._id, user.isApproved)}
+                                                title={user.isApproved ? "Disapprove Member" : "Approve Member"}
+                                                className={`p-3 rounded-xl transition-all shadow-sm border ${user.isApproved ? 'bg-success text-white border-success shadow-success-glow' : 'bg-white text-text-muted hover:text-text-main border-border hover:bg-bg-deep'}`}
+                                            >
+                                                {user.isApproved ? <FiCheckCircle size={16} /> : <FiCircle size={16} />}
+                                            </button>
                                             <button
                                                 onClick={() => toggleRole(user)}
                                                 title="Toggle Admin Privilege"
@@ -209,19 +229,27 @@ function AdminPanel() {
                                         </div>
                                     </div>
 
-                                    <div className="space-y-1 mb-8">
-                                        <h3 className="text-xl font-black uppercase tracking-tight text-text-main group-hover:text-primary transition-colors font-tech">
-                                            {user.name}
-                                        </h3>
+                                     <div className="space-y-1 mb-6">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <h3 className="text-xl font-black uppercase tracking-tight text-text-main group-hover:text-primary transition-colors font-tech truncate">
+                                                {user.name}
+                                            </h3>
+                                            {user.isAdminRequested && (
+                                                <span className="bg-primary/10 text-primary text-[7px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded-md border border-primary/20 animate-pulse">
+                                                    Elevation Requested
+                                                </span>
+                                            )}
+                                        </div>
                                         <p className="text-text-muted text-[10px] font-bold uppercase tracking-widest truncate">{user.email}</p>
+                                        <p className="text-primary text-[9px] font-black uppercase tracking-[0.2em] mt-2">UNIT: {user.teamName || "UNASSIGNED"}</p>
                                     </div>
 
                                     <div className="flex items-center justify-between pt-6 border-t border-border">
                                         <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${user.role === 'admin' ? 'text-primary' : 'text-slate-400'}`}>
-                                            ROLE: {user.role?.toUpperCase()}
+                                            PROTOCOL: {user.role?.toUpperCase()}
                                         </span>
                                         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-300">
-                                            ID: {user._id?.slice(-8).toUpperCase()}
+                                            {user.isApproved ? 'VERIFIED' : 'PENDING'}
                                         </span>
                                     </div>
                                 </motion.div>

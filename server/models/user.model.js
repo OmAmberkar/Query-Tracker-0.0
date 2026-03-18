@@ -12,7 +12,6 @@ const userSchema = new mongoose.Schema({
     username: {
         type: String,
         required: [true, 'Username is required'],
-        unique: true,
         trim: true,
         minlength: [3, 'Username must be at least 3 characters'],
         maxlength: [30, 'Username cannot exceed 30 characters'],
@@ -28,12 +27,27 @@ const userSchema = new mongoose.Schema({
         match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email']
     },
 
-    // teamName: {
-    //     type: String,
-    //     required: [true, 'Team name is required'],
-    //     trim: true,
-    //     maxlength: [50, 'Team name cannot exceed 50 characters']
-    // },
+    teamName: {
+        type: String,
+        required: [true, 'Team name is required'],
+        trim: true,
+        maxlength: [50, 'Team name cannot exceed 50 characters']
+    },
+
+    isApproved: {
+        type: Boolean,
+        default: false
+    },
+
+    profilePic: {
+        type: String,
+        default: ""
+    },
+
+    isAdminRequested: {
+        type: Boolean,
+        default: false
+    },
 
     contact: {
         type: String,
@@ -72,7 +86,8 @@ const userSchema = new mongoose.Schema({
     toObject: { virtuals: true }
 });
 
-// Note: unique: true automatically creates indexes for email and username fields
+// Enforce unique username within the same team
+userSchema.index({ username: 1, teamName: 1 }, { unique: true });
 
 // Virtual for user status
 userSchema.virtual('status').get(function () {

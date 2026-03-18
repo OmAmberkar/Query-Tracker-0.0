@@ -39,10 +39,10 @@ const TicketSchema = new mongoose.Schema(
       // required: true,
     },
 
-    // teamName:{
-    //   type : mongoose.Schema.Types.ObjectId,
-    //   ref: User,
-    // },
+    teamName: {
+      type: String,
+      required: true,
+    },
 
     // assignedTo: { 
     //   type: mongoose.Schema.Types.ObjectId, 
